@@ -1,6 +1,12 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Privacy guarantee (ADR-0008): release builds have NO network access.
+         Debug/profile manifests re-add INTERNET for hot reload only. -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
     <application
-        android:label="docscan_scanner"
+        android:label="DocScan"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

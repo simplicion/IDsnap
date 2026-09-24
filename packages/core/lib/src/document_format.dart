@@ -39,7 +39,8 @@ enum DocumentFormat {
   final String extension;
   final String mimeType;
 
-  bool get isImage => const {jpeg, png, webp, heic, gif, bmp, tiff}.contains(this);
+  bool get isImage =>
+      const {jpeg, png, webp, heic, gif, bmp, tiff}.contains(this);
   bool get isText => const {txt, markdown, html, csv}.contains(this);
 
   static DocumentFormat fromExtension(String name) {

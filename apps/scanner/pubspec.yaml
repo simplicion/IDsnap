@@ -19,6 +19,8 @@ dependencies:
     path: ../../packages/features/scan
   feature_home:
     path: ../../packages/features/home
+  engine_vision:
+    path: ../../packages/engines/vision
   engine_conversion:
     path: ../../packages/engines/conversion
   engine_scanner:
@@ -46,9 +48,14 @@ dependencies:
   path_provider: ^2.1.6
 
 dev_dependencies:
+  drift: ^2.35.0
   flutter_test:
     sdk: flutter
+  image: ^4.10.1
   mocktail: ^1.0.5
+  pdfrx: ^2.6.5
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/fonts/NotoSans-Regular.ttf

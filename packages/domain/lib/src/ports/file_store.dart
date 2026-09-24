@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-
 /// App-private file storage. Layout: `documents/` (library files),
 /// `originals/` (captured images), `thumbs/`, `tmp/` (work in progress).
 abstract interface class FileStore {

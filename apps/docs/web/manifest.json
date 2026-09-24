@@ -1,11 +1,11 @@
 {
-    "name": "docscan_docs",
-    "short_name": "docscan_docs",
+    "name": "DocScan Docs",
+    "short_name": "DocScan Docs",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#2457D6",
+    "theme_color": "#2457D6",
+    "description": "DocScan documentation",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

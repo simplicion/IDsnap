@@ -42,21 +42,27 @@ apps/            thin shells: composition root, routing, DI wiring only
   docs/          documentation app that renders /docs
   lab/           engine lab: run pipelines on fixtures, benchmark, spike
 packages/
-  core/          Result, failures, ids, logging, mime sniffing — pure Dart, no Flutter
-  domain/        entities, repository ports, use cases — pure Dart
-  design_system/ tokens, theme, shared widgets
-  data/          Drift DB + file store implementing domain ports
-  engines/*      ports + adapters: imaging, scanner, ocr, pdf, conversion
-  features/*     vertical slices: presentation + application state
+  core/          Result, failures, ids, logging, format sniffing, runHeavy — pure Dart
+  domain/        entities, ALL PORTS (lib/src/ports), use cases (CommitOutput,
+                 SaveScanAsPdf) — pure Dart
+  contracts/     one Riverpod provider per port (throws until overridden),
+                 settings controller, Routes + ToolId navigation contract
+  design_system/ tokens, light/dark theme, shared widgets
+  data/          Drift DB + FileStore/DraftStore/SettingsStore implementing ports
+  engines/*      adapters implementing ports: imaging, scanner, ocr, pdf, conversion
+  features/*     vertical slices: screens + Notifier controllers
 ```
 
 Dependency rules (a violation fails review):
 
 - `core` depends on nothing internal. `domain` depends only on `core`.
-- `engines/*` depend on `core` (and `domain` only for shared entities); never on features.
-- `features/*` depend on `domain`, `design_system`, engine *ports*; never on another
-  feature and never on `data` or concrete adapters.
-- Only `apps/*` wire concrete implementations (Riverpod overrides in `bootstrap.dart`).
+- Ports live in `docscan_domain`. `engines/*` and `data` implement them and depend
+  on `core` + `domain` only; never on features or contracts.
+- `features/*` depend on `domain`, `contracts`, `design_system`; never on another
+  feature, never on `data` or concrete engines. Cross-feature navigation uses
+  `Routes`/`ToolId` from `docscan_contracts`.
+- Only `apps/*` wire concrete implementations (ProviderScope overrides in `bootstrap.dart`).
+- Every file entering the library goes through `CommitOutput` (temp → validate → commit).
 - No `dart:io` in `core`, `domain`, `imaging` or `conversion` registry code (web-readiness).
 - CPU-bound work (decode, warp, filter, PDF encode) runs off the UI isolate
   (`Isolate.run`) or in native code.
@@ -66,8 +72,11 @@ Dependency rules (a violation fails review):
 Flutter stable, Dart 3 pub workspaces + melos scripts · Riverpod 3 · go_router · Drift
 (SQLite) · `image` (pure-Dart pixels) · `pdf` (writing) · `pdfrx` (PDFium render) ·
 ML Kit Document Scanner (Android) / VisionKit (iOS) via `cunning_document_scanner`
-with an in-app manual-crop fallback · ML Kit Text Recognition (on-device) · `share_plus`,
-`file_picker` · very_good_analysis lints · mocktail tests.
+with an in-app manual-crop fallback · ML Kit Text Recognition (on-device) · `archive` +
+`xml` for OOXML conversions · `share_plus`, `file_picker`, `image_picker` ·
+very_good_analysis lints · mocktail tests. No `google_fonts` (runtime download).
+Full rationale: `docs/architecture/tech-stack.md`; decisions: `docs/adr/`.
+Docs app (`apps/docs`) renders `/docs` — run `dart run tool/sync_docs.dart` after edits.
 
 ## How you work on a task
 

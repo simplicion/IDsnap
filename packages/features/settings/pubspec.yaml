@@ -22,6 +22,7 @@ dependencies:
   flutter_riverpod: ^3.4.3
   go_router: ^18.0.1
 
+  riverpod: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

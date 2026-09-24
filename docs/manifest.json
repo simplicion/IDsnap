@@ -1,0 +1,54 @@
+{
+  "title": "DocScan Docs",
+  "sections": [
+    {
+      "title": "Overview",
+      "pages": [
+        { "title": "Welcome", "path": "index.md" }
+      ]
+    },
+    {
+      "title": "Product",
+      "pages": [
+        { "title": "Product Requirements", "path": "product/PRD.md" },
+        { "title": "Original brief", "path": "offline-doc-scanner.md" }
+      ]
+    },
+    {
+      "title": "Design",
+      "pages": [
+        { "title": "Design System & UX", "path": "design/DESIGN.md" }
+      ]
+    },
+    {
+      "title": "Architecture",
+      "pages": [
+        { "title": "Overview", "path": "architecture/overview.md" },
+        { "title": "Tech Stack", "path": "architecture/tech-stack.md" }
+      ]
+    },
+    {
+      "title": "Decisions (ADR)",
+      "pages": [
+        { "title": "ADR template", "path": "adr/0000-template.md" },
+        { "title": "0001 Monorepo & workspaces", "path": "adr/0001-monorepo-pub-workspaces.md" },
+        { "title": "0002 Riverpod & go_router", "path": "adr/0002-riverpod-go-router.md" },
+        { "title": "0003 Drift (SQLite)", "path": "adr/0003-drift-sqlite.md" },
+        { "title": "0004 Scanner strategy", "path": "adr/0004-scanner-platform-plus-fallback.md" },
+        { "title": "0005 OCR (ML Kit)", "path": "adr/0005-ocr-mlkit-bundled.md" },
+        { "title": "0006 PDF engines", "path": "adr/0006-pdf-writer-and-pdfium.md" },
+        { "title": "0007 Conversions", "path": "adr/0007-pure-dart-ooxml-conversion.md" },
+        { "title": "0008 Privacy", "path": "adr/0008-privacy-no-network.md" }
+      ]
+    },
+    {
+      "title": "Guides",
+      "pages": [
+        { "title": "Getting Started", "path": "guides/getting-started.md" },
+        { "title": "Testing", "path": "guides/testing.md" },
+        { "title": "Release", "path": "guides/release.md" },
+        { "title": "Contributing a Tool", "path": "guides/contributing-a-tool.md" }
+      ]
+    }
+  ]
+}

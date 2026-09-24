@@ -1,5 +1,5 @@
 name: docscan_docs
-description: "A new Flutter project."
+description: "DocScan documentation site (Flutter web)."
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -23,3 +23,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/docs/
+    - assets/docs/product/
+    - assets/docs/design/
+    - assets/docs/architecture/
+    - assets/docs/adr/
+    - assets/docs/guides/
+

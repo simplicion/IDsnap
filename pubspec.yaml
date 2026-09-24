@@ -18,6 +18,7 @@ workspace:
   - packages/engines/ocr
   - packages/engines/pdf
   - packages/engines/conversion
+  - packages/engines/vision
   - packages/features/home
   - packages/features/scan
   - packages/features/library

@@ -1,0 +1,20 @@
+services:
+  # Documentation site → http://localhost:8080
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile.docs
+    image: docscan-docs:local
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+  # One-shot CI run (analyze, test, docs build, debug APK). APK lands in ./out
+  ci:
+    build:
+      context: .
+      dockerfile: Dockerfile.ci
+    image: docscan-ci:local
+    profiles: ["ci"]
+    volumes:
+      - ./out:/out

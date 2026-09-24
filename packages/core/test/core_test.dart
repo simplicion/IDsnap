@@ -7,14 +7,20 @@ void main() {
   group('DocumentFormat.sniff', () {
     test('detects by magic bytes, ignoring a lying extension', () {
       final pdf = Uint8List.fromList('%PDF-1.7'.codeUnits);
-      expect(DocumentFormat.sniff(pdf, nameHint: 'photo.jpg'), DocumentFormat.pdf);
+      expect(
+        DocumentFormat.sniff(pdf, nameHint: 'photo.jpg'),
+        DocumentFormat.pdf,
+      );
       final jpg = Uint8List.fromList([0xFF, 0xD8, 0xFF, 0xE0, 0, 0]);
       expect(DocumentFormat.sniff(jpg), DocumentFormat.jpeg);
     });
 
     test('uses hint for OOXML containers and text', () {
       final zip = Uint8List.fromList([0x50, 0x4B, 0x03, 0x04, 1, 2]);
-      expect(DocumentFormat.sniff(zip, nameHint: 'a.docx'), DocumentFormat.docx);
+      expect(
+        DocumentFormat.sniff(zip, nameHint: 'a.docx'),
+        DocumentFormat.docx,
+      );
       expect(DocumentFormat.sniff(zip, nameHint: 'a.bin'), DocumentFormat.zip);
       final txt = Uint8List.fromList('hello,world\n1,2'.codeUnits);
       expect(DocumentFormat.sniff(txt, nameHint: 'a.csv'), DocumentFormat.csv);

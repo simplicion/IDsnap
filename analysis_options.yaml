@@ -19,3 +19,4 @@ linter:
     avoid_positional_boolean_parameters: false
     flutter_style_todos: false
     sort_pub_dependencies: false
+    specify_nonobvious_property_types: false

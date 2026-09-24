@@ -31,7 +31,7 @@ sealed class Result<T> {
 
   Future<Result<R>> then<R>(Future<Result<R>> Function(T value) next) async =>
       switch (this) {
-        Ok(:final value) => next(value),
+        Ok(:final value) => await next(value),
         Err(:final failure) => Err(failure),
       };
 }

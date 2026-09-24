@@ -1,0 +1,24 @@
+# syntax=docker/dockerfile:1.7
+# Reproducible CI: Flutter + Android SDK. Runs format check, analysis, codegen,
+# all package tests and an Android debug APK build.
+#
+#   docker build -f Dockerfile.ci -t docscan-ci .
+#   docker run --rm docscan-ci                        # full pipeline
+#   docker run --rm -v "$PWD/out:/out" docscan-ci     # also copies the APK to ./out
+
+ARG FLUTTER_IMAGE=ghcr.io/cirruslabs/flutter:stable
+FROM ${FLUTTER_IMAGE}
+
+WORKDIR /repo
+ENV PUB_CACHE=/root/.pub-cache \
+    CI=true
+
+COPY pubspec.yaml pubspec.lock analysis_options.yaml ./
+COPY apps/ apps/
+COPY packages/ packages/
+RUN flutter pub get
+
+COPY . .
+RUN chmod +x tool/ci.sh
+
+CMD ["tool/ci.sh"]

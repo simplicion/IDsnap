@@ -14,6 +14,8 @@ class CropPreset {
     required this.heightMm,
     this.description,
     this.dpi = 300,
+    this.headRatio,
+    this.topMarginRatio = 0.09,
   });
 
   final String id;
@@ -22,6 +24,15 @@ class CropPreset {
   final double heightMm;
   final String? description;
   final int dpi;
+
+  /// Head height (chin to crown) as a fraction of photo height for portrait
+  /// presets; `null` for documents. Used by automatic face framing.
+  final double? headRatio;
+
+  /// Gap above the crown as a fraction of photo height.
+  final double topMarginRatio;
+
+  bool get isPortrait => headRatio != null;
 
   double get aspect => widthMm / heightMm;
 
@@ -42,6 +53,7 @@ class CropPreset {
     widthMm: 35,
     heightMm: 45,
     description: 'Common size in India, UK, EU, Australia and more',
+    headRatio: 0.75,
   );
   static const passportUs = CropPreset(
     id: 'passport_us',
@@ -49,12 +61,15 @@ class CropPreset {
     widthMm: 50.8,
     heightMm: 50.8,
     description: '2 × 2 inch',
+    headRatio: 0.6,
+    topMarginRatio: 0.12,
   );
   static const visaChina = CropPreset(
     id: 'visa_33x48',
     label: 'China visa',
     widthMm: 33,
     heightMm: 48,
+    headRatio: 0.64,
   );
   static const stampSize = CropPreset(
     id: 'stamp_20x25',
@@ -62,6 +77,26 @@ class CropPreset {
     widthMm: 20,
     heightMm: 25,
     description: 'Used on many exam and application forms',
+    headRatio: 0.62,
+    topMarginRatio: 0.1,
+  );
+  static const passportCanada = CropPreset(
+    id: 'passport_canada',
+    label: 'Canada passport',
+    widthMm: 50,
+    heightMm: 70,
+    headRatio: 0.48,
+    topMarginRatio: 0.15,
+  );
+  static const profilePhoto = CropPreset(
+    id: 'profile',
+    label: 'Profile photo',
+    widthMm: 100,
+    heightMm: 100,
+    dpi: 108,
+    description: 'Square headshot for resumes, LinkedIn and ID apps',
+    headRatio: 0.5,
+    topMarginRatio: 0.14,
   );
   static const idCard = CropPreset(
     id: 'id_card',
@@ -102,7 +137,9 @@ class CropPreset {
     passportIntl,
     passportUs,
     visaChina,
+    passportCanada,
     stampSize,
+    profilePhoto,
     idCard,
     a4,
     letter,

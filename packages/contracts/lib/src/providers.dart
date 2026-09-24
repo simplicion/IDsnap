@@ -72,3 +72,8 @@ final documentByIdProvider = FutureProvider.family<Document?, String>(
 final foldersProvider = StreamProvider<List<Folder>>(
   (ref) => ref.watch(documentRepositoryProvider).watchFolders(),
 );
+
+/// Face detection for automatic passport/ID photo framing.
+final faceLocatorProvider = Provider<FaceLocator>(
+  (ref) => _missing('FaceLocator'),
+);

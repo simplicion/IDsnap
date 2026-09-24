@@ -1,0 +1,32 @@
+# syntax=docker/dockerfile:1.7
+# DocScan documentation site: Flutter web build served by nginx.
+#
+#   docker build -f Dockerfile.docs -t docscan-docs .
+#   docker run --rm -p 8080:80 docscan-docs      → http://localhost:8080
+
+ARG FLUTTER_IMAGE=ghcr.io/cirruslabs/flutter:stable
+
+# ── Stage 1: build ─────────────────────────────────────────────────────────
+FROM ${FLUTTER_IMAGE} AS build
+WORKDIR /repo
+
+# Resolve the workspace first so dependency layers cache across doc edits.
+COPY pubspec.yaml pubspec.lock analysis_options.yaml ./
+COPY apps/ apps/
+COPY packages/ packages/
+RUN flutter pub get
+
+COPY docs/ docs/
+COPY tool/ tool/
+RUN dart run tool/sync_docs.dart \
+ && cd apps/docs \
+ && flutter build web --release --no-pub
+
+# ── Stage 2: serve ─────────────────────────────────────────────────────────
+FROM nginx:1.27-alpine AS runtime
+COPY tool/docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /repo/apps/docs/build/web /usr/share/nginx/html
+EXPOSE 80
+HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1
+LABEL org.opencontainers.image.title="DocScan Docs" \
+      org.opencontainers.image.description="Documentation for the DocScan offline document scanner"
