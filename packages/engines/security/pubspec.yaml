@@ -1,0 +1,25 @@
+name: engine_security
+description: "Engine: security (on-device only)."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  cryptography: ^2.9.0
+  docscan_core:
+    path: ../../core
+  docscan_domain:
+    path: ../../domain
+  flutter:
+    sdk: flutter
+  flutter_secure_storage: ^11.2.0
+  local_auth: ^3.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.5

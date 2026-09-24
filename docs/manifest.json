@@ -11,6 +11,7 @@
       "title": "Product",
       "pages": [
         { "title": "Product Requirements", "path": "product/PRD.md" },
+        { "title": "Roadmap: ID Card, Vault, Kits", "path": "product/roadmap-vault-id-card.md" },
         { "title": "Original brief", "path": "offline-doc-scanner.md" }
       ]
     },

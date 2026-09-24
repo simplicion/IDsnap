@@ -1,4 +1,5 @@
 import 'package:docscan_core/docscan_core.dart';
+import 'package:docscan_domain/src/entities/vault.dart';
 import 'package:meta/meta.dart';
 
 /// A file in the local library. The display [name] lives in the database; the
@@ -17,6 +18,9 @@ class Document {
     this.folderId,
     this.favorite = false,
     this.thumbnailPath,
+    this.category,
+    this.expiresAt,
+    this.slot,
   });
 
   final String id;
@@ -28,6 +32,15 @@ class Document {
   final String? folderId;
   final bool favorite;
   final String? thumbnailPath;
+
+  /// Vault category; `null` = uncategorized.
+  final DocumentCategory? category;
+
+  /// Optional expiry (passports, licences, insurance) for local reminders.
+  final DateTime? expiresAt;
+
+  /// [VaultSlot.key] this document fills, if any.
+  final String? slot;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -43,6 +56,12 @@ class Document {
     String? thumbnailPath,
     String? relativePath,
     DateTime? updatedAt,
+    DocumentCategory? category,
+    bool clearCategory = false,
+    DateTime? expiresAt,
+    bool clearExpiry = false,
+    String? slot,
+    bool clearSlot = false,
   }) => Document(
     id: id,
     name: name ?? this.name,
@@ -53,6 +72,9 @@ class Document {
     folderId: clearFolder ? null : folderId ?? this.folderId,
     favorite: favorite ?? this.favorite,
     thumbnailPath: thumbnailPath ?? this.thumbnailPath,
+    category: clearCategory ? null : category ?? this.category,
+    expiresAt: clearExpiry ? null : expiresAt ?? this.expiresAt,
+    slot: clearSlot ? null : slot ?? this.slot,
     createdAt: createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -96,6 +118,7 @@ class DocumentQuery {
     this.filter = DocumentFilter.all,
     this.folderId,
     this.limit,
+    this.category,
   });
 
   final String search;
@@ -106,18 +129,24 @@ class DocumentQuery {
   final String? folderId;
   final int? limit;
 
+  /// `null` means every category.
+  final DocumentCategory? category;
+
   DocumentQuery copyWith({
     String? search,
     DocumentSort? sort,
     DocumentFilter? filter,
     String? folderId,
     bool clearFolder = false,
+    DocumentCategory? category,
+    bool clearCategory = false,
   }) => DocumentQuery(
     search: search ?? this.search,
     sort: sort ?? this.sort,
     filter: filter ?? this.filter,
     folderId: clearFolder ? null : folderId ?? this.folderId,
     limit: limit,
+    category: clearCategory ? null : category ?? this.category,
   );
 
   @override
@@ -127,8 +156,10 @@ class DocumentQuery {
       other.sort == sort &&
       other.filter == filter &&
       other.folderId == folderId &&
-      other.limit == limit;
+      other.limit == limit &&
+      other.category == category;
 
   @override
-  int get hashCode => Object.hash(search, sort, filter, folderId, limit);
+  int get hashCode =>
+      Object.hash(search, sort, filter, folderId, limit, category);
 }

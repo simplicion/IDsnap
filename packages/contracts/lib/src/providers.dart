@@ -77,3 +77,19 @@ final foldersProvider = StreamProvider<List<Folder>>(
 final faceLocatorProvider = Provider<FaceLocator>(
   (ref) => _missing('FaceLocator'),
 );
+
+// ── Roadmap ports (docs/product/roadmap-vault-id-card.md) ───────────────────
+
+final sheetPdfBuilderProvider = Provider<SheetPdfBuilder>(
+  (ref) => _missing('SheetPdfBuilder'),
+);
+final appLockProvider = Provider<AppLock>((ref) => _missing('AppLock'));
+final libraryArchiverProvider = Provider<LibraryArchiver>(
+  (ref) => _missing('LibraryArchiver'),
+);
+final reminderSchedulerProvider = Provider<ReminderScheduler>(
+  (ref) => _missing('ReminderScheduler'),
+);
+final signatureProcessorProvider = Provider<SignatureProcessor>(
+  (ref) => _missing('SignatureProcessor'),
+);

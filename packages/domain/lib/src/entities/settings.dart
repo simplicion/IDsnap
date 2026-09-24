@@ -22,6 +22,11 @@ class AppSettings {
     this.ocrScript = OcrScript.latin,
     this.autoDetectEdges = true,
     this.searchablePdf = true,
+    this.appLock = false,
+    this.lockAfterMinutes = 1,
+    this.showPrivacyBanner = true,
+    this.hideEmptyCategories = false,
+    this.expiryReminders = true,
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> j) {
@@ -39,6 +44,11 @@ class AppSettings {
       ocrScript: pick(OcrScript.values, j['ocrScript'], OcrScript.latin),
       autoDetectEdges: (j['autoDetectEdges'] as bool?) ?? true,
       searchablePdf: (j['searchablePdf'] as bool?) ?? true,
+      appLock: (j['appLock'] as bool?) ?? false,
+      lockAfterMinutes: (j['lockAfterMinutes'] as int?) ?? 1,
+      showPrivacyBanner: (j['showPrivacyBanner'] as bool?) ?? true,
+      hideEmptyCategories: (j['hideEmptyCategories'] as bool?) ?? false,
+      expiryReminders: (j['expiryReminders'] as bool?) ?? true,
     );
   }
 
@@ -52,6 +62,15 @@ class AppSettings {
   /// Add an invisible OCR text layer when saving scans (Latin script only).
   final bool searchablePdf;
 
+  /// Require biometric / device credential to open DocScan.
+  final bool appLock;
+
+  /// Re-lock after this many minutes in the background (0 = immediately).
+  final int lockAfterMinutes;
+  final bool showPrivacyBanner;
+  final bool hideEmptyCategories;
+  final bool expiryReminders;
+
   AppSettings copyWith({
     ThemePreference? theme,
     QualityPreset? quality,
@@ -60,6 +79,11 @@ class AppSettings {
     OcrScript? ocrScript,
     bool? autoDetectEdges,
     bool? searchablePdf,
+    bool? appLock,
+    int? lockAfterMinutes,
+    bool? showPrivacyBanner,
+    bool? hideEmptyCategories,
+    bool? expiryReminders,
   }) => AppSettings(
     theme: theme ?? this.theme,
     quality: quality ?? this.quality,
@@ -68,6 +92,11 @@ class AppSettings {
     ocrScript: ocrScript ?? this.ocrScript,
     autoDetectEdges: autoDetectEdges ?? this.autoDetectEdges,
     searchablePdf: searchablePdf ?? this.searchablePdf,
+    appLock: appLock ?? this.appLock,
+    lockAfterMinutes: lockAfterMinutes ?? this.lockAfterMinutes,
+    showPrivacyBanner: showPrivacyBanner ?? this.showPrivacyBanner,
+    hideEmptyCategories: hideEmptyCategories ?? this.hideEmptyCategories,
+    expiryReminders: expiryReminders ?? this.expiryReminders,
   );
 
   Map<String, dynamic> toJson() => {
@@ -78,5 +107,10 @@ class AppSettings {
     'ocrScript': ocrScript.name,
     'autoDetectEdges': autoDetectEdges,
     'searchablePdf': searchablePdf,
+    'appLock': appLock,
+    'lockAfterMinutes': lockAfterMinutes,
+    'showPrivacyBanner': showPrivacyBanner,
+    'hideEmptyCategories': hideEmptyCategories,
+    'expiryReminders': expiryReminders,
   };
 }

@@ -1,0 +1,24 @@
+name: engine_reminders
+description: "Engine: reminders (on-device only)."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  docscan_core:
+    path: ../../core
+  docscan_domain:
+    path: ../../domain
+  flutter:
+    sdk: flutter
+  flutter_local_notifications: ^22.3.1
+  timezone: ^0.11.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.5

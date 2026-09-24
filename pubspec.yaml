@@ -19,6 +19,8 @@ workspace:
   - packages/engines/pdf
   - packages/engines/conversion
   - packages/engines/vision
+  - packages/engines/security
+  - packages/engines/reminders
   - packages/features/home
   - packages/features/scan
   - packages/features/library
