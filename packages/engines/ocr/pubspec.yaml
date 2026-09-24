@@ -1,0 +1,23 @@
+name: engine_ocr
+description: "On-device OCR adapter (ML Kit Text Recognition)."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  docscan_domain:
+    path: ../../../packages/domain
+  docscan_core:
+    path: ../../../packages/core
+  flutter:
+    sdk: flutter
+  google_mlkit_text_recognition: ^0.17.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.5

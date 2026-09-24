@@ -1,0 +1,28 @@
+name: engine_scanner
+description: "Platform document scanner adapters (ML Kit / VisionKit) and image import."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  docscan_domain:
+    path: ../../../packages/domain
+  docscan_core:
+    path: ../../../packages/core
+  cunning_document_scanner: ^3.0.3
+  file_picker: ^13.1.0
+  flutter:
+    sdk: flutter
+  image_picker: ^1.2.3
+  share_plus: ^13.3.0
+  path: ^1.9.1
+  path_provider: ^2.1.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.5

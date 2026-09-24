@@ -1,0 +1,25 @@
+name: engine_pdf
+description: "PDF writing (pdf) and rendering/manipulation (pdfrx/PDFium)."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  docscan_domain:
+    path: ../../../packages/domain
+  docscan_core:
+    path: ../../../packages/core
+  flutter:
+    sdk: flutter
+  pdf: ^3.13.1
+  pdfrx: ^2.6.5
+  image: ^4.10.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.5

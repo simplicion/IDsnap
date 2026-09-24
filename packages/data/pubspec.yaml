@@ -1,0 +1,28 @@
+name: docscan_data
+description: "Drift database and file store implementing domain ports."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  docscan_domain:
+    path: ../domain
+  docscan_core:
+    path: ../core
+  drift: ^2.35.0
+  drift_flutter: ^0.3.1
+  flutter:
+    sdk: flutter
+  path: ^1.9.1
+  path_provider: ^2.1.6
+
+dev_dependencies:
+  build_runner: ^2.16.1
+  drift_dev: ^2.35.0
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.5

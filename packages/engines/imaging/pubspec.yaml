@@ -1,0 +1,19 @@
+name: engine_imaging
+description: "Pure-Dart document detection, perspective correction and enhancement."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  docscan_domain:
+    path: ../../domain
+  docscan_core:
+    path: ../../core
+  image: ^4.10.1
+
+dev_dependencies:
+  mocktail: ^1.0.5
+  test: ^1.31.1

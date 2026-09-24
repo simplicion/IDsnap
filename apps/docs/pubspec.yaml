@@ -1,0 +1,25 @@
+name: docscan_docs
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0+1
+
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  docscan_design_system:
+    path: ../../packages/design_system
+  flutter:
+    sdk: flutter
+  flutter_markdown_plus: ^1.0.12
+  go_router: ^18.0.1
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

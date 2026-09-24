@@ -1,0 +1,59 @@
+name: docscan_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+
+workspace:
+  - apps/scanner
+  - apps/docs
+  - apps/lab
+  - packages/core
+  - packages/domain
+  - packages/contracts
+  - packages/design_system
+  - packages/data
+  - packages/engines/imaging
+  - packages/engines/scanner
+  - packages/engines/ocr
+  - packages/engines/pdf
+  - packages/engines/conversion
+  - packages/features/home
+  - packages/features/scan
+  - packages/features/library
+  - packages/features/tools
+  - packages/features/settings
+
+dev_dependencies: {melos: ^8.9.0, very_good_analysis: ^11.0.0}
+
+melos:
+  name: docscan
+  scripts:
+    analyze:
+      description: Static analysis across every package.
+      run: dart analyze --fatal-infos .
+    format:
+      description: Format all Dart code.
+      run: dart format .
+    format:check:
+      description: Fail if any file is not formatted.
+      run: dart format --output=none --set-exit-if-changed .
+    test:
+      description: Run tests in every package that has a test folder.
+      exec: flutter test
+      packageFilters:
+        dirExists: test
+    codegen:
+      description: Run build_runner where needed (Drift).
+      exec: dart run build_runner build --delete-conflicting-outputs
+      packageFilters:
+        dependsOn: build_runner
+    run:scanner:
+      description: Run the scanner app.
+      run: cd apps/scanner && flutter run
+    run:docs:
+      description: Run the docs app in Chrome.
+      run: cd apps/docs && flutter run -d chrome
+    run:lab:
+      description: Run the engine lab in Chrome.
+      run: cd apps/lab && flutter run -d chrome

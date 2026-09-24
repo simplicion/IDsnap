@@ -1,0 +1,21 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/build/**"
+  language:
+    strict-casts: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    public_member_api_docs: false
+    lines_longer_than_80_chars: false
+    avoid_print: true
+    comment_references: false
+    prefer_constructors_over_static_methods: false
+    one_member_abstracts: false
+    avoid_positional_boolean_parameters: false
+    flutter_style_todos: false
+    sort_pub_dependencies: false

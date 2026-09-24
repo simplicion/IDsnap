@@ -1,0 +1,21 @@
+name: engine_conversion
+description: "Conversion registry and orchestration over domain ports."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  docscan_domain:
+    path: ../../domain
+  docscan_core:
+    path: ../../core
+  meta: ^1.19.0
+  archive: ^4.3.0
+  xml: ^7.0.1
+
+dev_dependencies:
+  mocktail: ^1.0.5
+  test: ^1.31.1

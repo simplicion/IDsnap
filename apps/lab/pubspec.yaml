@@ -1,0 +1,42 @@
+name: docscan_lab
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0+1
+
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  engine_conversion:
+    path: ../../packages/engines/conversion
+  engine_scanner:
+    path: ../../packages/engines/scanner
+  engine_ocr:
+    path: ../../packages/engines/ocr
+  engine_pdf:
+    path: ../../packages/engines/pdf
+  engine_imaging:
+    path: ../../packages/engines/imaging
+  docscan_data:
+    path: ../../packages/data
+  docscan_design_system:
+    path: ../../packages/design_system
+  docscan_contracts:
+    path: ../../packages/contracts
+  docscan_domain:
+    path: ../../packages/domain
+  docscan_core:
+    path: ../../packages/core
+  flutter:
+    sdk: flutter
+  file_picker: ^13.1.0
+  image: ^4.10.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

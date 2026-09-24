@@ -1,0 +1,28 @@
+name: feature_scan
+description: "Feature module: scan."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  docscan_design_system:
+    path: ../../../packages/design_system
+  docscan_contracts:
+    path: ../../../packages/contracts
+  docscan_domain:
+    path: ../../../packages/domain
+  docscan_core:
+    path: ../../../packages/core
+  flutter:
+    sdk: flutter
+  flutter_riverpod: ^3.4.3
+  go_router: ^18.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.5
