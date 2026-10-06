@@ -50,6 +50,7 @@ const assets = [
 <Layout
   title="Google Play Visual Assets & Media Kit"
   description="Download official, specification-compliant App Icon (512x512), Feature Graphic (1024x500), and 1080px Phone Screenshots for IDSnap."
+  robots="noindex, follow"
 >
   <div class="container legal-page-container">
     <div class="legal-header">
@@ -67,17 +68,19 @@ const assets = [
 
     <!-- Quick instructions -->
     <div class="card-glass summary-box">
-      <h3>Ready-to-Upload Specifications</h3>
+      <h2>Ready-to-Upload Specifications</h2>
       <p>
         These assets strictly follow Google Play's <strong>512 × 512 px App Icon</strong>, <strong>1024 × 500 px Feature Graphic</strong>, and <strong>minimum 1080 px Phone Screenshots</strong> (9:16 aspect ratio) requirements to ensure full promotion eligibility.
       </p>
     </div>
 
+    <h2 class="section-title" style="margin-top: 2rem; margin-bottom: 1.5rem; font-size: 1.5rem;">Downloadable Media Package</h2>
+
     <div class="assets-grid">
       {assets.map((asset) => (
         <div class="card-glass asset-card">
           <div class="asset-preview-box">
-            <img src={asset.path} alt={asset.type} class="asset-img" loading="lazy" />
+            <img src={asset.path} alt={asset.type} class="asset-img" loading="lazy" width="400" height="400" />
           </div>
           <div class="asset-info">
             <span class="badge-pill badge-primary">{asset.specs}</span>

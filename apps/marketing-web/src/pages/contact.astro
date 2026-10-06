@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 const contactSchema = {
   "@context": "https://schema.org",
@@ -10,17 +11,19 @@ const contactSchema = {
     "@type": "Organization",
     "name": "IDSnap",
     "email": "support@idsnap.app",
-    "url": "https://idsnap.app"
+    "url": "https://idsnap-bi3.pages.dev"
   }
 };
 ---
 
 <Layout
-  title="Support & Developer Contact"
-  description="Contact the IDSnap development and support team. Get help with scanning, 2FA keys, PDF compression, and security inquiries."
+  title="Support, Bug Reports & Developer Contact | IDSnap"
+  description="Get direct help from the IDSnap engineering team. Support for ID card merging, offline 2FA keys, PDF compression, and security disclosures."
   schema={contactSchema}
 >
   <div class="container legal-page-container">
+    <Breadcrumbs items={[{ name: 'Support & Contact' }]} />
+
     <div class="legal-header">
       <div class="badge-pill">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -31,6 +34,8 @@ const contactSchema = {
       <h1 class="legal-title">Support & Developer Contact</h1>
       <p class="legal-meta">We are here to help. Reach out with questions, bug reports, or feature requests.</p>
     </div>
+
+    <h2 class="section-title" style="font-size: 1.5rem; margin-bottom: 1.5rem;">Direct Communication Channels</h2>
 
     <div class="contact-grid">
       <!-- Quick Contact Cards -->
@@ -61,7 +66,7 @@ const contactSchema = {
 
     <!-- Self-Serve Help Section -->
     <div class="card-glass self-serve-box">
-      <h3>Looking for Fast Answers?</h3>
+      <h2>Looking for Fast Answers?</h2>
       <p>Before emailing, you may find instant answers in our self-serve guides:</p>
       <div class="quick-links-group">
         <a href="/#faq" class="quick-link-btn">Browse Home FAQs →</a>

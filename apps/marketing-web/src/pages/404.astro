@@ -1,0 +1,138 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const quickTools = [
+  { name: 'ID Card 1-Sheet Scanner', path: '/id-card-scanner', desc: 'Merge front & back of ID cards onto 1 A4 page' },
+  { name: 'Passport Photo Maker', path: '/passport-photo-maker', desc: 'Auto-frame 35×45mm, 2×2 in, and visa sizes' },
+  { name: 'Target PDF Compressor', path: '/compress-pdf', desc: 'Strict compression under 200 KB, 100 KB, or 50 KB' },
+  { name: 'Offline 2FA Authenticator', path: '/authenticator', desc: 'KeyStore-encrypted TOTP vault with biometric lock' },
+  { name: 'Encrypted Document Vault', path: '/document-vault', desc: 'Secure local storage for IDs, certificates & tax files' },
+  { name: 'Offline Document Scanner', path: '/document-scanner', desc: 'Perspective crop & clean high-contrast PDF scanner' },
+  { name: 'Exam Application Kits', path: '/exam-application-kits', desc: 'Bundle photos, signatures & marksheets for portals' },
+];
+---
+
+<Layout
+  title="Page Not Found (404) | IDSnap"
+  description="The page you requested could not be found. Explore our 7 private on-device document and identity tools or return to the IDSnap home page."
+  robots="noindex, follow"
+>
+  <div class="container not-found-container">
+    <div class="not-found-hero text-center">
+      <span class="badge-pill not-found-badge">404 — ROUTE NOT FOUND</span>
+      <h1 class="not-found-title">We couldn't find that page</h1>
+      <p class="not-found-desc">
+        The link you followed may be broken, or the page may have been moved. Return to the home page or jump directly to one of our private, on-device tools below.
+      </p>
+      <div class="not-found-actions">
+        <a href="/" class="btn btn-primary btn-lg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          Return to Home Page
+        </a>
+        <a href="/contact" class="btn btn-secondary btn-lg">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Contact Support
+        </a>
+      </div>
+    </div>
+
+    <div class="quick-tools-section">
+      <h2 class="quick-tools-title text-center">Popular On-Device Tools</h2>
+      <div class="quick-tools-grid">
+        {quickTools.map(tool => (
+          <a href={tool.path} class="card quick-tool-card">
+            <h3 class="quick-tool-name">{tool.name}</h3>
+            <p class="quick-tool-desc">{tool.desc}</p>
+            <span class="quick-tool-link">Open tool &rarr;</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .not-found-container {
+    padding-top: 4rem;
+    padding-bottom: 5rem;
+    max-width: 960px;
+  }
+  .not-found-badge {
+    background: rgba(217, 48, 37, 0.12);
+    color: #D93025;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+  }
+  [data-theme="dark"] .not-found-badge {
+    background: rgba(234, 67, 53, 0.25);
+    color: #F28B82;
+  }
+  .not-found-title {
+    font-size: clamp(2.25rem, 4vw, 3.25rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+  .not-found-desc {
+    font-size: 1.15rem;
+    color: var(--on-surface-muted);
+    max-width: 620px;
+    margin: 0 auto 2rem auto;
+    line-height: 1.6;
+  }
+  .not-found-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+  }
+  .quick-tools-section {
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .quick-tools-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.75rem;
+  }
+  .quick-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+  .quick-tool-card {
+    padding: 1.5rem;
+    text-decoration: none;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .quick-tool-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+  }
+  .quick-tool-name {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--on-surface);
+    margin-bottom: 0.5rem;
+  }
+  .quick-tool-desc {
+    font-size: 0.875rem;
+    color: var(--on-surface-muted);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+  .quick-tool-link {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+</style>

@@ -48,13 +48,15 @@ const homeSchema = [
       "priceCurrency": "USD"
     },
     "description": "The private identity and document studio for your phone. Scan ID cards front-and-back, auto-frame passport photos, compress PDFs to target sizes, and protect 2FA keys on your device. Free, supported by ads.",
-    "url": "https://idsnap.app/",
+    "url": "https://idsnap-bi3.pages.dev/",
     "downloadUrl": playStoreUrl,
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "ratingCount": "1280"
-    }
+    "featureList": [
+      "ID card front and back merged on one page PDF",
+      "International passport and visa photo maker with biometric crop",
+      "Target file size PDF compressor (under 200 KB)",
+      "Offline RFC 6238 2FA authenticator with KeyStore encryption",
+      "Encrypted document vault with biometric lock"
+    ]
   },
   {
     "@context": "https://schema.org",
@@ -72,9 +74,9 @@ const homeSchema = [
 ---
 
 <Layout
-  title="IDSnap — The Private Identity & Document Studio | Free, Works Offline"
-  description="IDSnap is the all-in-one private identity & document studio for your phone. Merge ID cards front-and-back on 1 page, crop official passport photos, compress PDFs under 200 KB, and safeguard 2FA keys with zero cloud uploads."
-  canonical="https://idsnap.app/"
+  title="IDSnap — Private Identity & Document Studio | 100% Offline"
+  description="Private identity & document studio for your phone. Merge ID cards front & back on 1 page, crop passport photos, compress PDFs, and store 2FA keys 100% offline."
+  canonical="/"
   schema={homeSchema}
 >
   <!-- =========================================================================

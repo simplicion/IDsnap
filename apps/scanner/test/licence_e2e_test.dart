@@ -110,7 +110,11 @@ void main() {
       ],
     );
     final container = ProviderContainer(
-      overrides: [entitlementServiceProvider.overrideWithValue(service)],
+      overrides: [
+        // The paid licence build (the default is free with ads, ADR-0013).
+        monetizationModeProvider.overrideWithValue(MonetizationMode.licence),
+        entitlementServiceProvider.overrideWithValue(service),
+      ],
     );
     addTearDown(container.dispose);
 

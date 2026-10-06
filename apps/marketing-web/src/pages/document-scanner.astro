@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
 
-const pageTitle = "Private Offline Document Scanner & PDF Maker | Zero Cloud | IDSnap";
+const pageTitle = "Offline Document Scanner & PDF Maker | IDSnap";
 const pageDescription = "Turn paper into clean, high-contrast PDFs with on-device edge detection, shadow removal, and Latin & Devanagari OCR. Processed on your phone, free (supported by ads), and private.";
 
 const schemaData = [
@@ -19,7 +20,7 @@ const schemaData = [
       "priceCurrency": "USD"
     },
     "description": pageDescription,
-    "url": "https://idsnap.app/document-scanner",
+    "url": "https://idsnap-bi3.pages.dev/document-scanner",
     "downloadUrl": playStoreUrl,
     "featureList": [
       "Real-time automatic document edge detection & perspective straightening",
@@ -28,6 +29,30 @@ const schemaData = [
       "On-device OCR for Latin and Devanagari scripts with text export",
       "Scans are processed on the device and never uploaded",
       "No account required, no subscription; free, supported by ads"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://idsnap-bi3.pages.dev"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://idsnap-bi3.pages.dev/#core-tools"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Document Scanner",
+        "item": "https://idsnap-bi3.pages.dev/document-scanner"
+      }
     ]
   },
   {
@@ -102,13 +127,14 @@ const schemaData = [
 <Layout
   title={pageTitle}
   description={pageDescription}
-  canonical="https://idsnap.app/document-scanner"
+  canonical="/document-scanner"
   schema={schemaData}
 >
   <!-- Hero Section -->
   <section class="tool-hero">
     <div class="container hero-grid">
       <div class="hero-copy">
+        <Breadcrumbs items={[{ name: 'Tools', url: '/#core-tools' }, { name: 'Document Scanner' }]} />
         <div class="badge-row">
           <span class="badge badge-primary">Offline Mobile Scanner</span>
           <span class="badge badge-neutral">No Cloud · No Account · Free</span>

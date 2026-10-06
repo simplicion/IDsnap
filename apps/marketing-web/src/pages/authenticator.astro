@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
 
-const pageTitle = "Offline 2FA Authenticator Vault | Hardware KeyStore Encrypted TOTP | IDSnap";
+const pageTitle = "Offline 2FA Authenticator | Hardware Encrypted TOTP | IDSnap";
 const pageDescription = "True offline two-factor authentication (TOTP RFC 6238). Protected by Android KeyStore hardware encryption, biometric lock, zero cloud sync, and no ads on the authenticator.";
 
 const schemaData = [
@@ -19,7 +20,7 @@ const schemaData = [
       "priceCurrency": "USD"
     },
     "description": pageDescription,
-    "url": "https://idsnap.app/authenticator",
+    "url": "https://idsnap-bi3.pages.dev/authenticator",
     "downloadUrl": playStoreUrl,
     "featureList": [
       "Standard RFC 6238 TOTP 6-digit two-factor authentication",
@@ -28,6 +29,30 @@ const schemaData = [
       "FLAG_SECURE app switcher privacy prevents screenshot snooping",
       "Auto-clearing clipboard wipes 2FA codes after 30 seconds",
       "Encrypted local backup export without cloud account lock-in"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://idsnap-bi3.pages.dev"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://idsnap-bi3.pages.dev/#core-tools"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Offline 2FA Authenticator",
+        "item": "https://idsnap-bi3.pages.dev/authenticator"
+      }
     ]
   },
   {
@@ -102,13 +127,14 @@ const schemaData = [
 <Layout
   title={pageTitle}
   description={pageDescription}
-  canonical="https://idsnap.app/authenticator"
+  canonical="/authenticator"
   schema={schemaData}
 >
   <!-- Hero Section -->
   <section class="tool-hero">
     <div class="container hero-grid">
       <div class="hero-copy">
+        <Breadcrumbs items={[{ name: 'Tools', url: '/#core-tools' }, { name: '2FA Authenticator' }]} />
         <div class="badge-row">
           <span class="badge badge-primary">Zero Cloud Synced</span>
           <span class="badge badge-neutral">RFC 6238 TOTP Standard</span>

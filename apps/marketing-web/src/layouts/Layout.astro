@@ -10,9 +10,10 @@ export interface Props {
   canonical?: string;
   ogType?: string;
   schema?: object | object[];
+  robots?: string;
 }
 
-const { title, description, canonical, ogType, schema } = Astro.props;
+const { title, description, canonical, ogType, schema, robots } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -24,6 +25,7 @@ const { title, description, canonical, ogType, schema } = Astro.props;
       canonical={canonical}
       ogType={ogType}
       schema={schema}
+      robots={robots}
     />
     <script is:inline>
       (function() {

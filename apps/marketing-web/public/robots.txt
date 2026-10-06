@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /store-assets/
 
-Sitemap: https://idsnap.app/sitemap.xml
+Sitemap: https://idsnap-bi3.pages.dev/sitemap.xml
+

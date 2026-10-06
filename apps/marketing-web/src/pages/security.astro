@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 const securitySchema = {
   "@context": "https://schema.org",
@@ -8,17 +9,20 @@ const securitySchema = {
   "description": "Technical specifications of IDSnap's on-device cryptographic isolation, hardware KeyStore implementation, and the Airplane Mode verification test.",
   "author": {
     "@type": "Organization",
-    "name": "IDSnap Security Engineering"
+    "name": "IDSnap Security Engineering",
+    "url": "https://idsnap-bi3.pages.dev"
   }
 };
 ---
 
 <Layout
-  title="Security Architecture & Offline Verification"
-  description="Explore IDSnap's on-device security architecture, biometric KeyStore encryption, and our reproducible Airplane Mode verification test."
+  title="Security Architecture & On-Device Cryptography | IDSnap"
+  description="Technical specifications of IDSnap's on-device cryptographic isolation, hardware KeyStore implementation, and reproducible offline verification tests."
   schema={securitySchema}
 >
   <div class="container legal-page-container">
+    <Breadcrumbs items={[{ name: 'Security Architecture' }]} />
+
     <div class="legal-header">
       <div class="badge-pill">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -31,6 +35,7 @@ const securitySchema = {
     </div>
 
     <!-- Security Highlights Grid -->
+    <h2 class="section-title" style="font-size: 1.5rem; margin-bottom: 1.5rem;">Core Cryptographic Pillars</h2>
     <div class="security-pillars-grid">
       <div class="card-glass pillar-card">
         <div class="pillar-icon"><svg class="icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
@@ -64,7 +69,7 @@ const securitySchema = {
           We believe privacy claims should be verifiable, not taken on faith. Anyone can verify that the tools work without a connection in 60 seconds:
         </p>
         <div class="test-steps-card">
-          <h4>Reproducible Verification Protocol:</h4>
+          <h3>Reproducible Verification Protocol:</h3>
           <ol class="protocol-list">
             <li><strong>Enable Airplane Mode:</strong> Turn off all Wi-Fi, Cellular Data, and Bluetooth on your phone.</li>
             <li><strong>Launch IDSnap:</strong> The app opens normally and every feature works. (No ads are shown offline.)</li>

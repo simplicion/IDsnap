@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
 
@@ -55,7 +56,33 @@ const howToSchema = {
   ]
 };
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://idsnap-bi3.pages.dev"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Tools",
+      "item": "https://idsnap-bi3.pages.dev/#core-tools"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "ID Card Scanner",
+      "item": "https://idsnap-bi3.pages.dev/id-card-scanner"
+    }
+  ]
+};
+
 const pageSchema = [
+  breadcrumbSchema,
   howToSchema,
   {
     "@context": "https://schema.org",
@@ -81,6 +108,7 @@ const pageSchema = [
   <section class="section tool-hero">
     <div class="container hero-grid">
       <div class="hero-text-col">
+        <Breadcrumbs items={[{ name: 'Tools', url: '/#core-tools' }, { name: 'ID Card Scanner' }]} />
         <div class="badge-pill">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <rect x="3" y="4" width="18" height="16" rx="3"/>

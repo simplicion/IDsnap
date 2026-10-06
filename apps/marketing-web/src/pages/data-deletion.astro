@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 const deletionSchema = {
   "@context": "https://schema.org",
@@ -9,17 +10,19 @@ const deletionSchema = {
   "publisher": {
     "@type": "Organization",
     "name": "IDSnap",
-    "url": "https://idsnap.app"
+    "url": "https://idsnap-bi3.pages.dev"
   }
 };
 ---
 
 <Layout
-  title="Account & Data Deletion Policy (Google Play Compliance)"
+  title="Account & Data Deletion Policy | Google Play Compliance | IDSnap"
   description="How to delete your data from IDSnap. Because IDSnap keeps your documents only on your phone, you have total and immediate control over wiping your records."
   schema={deletionSchema}
 >
   <div class="container legal-page-container">
+    <Breadcrumbs items={[{ name: 'Data Deletion' }]} />
+
     <div class="legal-header">
       <div class="badge-pill">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -34,7 +37,7 @@ const deletionSchema = {
 
     <!-- Overview Banner -->
     <div class="card-glass summary-box">
-      <h3>No Accounts and No Document Servers</h3>
+      <h2>No Accounts and No Document Servers</h2>
       <p>
         <strong>IDSnap does not have user accounts or logins, and never uploads your documents.</strong> We do not store your name, documents, photos, or 2FA keys on any server. (The ads in the app are provided by Google, which may use your device's advertising ID: you can reset or delete it in your phone's settings, and change your ad choices in the app under Settings → Ad privacy choices.) Because 100% of your data resides locally on your physical phone, you do not need to submit a ticket, wait for an administrator, or verify your email to delete your data. You possess instant, sovereign control over your data deletion at all times.
       </p>

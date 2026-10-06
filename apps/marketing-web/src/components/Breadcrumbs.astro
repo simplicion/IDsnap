@@ -1,0 +1,115 @@
+---
+export interface BreadcrumbItem {
+  name: string;
+  url?: string;
+}
+
+export interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+const siteOrigin = Astro.site ? Astro.site.href.replace(/\/$/, '') : 'https://idsnap-bi3.pages.dev';
+
+// Full list including Home
+const fullList = [
+  { name: 'Home', url: '/' },
+  ...items
+];
+---
+
+<nav aria-label="Breadcrumb" class="breadcrumbs-nav">
+  <ol class="breadcrumbs-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+    {fullList.map((item, index) => {
+      const isLast = index === fullList.length - 1;
+      const fullUrl = item.url ? (item.url.startsWith('http') ? item.url : `${siteOrigin}${item.url}`) : undefined;
+      
+      return (
+        <li
+          class={`breadcrumb-item ${isLast ? 'active' : ''}`}
+          itemprop="itemListElement"
+          itemscope
+          itemtype="https://schema.org/ListItem"
+        >
+          {!isLast && item.url ? (
+            <a href={item.url} itemprop="item" class="breadcrumb-link">
+              <span itemprop="name">{item.name}</span>
+            </a>
+          ) : (
+            <span itemprop="name" class="breadcrumb-current" aria-current="page">
+              {item.name}
+            </span>
+          )}
+          <meta itemprop="position" content={String(index + 1)} />
+
+          {!isLast && (
+            <svg
+              class="breadcrumb-separator"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          )}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumbs-nav {
+    padding: 1rem 0 1.25rem 0;
+    margin-bottom: 0.5rem;
+  }
+  .breadcrumbs-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+  .breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--on-surface-muted);
+  }
+  .breadcrumb-link {
+    color: var(--on-surface-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .breadcrumb-link:hover {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+  .breadcrumb-current {
+    color: var(--on-surface);
+    font-weight: 600;
+  }
+  .breadcrumb-separator {
+    color: var(--border);
+    flex-shrink: 0;
+  }
+  @media (max-width: 640px) {
+    .breadcrumbs-list {
+      font-size: 0.8125rem;
+      gap: 0.3rem;
+    }
+    .breadcrumb-item {
+      gap: 0.3rem;
+    }
+  }
+</style>

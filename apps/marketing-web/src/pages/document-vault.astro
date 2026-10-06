@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
 
-const pageTitle = "Encrypted Document Vault & Identity Organizer | On-Device Folder Privacy | IDSnap";
+const pageTitle = "Encrypted Document Vault & Offline Organizer | IDSnap";
 const pageDescription = "Organize all sensitive identity cards, tax proofs, medical records, and education degrees in an encrypted, biometric-locked offline vault. Features local expiry reminders and zero cloud sync.";
 
 const schemaData = [
@@ -19,7 +20,7 @@ const schemaData = [
       "priceCurrency": "USD"
     },
     "description": pageDescription,
-    "url": "https://idsnap.app/document-vault",
+    "url": "https://idsnap-bi3.pages.dev/document-vault",
     "downloadUrl": playStoreUrl,
     "featureList": [
       "Smart folder templates: IDs & Proofs, Education, Medical, Vehicles, Tax, Legal",
@@ -28,6 +29,30 @@ const schemaData = [
       "FLAG_SECURE snapshot protection blocks app switcher snooping",
       "One-tap AES-256 encrypted local backup with zero vendor lock-in",
       "Local encrypted database: documents are never uploaded, and there are never ads in the vault"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://idsnap-bi3.pages.dev"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://idsnap-bi3.pages.dev/#core-tools"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Document Vault",
+        "item": "https://idsnap-bi3.pages.dev/document-vault"
+      }
     ]
   },
   {
@@ -102,13 +127,14 @@ const schemaData = [
 <Layout
   title={pageTitle}
   description={pageDescription}
-  canonical="https://idsnap.app/document-vault"
+  canonical="/document-vault"
   schema={schemaData}
 >
   <!-- Hero Section -->
   <section class="tool-hero">
     <div class="container hero-grid">
       <div class="hero-copy">
+        <Breadcrumbs items={[{ name: 'Tools', url: '/#core-tools' }, { name: 'Document Vault' }]} />
         <div class="badge-row">
           <span class="badge badge-primary">Encrypted Local Vault</span>
           <span class="badge badge-neutral">Biometric Folder Lock</span>

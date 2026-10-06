@@ -1,9 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
 
-const pageTitle = "Exam & Job Application Document Kit Prepper | UPSC, SSC, US Visa, College Portals | IDSnap";
+const pageTitle = "Exam & Job Application Document Kit Prepper | IDSnap";
 const pageDescription = "Prepare all application uploads in one flow. Auto-format passport photos ≤ 50 KB, enhance and crop signatures ≤ 20 KB, and compress PDFs under 200 KB or 300 KB. Processed on your phone and private.";
 
 const schemaData = [
@@ -19,7 +20,7 @@ const schemaData = [
       "priceCurrency": "USD"
     },
     "description": pageDescription,
-    "url": "https://idsnap.app/exam-application-kits",
+    "url": "https://idsnap-bi3.pages.dev/exam-application-kits",
     "downloadUrl": playStoreUrl,
     "featureList": [
       "Government exam presets: UPSC, SSC, State PSC, JEE, NEET",
@@ -27,6 +28,30 @@ const schemaData = [
       "High-contrast handwritten signature crop and cleaner (≤20 KB)",
       "Target-size PDF document compressor (≤200 KB, ≤300 KB)",
       "Offline local processing with zero server uploads"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://idsnap-bi3.pages.dev"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://idsnap-bi3.pages.dev/#core-tools"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Exam Application Kits",
+        "item": "https://idsnap-bi3.pages.dev/exam-application-kits"
+      }
     ]
   },
   {
@@ -106,13 +131,14 @@ const schemaData = [
 <Layout
   title={pageTitle}
   description={pageDescription}
-  canonical="https://idsnap.app/exam-application-kits"
+  canonical="/exam-application-kits"
   schema={schemaData}
 >
   <!-- Hero Section -->
   <section class="tool-hero">
     <div class="container hero-grid">
       <div class="hero-copy">
+        <Breadcrumbs items={[{ name: 'Tools', url: '/#core-tools' }, { name: 'Exam Application Kits' }]} />
         <div class="badge-row">
           <span class="badge badge-primary">Portal-Ready Uploads</span>
           <span class="badge badge-neutral">UPSC · SSC · US Visa · Admissions</span>

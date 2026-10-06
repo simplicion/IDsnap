@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 const termsSchema = {
   "@context": "https://schema.org",
@@ -9,17 +10,19 @@ const termsSchema = {
   "publisher": {
     "@type": "Organization",
     "name": "IDSnap",
-    "url": "https://idsnap.app"
+    "url": "https://idsnap-bi3.pages.dev"
   }
 };
 ---
 
 <Layout
-  title="Terms of Service & EULA"
-  description="Terms of Service and End User License Agreement for IDSnap. Plain-English terms ensuring you retain 100% ownership of your documents."
+  title="Terms of Service & User License Agreement (EULA) | IDSnap"
+  description="Terms of Service and End User License Agreement for IDSnap. Plain-English terms ensuring you retain 100% ownership and privacy of your documents."
   schema={termsSchema}
 >
   <div class="container legal-page-container">
+    <Breadcrumbs items={[{ name: 'Terms of Service' }]} />
+
     <div class="legal-header">
       <div class="badge-pill">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
