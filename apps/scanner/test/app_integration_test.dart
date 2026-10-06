@@ -51,6 +51,7 @@ void main() {
   Future<void> pumpApp(
     WidgetTester tester, {
     List<Override> extra = const [],
+    AppLock? lock,
   }) async {
     const images = ImagingEngine();
     final pdf = _FakePdf();
@@ -77,7 +78,7 @@ void main() {
           shareServiceProvider.overrideWithValue(_FakeShare()),
           conversionEngineProvider.overrideWithValue(conversion),
           faceLocatorProvider.overrideWithValue(_FakeFace()),
-          appLockProvider.overrideWithValue(_FakeLock()),
+          appLockProvider.overrideWithValue(lock ?? _FakeLock()),
           otpCodecProvider.overrideWithValue(const OtpCodecImpl()),
           authenticatorRepositoryProvider.overrideWithValue(
             DriftAuthenticatorRepository(
@@ -403,10 +404,10 @@ void main() {
     final lock = _ManualLock();
     await pumpApp(
       tester,
+      lock: lock,
       extra: [
         monetizationModeProvider.overrideWithValue(MonetizationMode.ads),
         adsServiceProvider.overrideWithValue(ads),
-        appLockProvider.overrideWithValue(lock),
       ],
     );
     expect(find.text('IDSnap is locked'), findsOneWidget);

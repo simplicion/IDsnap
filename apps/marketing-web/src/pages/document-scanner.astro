@@ -3,8 +3,8 @@ import Layout from '../layouts/Layout.astro';
 
 const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
 
-const pageTitle = "Private Offline Document Scanner & PDF Maker | Zero Ads, Zero Cloud | IDSnap";
-const pageDescription = "Turn paper into clean, high-contrast PDFs with on-device edge detection, shadow removal, and Latin & Devanagari OCR. 100% offline, free, and private.";
+const pageTitle = "Private Offline Document Scanner & PDF Maker | Zero Cloud | IDSnap";
+const pageDescription = "Turn paper into clean, high-contrast PDFs with on-device edge detection, shadow removal, and Latin & Devanagari OCR. Processed on your phone, free (supported by ads), and private.";
 
 const schemaData = [
   {
@@ -26,8 +26,8 @@ const schemaData = [
       "Multi-page batch scanning into single optimized PDF",
       "Adaptive filters: Auto-enhance, Grayscale, High-contrast B&W, Shadow Remover",
       "On-device OCR for Latin and Devanagari scripts with text export",
-      "Zero internet permissions requested in release build",
-      "No account required, zero subscriptions, zero advertisements"
+      "Scans are processed on the device and never uploaded",
+      "No account required, no subscription; free, supported by ads"
     ]
   },
   {
@@ -67,7 +67,7 @@ const schemaData = [
         "name": "How is IDSnap different from popular scanner apps like CamScanner?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Most popular scanner apps upload your scans to remote company servers, require email or phone logins, show intrusive interstitial ads, or watermarks on free tiers. IDSnap operates 100% locally on your smartphone processor, requires zero account, shows zero ads, and has zero internet permissions."
+          "text": "Most popular scanner apps upload your scans to remote company servers, require email or phone logins, show intrusive interstitial ads, or watermarks on free tiers. IDSnap processes scans locally on your smartphone, requires no account and never uploads your documents. It is free and shows ads on a few screens, never in the scanner."
         }
       },
       {
@@ -111,7 +111,7 @@ const schemaData = [
       <div class="hero-copy">
         <div class="badge-row">
           <span class="badge badge-primary">Offline Mobile Scanner</span>
-          <span class="badge badge-neutral">No Cloud · No Ads · No Account</span>
+          <span class="badge badge-neutral">No Cloud · No Account · Free</span>
         </div>
         <h1 class="hero-title">
           The calm, private document scanner. <span class="highlight">Clear PDFs without cloud surveillance.</span>
@@ -142,7 +142,7 @@ const schemaData = [
           </div>
           <div class="metric-divider"></div>
           <div class="metric">
-            <span class="metric-val">Zero Ads</span>
+            <span class="metric-val">Free</span>
             <span class="metric-label">No Watermarks</span>
           </div>
         </div>
@@ -176,7 +176,12 @@ const schemaData = [
 
           <div class="scanner-meta-footer">
             <span class="page-count-tag">Page 1 of 3 · A4 Standard</span>
-            <span class="ocr-status-tag">⚡ OCR Ready (Offline)</span>
+            <span class="ocr-status-tag">
+              <svg class="icon-inline" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              OCR Ready (Offline)
+            </span>
           </div>
         </div>
       </div>
@@ -197,7 +202,15 @@ const schemaData = [
       <div class="grid grid-3">
         <!-- Feature 1 -->
         <div class="card scanner-card">
-          <div class="feature-icon">📐</div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 22h20"/>
+              <path d="M20 22V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v16"/>
+              <path d="M6 10h4"/>
+              <path d="M6 14h6"/>
+              <path d="M6 18h8"/>
+            </svg>
+          </div>
           <h3 class="card-title">Real-Time Edge Detection</h3>
           <p class="card-text">
             Automatically finds paper corners against textured tables and applies perspective warp correction so skewed photos become perfectly straight rectangles.
@@ -206,7 +219,12 @@ const schemaData = [
 
         <!-- Feature 2 -->
         <div class="card scanner-card">
-          <div class="feature-icon">🌓</div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 2a10 10 0 0 0 0 20z"/>
+            </svg>
+          </div>
           <h3 class="card-title">Shadow Removal & B&W Filters</h3>
           <p class="card-text">
             Strips out dark finger shadows and room lighting gradients. Produces pure high-contrast black-and-white pages that look clean when printed or emailed.
@@ -215,7 +233,12 @@ const schemaData = [
 
         <!-- Feature 3 -->
         <div class="card scanner-card">
-          <div class="feature-icon">📚</div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </div>
           <h3 class="card-title">Multi-Page Batch Scanning</h3>
           <p class="card-text">
             Rapidly capture multi-page contracts, study notes, or legal agreements in sequence. Reorder, rotate, or retake pages seamlessly in the visual page tray.
@@ -224,7 +247,12 @@ const schemaData = [
 
         <!-- Feature 4 -->
         <div class="card scanner-card">
-          <div class="feature-icon">🔍</div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
           <h3 class="card-title">On-Device OCR & Searchable PDFs</h3>
           <p class="card-text">
             Recognize text in Latin and Devanagari scripts with local machine learning models. Create searchable PDFs containing an invisible selectable text layer.
@@ -233,7 +261,13 @@ const schemaData = [
 
         <!-- Feature 5 -->
         <div class="card scanner-card">
-          <div class="feature-icon">💾</div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+          </div>
           <h3 class="card-title">Standard Page Sizes</h3>
           <p class="card-text">
             Choose output layouts tailored to ISO A4, US Letter, Legal, or Fit-to-Image dimensions. Everything compiles directly into standard, portable PDF/A.
@@ -242,7 +276,11 @@ const schemaData = [
 
         <!-- Feature 6 -->
         <div class="card scanner-card">
-          <div class="feature-icon">🛡️</div>
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
           <h3 class="card-title">Clean Watermark-Free Output</h3>
           <p class="card-text">
             We never stamp annoying "Scanned with..." watermarks across your professional resumes or formal business correspondence.
@@ -288,7 +326,7 @@ const schemaData = [
             <tr>
               <td><strong>Advertisements</strong></td>
               <td class="negative">Full-screen video and banner ads</td>
-              <td class="positive">Zero Ads · Calm & Respectful</td>
+              <td class="positive">A few calm ads, never in the scanner</td>
             </tr>
             <tr>
               <td><strong>Airplane Mode</strong></td>
@@ -345,7 +383,7 @@ const schemaData = [
     <div class="container max-w-reading">
       <h2 class="cta-title">Start scanning documents with complete peace of mind</h2>
       <p class="cta-lead">
-        No accounts. No ads. No watermark. The private mobile scanner you can trust with your personal papers.
+        No accounts. No watermark. No ads in the scanner. The private mobile scanner you can trust with your personal papers.
       </p>
       <div class="cta-btn-wrap">
         <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-light btn-lg">
@@ -543,8 +581,15 @@ const schemaData = [
     background: var(--surface);
   }
   .feature-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--primary-container);
+    color: var(--primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
   }
 
   /* Comparison Table */

@@ -268,3 +268,97 @@ a:hover {
 .section-header p {
   font-size: 1.15rem;
 }
+
+/* ==========================================================================
+   Responsive Grids & Layout Utilities
+   ========================================================================== */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Icon Utilities (Lucide / Corporate Feather Style) */
+.icon-svg {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  background-color: var(--primary-container);
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(36, 87, 214, 0.15);
+}
+
+.icon-badge-secondary {
+  background-color: var(--secondary-container);
+  color: var(--secondary);
+  border-color: rgba(14, 138, 126, 0.2);
+}
+
+.icon-inline {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: -0.15em;
+  margin-right: 0.35rem;
+  flex-shrink: 0;
+}
+
+/* Responsive Table Wrapper */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 1.5rem;
+  border-radius: var(--radius-md);
+}
+
+/* Global Mobile Responsiveness Tweaks */
+@media (max-width: 960px) {
+  .section {
+    padding: 3.5rem 0;
+  }
+  .grid-3, .grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 1rem;
+  }
+  .section {
+    padding: 2.75rem 0;
+  }
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .card-glass {
+    padding: 1.25rem;
+  }
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+

@@ -241,7 +241,9 @@ const pageSchema = [
 
       <div class="feature-grid-3">
         <div class="card-glass feature-detail-card">
-          <div class="feature-icon-badge">🎯</div>
+          <div class="feature-icon-badge" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+          </div>
           <h3 class="feature-detail-title">On-Device Face Framing</h3>
           <p class="feature-detail-text">
             Using Google ML Kit, IDSnap detects the subject's face boundaries in milliseconds. It aligns the crown and chin to the exact percentage required by visa guidelines, avoiding rejection for improper head height.
@@ -249,7 +251,9 @@ const pageSchema = [
         </div>
 
         <div class="card-glass feature-detail-card">
-          <div class="feature-icon-badge">🖨️</div>
+          <div class="feature-icon-badge" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          </div>
           <h3 class="feature-detail-title">Printable 4×6 & A4 Sheets</h3>
           <p class="feature-detail-text">
             Need physical photos for embassy interviews? Export a printable sheet with 6 or 12 photos tiled at true 300 DPI with light border guidelines for razor-sharp scissor cutting.
@@ -257,7 +261,9 @@ const pageSchema = [
         </div>
 
         <div class="card-glass feature-detail-card">
-          <div class="feature-icon-badge">⚖️</div>
+          <div class="feature-icon-badge" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"></line><path d="m4 7 8-4 8 4"></path><path d="M5 21 2 11l6-2"></path><path d="M19 21l-3-10 6-2"></path></svg>
+          </div>
           <h3 class="feature-detail-title">Exact Target Size Search</h3>
           <p class="feature-detail-text">
             Applying online? University and job portals strictly reject photos over 50 KB or 100 KB. IDSnap searches compression levels dynamically to keep your photo right under the threshold while retaining crisp facial clarity.
@@ -597,7 +603,14 @@ const pageSchema = [
   }
 
   .feature-icon-badge {
-    font-size: 2.2rem;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--primary-container);
+    color: var(--primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 1rem;
   }
 

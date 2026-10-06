@@ -35,18 +35,46 @@ const privacySchema = {
     <div class="card-glass summary-box">
       <h3>The IDSnap Privacy Promise in Plain English</h3>
       <p>
-        <strong>IDSnap is an accountless, on-device application.</strong> We do not operate document servers or cloud processing pipelines. Every scan, ID card collage, 2FA authenticator seed, and OCR extraction runs <strong>exclusively on your device</strong>. IDSnap Pro licences are checked by our licence server, which stores only an anonymous device id, your plan and its purchase record — never documents, photos, 2FA secrets or OCR text. We do not sell, rent, monetize, or track your personal information.
+        <strong>IDSnap is an accountless, on-device application.</strong> We do not operate document servers or cloud processing pipelines. Every scan, ID card collage, 2FA authenticator seed, and OCR extraction runs <strong>exclusively on your device</strong>. IDSnap is free and shows ads on a few screens; the ads are provided by Google, which may use your device's advertising ID. We never sell, rent or share your documents, IDs or codes: they never leave your phone.
       </p>
       <div class="promise-badges">
-        <span class="promise-tag">✓ No Document Uploads</span>
-        <span class="promise-tag">✓ No Account or Login Required</span>
-        <span class="promise-tag">✓ No Third-Party Analytics SDKs</span>
-        <span class="promise-tag">✓ No Advertising Trackers</span>
-        <span class="promise-tag">✓ Tools Work Offline</span>
+        <span class="promise-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          No Document Uploads
+        </span>
+        <span class="promise-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          No Account or Login Required
+        </span>
+        <span class="promise-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          No Analytics SDK of Our Own
+        </span>
+        <span class="promise-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          No Ads in Your Vault
+        </span>
+        <span class="promise-tag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Tools Work Offline
+        </span>
       </div>
     </div>
 
     <div class="legal-body">
+      <section id="ads" class="legal-section">
+        <h2>Ads and your privacy</h2>
+        <p><strong>Your documents, IDs and codes never leave this phone. IDSnap is free and shows ads on a few screens; the ads are provided by Google, which may use your device's advertising ID.</strong></p>
+        <ul>
+          <li><strong>Who provides the ads:</strong> Google AdMob, through the Google Mobile Ads SDK built into the app. IDSnap's own code makes no network calls; the only connections are made by that SDK.</li>
+          <li><strong>What the ad SDK may collect:</strong> your device's advertising ID and other device identifiers, your approximate location (worked out from your IP address), which ads were shown or tapped, and diagnostic data such as crash and performance information. Google uses this to show, measure and protect ads. See <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">how Google uses information from apps that use its services</a>.</li>
+          <li><strong>What it never gets:</strong> your documents, scans, photos, ID cards, recognised text, file names, notes, 2FA secrets and codes, PINs or passwords. None of these are ever sent anywhere.</li>
+          <li><strong>Where ads appear:</strong> on Home, the Tools list, some tool screens and after a tool has finished. Never in your ID Vault, on a document, in the authenticator, in secure notes, in the scanner or camera, on password or signature screens, or in Settings.</li>
+          <li><strong>Your choices:</strong> in the EEA, the UK and Switzerland (and US states that require it) the app asks for your choice before any ad is requested, and you can change it at any time in Settings → Ad privacy choices. Without your consent to personalisation, IDSnap asks only for non-personalised ads. You can reset or delete your advertising ID in your phone's settings (Android: Settings → Privacy → Ads).</li>
+          <li><strong>iPhone:</strong> IDSnap does not ask to track you and does not use the advertising identifier (IDFA).</li>
+        </ul>
+      </section>
+
       <section id="google-play" class="legal-section">
         <h2>1. Google Play Store Data Safety Declarations</h2>
         <p>
@@ -88,16 +116,22 @@ const privacySchema = {
                 <td>Evaluated entirely by OS hardware enclave; app receives only binary pass/fail token.</td>
               </tr>
               <tr>
-                <td><strong>Device Identifiers & Telemetry</strong></td>
-                <td>Licence only</td>
-                <td><span class="badge-pill badge-primary">No</span></td>
-                <td>An anonymous device id, platform and app version are sent to the IDSnap licence server to activate and check Pro. No analytics or crash reporting SDKs are installed.</td>
+                <td><strong>Device or Other IDs</strong> (advertising ID)</td>
+                <td>Yes (by the Google ad SDK)</td>
+                <td>Yes (Google, for advertising)</td>
+                <td>Used to show, measure and protect ads. Reset or delete it in your phone's settings.</td>
               </tr>
               <tr>
-                <td><strong>Purchase History</strong></td>
-                <td>Yes (Pro only)</td>
-                <td>Payment processor</td>
-                <td>Payments are handled by our payment provider in your browser; the licence server keeps the plan and purchase record needed to unlock Pro.</td>
+                <td><strong>Approximate Location</strong> (from IP address)</td>
+                <td>Yes (by the Google ad SDK)</td>
+                <td>Yes (Google, for advertising)</td>
+                <td>Coarse location for ad selection and fraud prevention. IDSnap never requests the location permission.</td>
+              </tr>
+              <tr>
+                <td><strong>App Interactions & Diagnostics</strong> (ads shown or tapped, crash and performance data)</td>
+                <td>Yes (by the Google ad SDK)</td>
+                <td>Yes (Google, for advertising and analytics)</td>
+                <td>Collected by the ad SDK only. IDSnap has no analytics or crash-reporting SDK of its own.</td>
               </tr>
             </tbody>
           </table>
@@ -110,9 +144,9 @@ const privacySchema = {
           In accordance with Apple's App Privacy requirements for the iOS App Store:
         </p>
         <ul>
-          <li><strong>Data Used to Track You:</strong> None. IDSnap does not track users across apps and websites owned by other companies.</li>
-          <li><strong>Data Linked to You:</strong> None. No data collected is tied to your identity.</li>
-          <li><strong>Data Not Linked to You:</strong> None. IDSnap does not collect diagnostics or usage metrics.</li>
+          <li><strong>Ads on iPhone:</strong> not shown yet. When they are, the labels will list the data Google's ad SDK collects (device ID, coarse location, advertising and usage data, diagnostics), used for third-party advertising and not linked to your identity.</li>
+          <li><strong>Data Used to Track You:</strong> None. IDSnap does not ask for the advertising identifier (IDFA) and shows no tracking prompt.</li>
+          <li><strong>Documents, IDs, 2FA secrets and notes:</strong> never collected.</li>
         </ul>
       </section>
 
@@ -144,15 +178,15 @@ const privacySchema = {
         </p>
         <ul>
           <li><strong>Right of Access & Portability (GDPR Art. 15/20):</strong> You have direct, unhindered access to all your files at all times through the in-app "Files" tab and the "Share / Save to Device" buttons.</li>
-          <li><strong>Right to Erasure / "To Be Forgotten" (GDPR Art. 17):</strong> You can delete any individual document, 2FA account, or your entire database directly from the app settings, or by simply clearing the app data / uninstalling the app. No copies of your documents exist on our servers. To remove your licence record, contact us.</li>
-          <li><strong>Do Not Sell My Personal Information (CCPA):</strong> We have never sold, rented, or shared personal information with third parties, and your documents never reach us in the first place.</li>
+          <li><strong>Right to Erasure / "To Be Forgotten" (GDPR Art. 17):</strong> You can delete any individual document, 2FA account, or your entire database directly from the app settings, or by simply clearing the app data / uninstalling the app. No copies of your documents exist on any server. For ad data, reset or delete your advertising ID in your phone's settings, change Settings → Ad privacy choices in the app, or use Google's controls.</li>
+          <li><strong>Do Not Sell My Personal Information (CCPA):</strong> We never sell your documents or what is in your vault, which never leaves your phone. The Google ad SDK shares device identifiers and ad data with Google for advertising, which some US state laws treat as "sharing"; you can opt out of personalised ads in Settings → Ad privacy choices.</li>
         </ul>
       </section>
 
       <section id="children" class="legal-section">
         <h2>5. Children's Privacy (COPPA Compliance)</h2>
         <p>
-          IDSnap does not knowingly collect or solicit personal information from children under the age of 13. Since documents are never transmitted off the device, IDSnap is safe for use by students of all ages.
+          IDSnap is not directed at children and does not knowingly collect personal information from children under the age of 13. Documents are never transmitted off the device. The app shows ads from Google, so children under 13 should use it only with a parent.
         </p>
       </section>
 
@@ -232,6 +266,9 @@ const privacySchema = {
     padding: 0.35rem 0.8rem;
     border-radius: var(--radius-sm);
     border: 1px solid var(--outline-variant);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
   }
 
   .legal-body {

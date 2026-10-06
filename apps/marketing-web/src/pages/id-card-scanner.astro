@@ -175,7 +175,9 @@ const pageSchema = [
 
       <div class="feature-grid-3">
         <div class="card-glass feature-detail-card">
-          <div class="feature-icon-badge">📐</div>
+          <div class="feature-icon-badge" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 8.7 8.7 21.3c-.4.4-1 .4-1.4 0l-4.6-4.6c-.4-.4-.4-1 0-1.4L15.3 2.7c.4-.4 1-.4 1.4 0l4.6 4.6c.4.4.4 1 0 1.4z"></path><path d="m9 11 2-2"></path><path d="m12 14 2-2"></path><path d="m15 17 2-2"></path><path d="m6 8 2-2"></path></svg>
+          </div>
           <h3 class="feature-detail-title">True ISO/IEC 7810 Sizing</h3>
           <p class="feature-detail-text">
             Standard cards (credit cards, driver's licenses, national IDs) measure exactly 85.60 × 53.98 mm. IDSnap enforces this exact aspect ratio, ensuring your printed PDF looks crisp, proportional, and photocopier-accurate.
@@ -183,7 +185,9 @@ const pageSchema = [
         </div>
 
         <div class="card-glass feature-detail-card">
-          <div class="feature-icon-badge">🛡️</div>
+          <div class="feature-icon-badge" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
           <h3 class="feature-detail-title">Anti-Misuse Purpose Watermark</h3>
           <p class="feature-detail-text">
             Never send a blank ID copy that could be repurposed for unauthorized SIM activations or loans. Stamp a 12% opacity diagonal watermark stating your exact purpose ("FOR VISA APPLICATION ONLY").
@@ -191,7 +195,9 @@ const pageSchema = [
         </div>
 
         <div class="card-glass feature-detail-card">
-          <div class="feature-icon-badge">📴</div>
+          <div class="feature-icon-badge" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+          </div>
           <h3 class="feature-detail-title">Zero Cloud Leakage</h3>
           <p class="feature-detail-text">
             Never upload sensitive government ID numbers to untrusted cloud servers. Every crop, perspective transform, and PDF conversion executes strictly on your local device CPU.
@@ -262,7 +268,7 @@ const pageSchema = [
       <div class="card-glass cta-banner text-center">
         <h2 class="cta-title">Scan Both Sides of Your ID on One Page Now</h2>
         <p class="cta-text">
-          Free, 100% offline, and completely private. Available now on Google Play.
+          Free (supported by ads), processed on your phone, and completely private. Available now on Google Play.
         </p>
         <div class="cta-buttons">
           <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-large">
@@ -513,7 +519,14 @@ const pageSchema = [
   }
 
   .feature-icon-badge {
-    font-size: 2.2rem;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--primary-container);
+    color: var(--primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 1rem;
   }
 
