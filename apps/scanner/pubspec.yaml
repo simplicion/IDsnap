@@ -69,15 +69,15 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_riverpod: ^3.4.3
-  go_router: ^18.0.1
+  go_router: ^18.0.2
   path_provider: ^2.1.6
   # Licensing: checkout and the 180 Pay portal open in the external browser.
-  url_launcher: ^6.3.2
+  url_launcher: ^6.3.3
 
 dev_dependencies:
   integration_test:
     sdk: flutter
-  drift: ^2.35.0
+  drift: ^2.35.1
   flutter_test:
     sdk: flutter
   image: ^4.10.1

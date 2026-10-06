@@ -13,7 +13,7 @@ dependencies:
     path: ../../packages/engines/license
   http: ^1.6.0
   shelf: ^1.4.2
-  sqlite3: ^3.6.0
+  sqlite3: ^3.7.0
 
 dev_dependencies:
   test: ^1.25.0
