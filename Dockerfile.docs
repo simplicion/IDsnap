@@ -23,7 +23,7 @@ RUN dart run tool/sync_docs.dart \
  && flutter build web --release --no-pub
 
 # ── Stage 2: serve ─────────────────────────────────────────────────────────
-FROM nginx:1.27-alpine AS runtime
+FROM nginx:1.31-alpine AS runtime
 COPY tool/docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /repo/apps/docs/build/web /usr/share/nginx/html
 EXPOSE 80
