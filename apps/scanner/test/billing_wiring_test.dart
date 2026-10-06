@@ -58,34 +58,36 @@ void main() {
       );
     });
 
-    test('everything is unlocked for good, with no licence client, no '
-        'device registration and no licence defines, even in release',
-        () async {
-      final service = await startBilling(
-        mode: MonetizationMode.ads,
-        // A release build with NO licence defines must start.
-        release: true,
-        // Fails the test if anything builds a licence HTTP client.
-        clientFactory: (_) =>
-            fail('a licence client was constructed in ads mode'),
-      );
-      expect(service, isA<FreeEntitlementService>());
-      final state = service.current;
-      expect(state, isA<FreeEntitlement>());
-      expect(state.isEntitled, isTrue);
-      expect(state.accessEndsAt, isNull);
-      for (final feature in ProFeature.values) {
-        expect(canUse(feature, state), isTrue, reason: feature.name);
-      }
-      // Nothing to refresh, buy or manage; none of it touches a network.
-      await service.refresh();
-      expect((await service.refreshLicence()).ok, isTrue);
-      expect(
-        (await service.purchase(const ProPurchase.monthly())).kind,
-        PurchaseOutcomeKind.unavailable,
-      );
-      expect(await service.openManageSubscription(), isFalse);
-    });
+    test(
+      'everything is unlocked for good, with no licence client, no '
+      'device registration and no licence defines, even in release',
+      () async {
+        final service = await startBilling(
+          mode: MonetizationMode.ads,
+          // A release build with NO licence defines must start.
+          release: true,
+          // Fails the test if anything builds a licence HTTP client.
+          clientFactory: (_) =>
+              fail('a licence client was constructed in ads mode'),
+        );
+        expect(service, isA<FreeEntitlementService>());
+        final state = service.current;
+        expect(state, isA<FreeEntitlement>());
+        expect(state.isEntitled, isTrue);
+        expect(state.accessEndsAt, isNull);
+        for (final feature in ProFeature.values) {
+          expect(canUse(feature, state), isTrue, reason: feature.name);
+        }
+        // Nothing to refresh, buy or manage; none of it touches a network.
+        await service.refresh();
+        expect((await service.refreshLicence()).ok, isTrue);
+        expect(
+          (await service.purchase(const ProPurchase.monthly())).kind,
+          PurchaseOutcomeKind.unavailable,
+        );
+        expect(await service.openManageSubscription(), isFalse);
+      },
+    );
 
     test('the router backstop never sends anyone to the paywall', () {
       for (final t in ToolId.values) {

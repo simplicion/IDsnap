@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:docscan_contracts/docscan_contracts.dart';
+import 'package:docscan_contracts/testing.dart';
 import 'package:docscan_core/docscan_core.dart';
 import 'package:docscan_data/docscan_data.dart';
 import 'package:docscan_domain/docscan_domain.dart';
@@ -12,6 +13,7 @@ import 'package:engine_conversion/engine_conversion.dart';
 import 'package:engine_imaging/engine_imaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
@@ -46,7 +48,10 @@ void main() {
     await root.delete(recursive: true);
   });
 
-  Future<void> pumpApp(WidgetTester tester) async {
+  Future<void> pumpApp(
+    WidgetTester tester, {
+    List<Override> extra = const [],
+  }) async {
     const images = ImagingEngine();
     final pdf = _FakePdf();
     final conversion = ConversionEngineImpl(
@@ -81,6 +86,7 @@ void main() {
               codec: const OtpCodecImpl(),
             ),
           ),
+          ...extra,
         ],
         child: const DocScanApp(),
       ),
@@ -231,6 +237,242 @@ void main() {
     expect(find.textContaining('Hello offline world'), findsOneWidget);
     await unmount(tester);
   });
+
+  // ── Ads (ADR-0013): the real app, the real router, a fake ads service ──
+
+  final bannerOpen = find.byKey(AdBannerSlot.openKey);
+  final nativeOpen = find.byKey(AdNativeSlot.openKey);
+  final bannerAd = find.byKey(FakeAdsService.bannerKey);
+  final nativeAd = find.byKey(FakeAdsService.nativeKey);
+
+  /// Every screen an ad must NEVER appear on, reachable by location.
+  final forbidden = <String>[
+    Routes.files,
+    Routes.authenticator,
+    Routes.authenticatorAdd,
+    Routes.authenticatorScan,
+    Routes.notes,
+    Routes.settings,
+    Routes.privacy,
+    Routes.about,
+    Routes.security,
+    Routes.dataExport,
+    Routes.idCard(),
+    Routes.passportPhotoCamera,
+    Routes.scanReview,
+    Routes.scanSave,
+    Routes.qrScanner,
+    Routes.tool(ToolId.signPdf),
+    Routes.tool(ToolId.mySignature),
+    Routes.tool(ToolId.protectFile),
+    Routes.tool(ToolId.removePdfPassword),
+    Routes.tool(ToolId.photoCrop),
+    Routes.tool(ToolId.merge, docId: 'd1'),
+    Routes.kit('exam-portal'),
+  ];
+
+  /// Screens with the anchored banner.
+  final withBanner = <String>[
+    Routes.home,
+    Routes.tools,
+    Routes.kits,
+    Routes.tool(ToolId.convert),
+    Routes.convert('pdf-to-docx'),
+    Routes.qrGenerate,
+    for (final t in AdPlacementPolicy.adTools) Routes.tool(t),
+  ];
+
+  Future<GoRouter> pumpWithAds(
+    WidgetTester tester,
+    FakeAdsService ads, {
+    MonetizationMode mode = MonetizationMode.ads,
+  }) async {
+    await pumpApp(
+      tester,
+      extra: [
+        monetizationModeProvider.overrideWithValue(mode),
+        adsServiceProvider.overrideWithValue(ads),
+      ],
+    );
+    return GoRouter.of(tester.element(find.byType(Navigator).first));
+  }
+
+  Future<void> goTo(WidgetTester tester, GoRouter router, String to) async {
+    router.go(to);
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 50)),
+    );
+    await settle(tester);
+  }
+
+  testWidgets('ads: NO ad widget on any forbidden screen (vault, '
+      'authenticator, notes, settings, scanner, signature, passwords...)', (
+    tester,
+  ) async {
+    final ads = FakeAdsService();
+    final router = await pumpWithAds(tester, ads);
+    for (final location in forbidden) {
+      await goTo(tester, router, location);
+      expect(tester.takeException(), isNull, reason: '$location threw');
+      expect(
+        AdPlacementPolicy.forbidsAds(Uri.parse(location)) ||
+            location == Routes.kit('exam-portal'),
+        isTrue,
+        reason: '$location should be forbidden by the policy',
+      );
+      expect(bannerOpen, findsNothing, reason: 'banner slot on $location');
+      expect(bannerAd, findsNothing, reason: 'banner ad on $location');
+      expect(nativeOpen, findsNothing, reason: 'native card on $location');
+      expect(nativeAd, findsNothing, reason: 'native ad on $location');
+    }
+    expect(ads.interstitialRequests, 0);
+    await unmount(tester);
+  });
+
+  testWidgets('ads: exactly one banner on the allowed screens, never two, '
+      'and no layout error with it', (tester) async {
+    final ads = FakeAdsService();
+    final router = await pumpWithAds(tester, ads);
+    for (final location in withBanner) {
+      await goTo(tester, router, location);
+      expect(tester.takeException(), isNull, reason: '$location threw');
+      expect(
+        AdPlacementPolicy.allowsBanner(Uri.parse(location)),
+        isTrue,
+        reason: location,
+      );
+      expect(bannerOpen, findsOneWidget, reason: 'banner on $location');
+      expect(bannerAd, findsOneWidget, reason: 'one banner ad on $location');
+      expect(
+        nativeAd.evaluate().length,
+        lessThanOrEqualTo(1),
+        reason: 'at most one native card on $location',
+      );
+    }
+    // Opening and closing every screen asked for no interstitial: those
+    // only follow a finished job.
+    expect(ads.interstitialRequests, 0);
+    await unmount(tester);
+  });
+
+  testWidgets('ads: a document in the vault and its viewer show no ad', (
+    tester,
+  ) async {
+    final ads = FakeAdsService();
+    final router = await pumpWithAds(tester, ads);
+    final commit = CommitOutput(
+      files: data.files,
+      repository: data.documents,
+      pdf: _FakePdf(),
+      images: const ImagingEngine(),
+    );
+    final saved = await tester.runAsync(
+      () => commit(
+        OutputFile(
+          bytes: Uint8List.fromList('Private text'.codeUnits),
+          format: DocumentFormat.txt,
+          suggestedName: 'Passport copy',
+        ),
+      ),
+    );
+    final id = saved!.valueOrNull!.id;
+    for (final location in [Routes.files, Routes.document(id)]) {
+      await goTo(tester, router, location);
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 200)),
+      );
+      await settle(tester);
+      expect(bannerOpen, findsNothing, reason: location);
+      expect(bannerAd, findsNothing, reason: location);
+      expect(nativeOpen, findsNothing, reason: location);
+      expect(nativeAd, findsNothing, reason: location);
+    }
+    // With a file in the vault, Home may now carry its native card.
+    await goTo(tester, router, Routes.home);
+    expect(bannerAd, findsOneWidget);
+    expect(nativeAd.evaluate().length, lessThanOrEqualTo(1));
+    await unmount(tester);
+  });
+
+  testWidgets('ads: nothing while the app is locked — no ad, no consent '
+      'form, no ad code — and they start after unlocking', (tester) async {
+    await tester.runAsync(
+      () => data.settings.save(const AppSettings(appLock: true)),
+    );
+    final ads = FakeAdsService();
+    final lock = _ManualLock();
+    await pumpApp(
+      tester,
+      extra: [
+        monetizationModeProvider.overrideWithValue(MonetizationMode.ads),
+        adsServiceProvider.overrideWithValue(ads),
+        appLockProvider.overrideWithValue(lock),
+      ],
+    );
+    expect(find.text('IDSnap is locked'), findsOneWidget);
+    expect(bannerOpen, findsNothing);
+    expect(bannerAd, findsNothing);
+    expect(nativeAd, findsNothing);
+    expect(ads.initializeCalls, 0);
+    expect(ads.adActivity, 0);
+
+    lock.allow = true;
+    await tester.tap(find.text('Unlock'));
+    await settle(tester);
+    expect(find.text('IDSnap is locked'), findsNothing);
+    expect(bannerAd, findsOneWidget);
+    expect(ads.initializeCalls, greaterThan(0));
+    await unmount(tester);
+  });
+
+  testWidgets('ads: the paywall routes are unreachable in the free build', (
+    tester,
+  ) async {
+    final router = await pumpWithAds(tester, FakeAdsService());
+    for (final location in [
+      Routes.paywall(),
+      Routes.paywall(feature: ProFeature.scan, from: Routes.tool(ToolId.ocr)),
+      Routes.subscription,
+      Routes.subscriptionTerms,
+    ]) {
+      await goTo(tester, router, location);
+      expect(find.text('Scan a document'), findsOneWidget, reason: location);
+      expect(find.textContaining('IDSnap Pro'), findsNothing);
+    }
+    // And no tool redirects there: every tool opens.
+    await goTo(tester, router, Routes.tool(ToolId.ocr));
+    expect(currentRouterLocation(router).path, Routes.tool(ToolId.ocr));
+    await unmount(tester);
+  });
+
+  testWidgets('paid builds: no ad anywhere, and no ad code runs', (
+    tester,
+  ) async {
+    for (final mode in [MonetizationMode.licence, MonetizationMode.store]) {
+      final ads = FakeAdsService();
+      final router = await pumpWithAds(tester, ads, mode: mode);
+      for (final location in [...withBanner, Routes.qrHistory]) {
+        await goTo(tester, router, location);
+        expect(bannerOpen, findsNothing, reason: '$mode $location');
+        expect(nativeOpen, findsNothing, reason: '$mode $location');
+      }
+      expect(ads.adActivity, 0, reason: mode.name);
+      expect(ads.initializeCalls, 0, reason: mode.name);
+      await unmount(tester);
+    }
+  });
+}
+
+/// An app lock that fails until the test allows it.
+class _ManualLock implements AppLock {
+  bool allow = false;
+
+  @override
+  Future<EngineCapability> capability() async =>
+      const EngineCapability(available: true, worksOffline: true);
+
+  @override
+  Future<Result<bool>> authenticate(String reason) async => Ok(allow);
 }
 
 class _FakePdf implements PdfEngine {
