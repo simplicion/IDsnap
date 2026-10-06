@@ -23,7 +23,7 @@ dependencies:
   in_app_purchase_storekit: any
   in_app_purchase_platform_interface: any
   meta: ^1.16.0
-  url_launcher: ^6.3.2
+  url_launcher: ^6.3.3
 
 dev_dependencies:
   flutter_test:

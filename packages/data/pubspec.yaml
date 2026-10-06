@@ -13,7 +13,7 @@ dependencies:
     path: ../domain
   docscan_core:
     path: ../core
-  drift: ^2.35.0
+  drift: ^2.35.1
   drift_flutter: ^0.3.1
   flutter:
     sdk: flutter
@@ -21,11 +21,11 @@ dependencies:
   path_provider: ^2.1.6
   archive: ^4.3.0
   # SQLCipher build via the workspace hook user-define (ADR-0010).
-  sqlite3: ^3.6.0
+  sqlite3: ^3.7.0
 
 dev_dependencies:
   build_runner: ^2.16.1
-  drift_dev: ^2.35.0
+  drift_dev: ^2.35.1
   engine_authenticator:
     path: ../engines/authenticator
   # Streaming ZIP codec for backup round-trip tests (wired by the app).
