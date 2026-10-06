@@ -161,7 +161,6 @@ void main() {
   group('no ads service at all', () {
     test('kill switch IDSNAP_ADS_DISABLED=true (IDs not even read)', () async {
       final setup = await checkMonetizationConfig(
-        mode: 'ads',
         release: true,
         adsDisabled: true,
         platform: TargetPlatform.android,
