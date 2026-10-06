@@ -1,0 +1,830 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
+
+const pageTitle = "Exam & Job Application Document Kit Prepper | UPSC, SSC, US Visa, College Portals | IDSnap";
+const pageDescription = "Prepare all application uploads in one flow. Auto-format passport photos ≤ 50 KB, enhance and crop signatures ≤ 20 KB, and compress PDFs under 200 KB or 300 KB. 100% offline and private.";
+
+const schemaData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "IDSnap Application Kit Studio",
+    "operatingSystem": "Android",
+    "applicationCategory": "BusinessApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": pageDescription,
+    "url": "https://idsnap.app/exam-application-kits",
+    "downloadUrl": playStoreUrl,
+    "featureList": [
+      "Government exam presets: UPSC, SSC, State PSC, JEE, NEET",
+      "US Visa and Green Card photo compliance kits (2x2 in, ≤240 KB)",
+      "High-contrast handwritten signature crop and cleaner (≤20 KB)",
+      "Target-size PDF document compressor (≤200 KB, ≤300 KB)",
+      "Offline local processing with zero server uploads"
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Prepare Application Photos, Signatures, and Documents for Online Portals",
+    "description": "Step-by-step instructions to prep photos under 50 KB, signatures under 20 KB, and supporting certificate PDFs under 200 KB.",
+    "step": [
+      {
+        "@type": "HowToStep",
+        "name": "Select Portal or Exam Kit",
+        "text": "Choose your target portal (e.g. UPSC, SSC, College Admission, or US Visa DS-160) or create a custom kit with custom file limits."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Capture or Import Passport Photo",
+        "text": "Crop using the official aspect ratio (35×45 mm or 2×2 in) with biometric head guides. IDSnap automatically compresses to under 50 KB (or portal limit) without visible pixelation."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Scan and Clean Signature",
+        "text": "Take a photo of your signature on blank paper. The signature filter removes shadows, sets a clean white background, and saves under 20 KB."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Compress Supporting Certificate PDFs",
+        "text": "Scan marksheets, degrees, or ID proofs and compress them to strictly adhere to the portal maximum (e.g. under 200 KB or 300 KB)."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "Export Bundle or Save to Vault",
+        "text": "Export all portal-ready files together or save them securely in your offline IDSnap Vault under Education & Career."
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Why do exam and job portals reject uploaded photos and signatures?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most government portals (like UPSC, SSC, state PSCs) and university admissions systems enforce strict file size thresholds (e.g., photo strictly between 20 KB and 50 KB, signature strictly between 10 KB and 20 KB) and strict aspect ratios. Uploading an unprocessed camera photo (often 3 MB to 8 MB) triggers an immediate server validation error."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does IDSnap clean handwritten signatures for exam uploads?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "IDSnap uses a specialized on-device thresholding filter that strips camera glare and paper shadows, isolates the ink strokes, tightens the bounding box around the signature, and exports a lightweight, crisp monochrome JPEG strictly under 20 KB."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are my sensitive application documents uploaded to any cloud server?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. IDSnap is engineered as a local-first offline utility. Image processing, signature thresholding, face framing, and PDF compression happen entirely in device memory. No network connection is required."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does IDSnap guarantee portal acceptance?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "IDSnap formats files strictly according to published portal guidelines. However, candidate guidelines change periodically. Always verify the latest official notification from the respective portal before final submission."
+        }
+      }
+    ]
+  }
+];
+---
+
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  canonical="https://idsnap.app/exam-application-kits"
+  schema={schemaData}
+>
+  <!-- Hero Section -->
+  <section class="tool-hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <div class="badge-row">
+          <span class="badge badge-primary">Portal-Ready Uploads</span>
+          <span class="badge badge-neutral">UPSC · SSC · US Visa · Admissions</span>
+        </div>
+        <h1 class="hero-title">
+          Stop struggling with portal upload limits. <span class="highlight">One flow for photos, signatures & PDFs.</span>
+        </h1>
+        <p class="hero-lead">
+          Government job forms, competitive exam portals, university admissions, and visa portals enforce rigid file limits: photos ≤ 50 KB, signatures ≤ 20 KB, and certificate PDFs ≤ 200 KB. IDSnap bundles these requirements into one guided, offline studio.
+        </p>
+
+        <div class="cta-actions">
+          <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3.609 1.814L13.793 12 3.61 22.186a2.235 2.235 0 0 1-.61-.318c-.469-.34-.75-.89-.75-1.488V3.62c0-.598.281-1.148.75-1.488.196-.142.408-.25.61-.318zm11.603 11.603l2.607-2.607-12.01-6.93 9.403 9.537zm0 1.166l-9.403 9.537 12.01-6.93-2.607-2.607zm1.166-1.166l3.208 1.852c.983.567.983 1.493 0 2.06l-3.208 1.852V13.417z"/>
+            </svg>
+            <span>Download on Google Play</span>
+          </a>
+          <a href="#portal-kits" class="btn btn-secondary btn-lg">Explore Pre-Configured Kits</a>
+        </div>
+
+        <div class="trust-metrics">
+          <div class="metric">
+            <span class="metric-val">≤ 50 KB</span>
+            <span class="metric-label">Photo Presets</span>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric">
+            <span class="metric-val">≤ 20 KB</span>
+            <span class="metric-label">Signature Optimizer</span>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric">
+            <span class="metric-val">0 Cloud</span>
+            <span class="metric-label">100% On-Device</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-preview">
+        <div class="kit-bundle-card">
+          <div class="kit-card-header">
+            <div class="kit-title-wrap">
+              <span class="kit-icon">📋</span>
+              <div>
+                <span class="kit-name">Competitive Exam Bundle</span>
+                <span class="kit-status">3 of 3 items ready</span>
+              </div>
+            </div>
+            <span class="kit-check-badge">PASSED CHECKS</span>
+          </div>
+
+          <div class="kit-items-list">
+            <!-- Item 1: Photo -->
+            <div class="kit-item">
+              <div class="kit-item-icon">📸</div>
+              <div class="kit-item-details">
+                <span class="item-name">Candidate Passport Photo</span>
+                <span class="item-specs">3.5 × 4.5 cm · 200 DPI · JPEG</span>
+              </div>
+              <div class="item-status-pill success">
+                <span class="size-text">38.4 KB</span>
+                <span class="limit-text">(limit ≤ 50 KB)</span>
+              </div>
+            </div>
+
+            <!-- Item 2: Signature -->
+            <div class="kit-item">
+              <div class="kit-item-icon">✍️</div>
+              <div class="kit-item-details">
+                <span class="item-name">Specimen Signature</span>
+                <span class="item-specs">Clean Ink · White BG · JPEG</span>
+              </div>
+              <div class="item-status-pill success">
+                <span class="size-text">14.2 KB</span>
+                <span class="limit-text">(limit ≤ 20 KB)</span>
+              </div>
+            </div>
+
+            <!-- Item 3: Document PDF -->
+            <div class="kit-item">
+              <div class="kit-item-icon">📄</div>
+              <div class="kit-item-details">
+                <span class="item-name">Degree & Marksheet Certificate</span>
+                <span class="item-specs">Multi-page A4 · Grayscale PDF</span>
+              </div>
+              <div class="item-status-pill success">
+                <span class="size-text">184 KB</span>
+                <span class="limit-text">(limit ≤ 200 KB)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="kit-card-footer">
+            <div class="bundle-summary">
+              <span>Ready for Portal Upload</span>
+              <span class="verified-dot">● Zero Server Upload</span>
+            </div>
+            <button class="btn btn-outline-primary btn-block" disabled>Exported to Device Storage</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pre-configured Kits Section -->
+  <section id="portal-kits" class="section bg-subtle">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-eyebrow">PORTAL PRESETS</span>
+        <h2 class="section-title">Built-In Kits for High-Stakes Applications</h2>
+        <p class="section-subtitle">
+          Never guess JPEG compression ratios or DPI scaling again. Every kit bundles published government, university, or consular criteria.
+        </p>
+      </div>
+
+      <div class="grid grid-3">
+        <!-- Kit 1 -->
+        <div class="card kit-feature-card">
+          <div class="card-tag">GOVERNMENT & EXAMS</div>
+          <h3 class="card-title">Central & State Exams (UPSC, SSC, PSC)</h3>
+          <p class="card-text">
+            Designed for portals with stringent upload validators that reject files off by even 1 kilobyte.
+          </p>
+          <ul class="specs-list">
+            <li><strong>Photo:</strong> 3.5 × 4.5 cm, strictly between 20 KB – 50 KB.</li>
+            <li><strong>Signature:</strong> Ink thresholded, strictly between 10 KB – 20 KB.</li>
+            <li><strong>ID & Certificates:</strong> Flattened PDF strictly ≤ 300 KB.</li>
+          </ul>
+        </div>
+
+        <!-- Kit 2 -->
+        <div class="card kit-feature-card">
+          <div class="card-tag">GLOBAL TRAVEL</div>
+          <h3 class="card-title">US Visa & Green Card (DS-160)</h3>
+          <p class="card-text">
+            Compliant with official Department of State photographic specifications for digital submissions.
+          </p>
+          <ul class="specs-list">
+            <li><strong>Photo Size:</strong> 2 × 2 inches (600 × 600 px up to 1200 × 1200 px).</li>
+            <li><strong>File Weight:</strong> High quality JPEG strictly ≤ 240 KB.</li>
+            <li><strong>Head Ratio:</strong> Biometric guide for 50% – 69% vertical head height.</li>
+          </ul>
+        </div>
+
+        <!-- Kit 3 -->
+        <div class="card kit-feature-card">
+          <div class="card-tag">COLLEGE & UNIVERSITY</div>
+          <h3 class="card-title">Higher Education Admissions</h3>
+          <p class="card-text">
+            For college entrance portals, scholarship applications, and semester registrations.
+          </p>
+          <ul class="specs-list">
+            <li><strong>Photo & Signature:</strong> Combined standard square or 35×45 mm crops.</li>
+            <li><strong>Marksheets:</strong> Multi-page transcripts merged into single PDF ≤ 500 KB.</li>
+            <li><strong>Category Proof:</strong> High-legibility grayscale scan ≤ 200 KB.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deep Dive: The Signature Cleaner -->
+  <section class="section">
+    <div class="container feature-deepdive">
+      <div class="deepdive-media">
+        <div class="signature-demo-box">
+          <div class="demo-split">
+            <div class="demo-panel raw">
+              <span class="panel-badge">RAW CAMERA PHOTO</span>
+              <div class="sig-preview-img shadowed">
+                <span class="mock-sig">Priyanka Sharma</span>
+              </div>
+              <span class="file-weight alert">3.4 MB · Yellow cast & shadows</span>
+            </div>
+            <div class="demo-arrow">➔</div>
+            <div class="demo-panel processed">
+              <span class="panel-badge success">IDSNAP SIGNATURE FILTER</span>
+              <div class="sig-preview-img crisp">
+                <span class="mock-sig clean">Priyanka Sharma</span>
+              </div>
+              <span class="file-weight good">14.6 KB · Pure white background</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="deepdive-copy">
+        <span class="section-eyebrow">SIGNATURE ENGINE</span>
+        <h2 class="section-title">Clean, crisp signatures without a desktop scanner</h2>
+        <p>
+          Portal upload forms reject phone photos of signatures because shadows, beige paper tints, and desk textures push file sizes well above the typical 20 KB limit.
+        </p>
+        <div class="benefits-checklist">
+          <div class="benefit-item">
+            <span class="check-icon">✓</span>
+            <div>
+              <strong>Adaptive Ink Thresholding:</strong>
+              <p>Strips background shadows and uneven ambient lighting, leaving only the dark ink strokes.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <span class="check-icon">✓</span>
+            <div>
+              <strong>Auto-Tight Bounding Box:</strong>
+              <p>Crops closely around the signature strokes, eliminating unnecessary whitespace margin.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <span class="check-icon">✓</span>
+            <div>
+              <strong>Guaranteed File Weight (≤ 20 KB):</strong>
+              <p>Direct compression tuning guarantees file size compliance on the very first try.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step-by-Step Workflow -->
+  <section class="section bg-subtle">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-eyebrow">HOW IT WORKS</span>
+        <h2 class="section-title">Prepare Your Full Application Package in 3 Minutes</h2>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <h3 class="step-heading">Pick a Preset</h3>
+          <p class="step-text">
+            Choose from built-in government, admission, or visa kits—or customize custom target bytes in seconds.
+          </p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <h3 class="step-heading">Capture or Import</h3>
+          <p class="step-text">
+            Snap your passport photo and paper signature. IDSnap automatically straightens, crops, and enhances them.
+          </p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <h3 class="step-heading">Compress Proofs</h3>
+          <p class="step-text">
+            Scan your transcripts or ID cards. The compressor hits your target PDF size (e.g., 200 KB) while keeping text legible.
+          </p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">04</div>
+          <h3 class="step-heading">Export & File</h3>
+          <p class="step-text">
+            Upload directly from your phone gallery or file picker. Save the kit safely to your encrypted Vault for future re-use.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="section">
+    <div class="container max-w-reading">
+      <div class="section-header text-center">
+        <span class="section-eyebrow">QUESTIONS & ANSWERS</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="faq-accordion">
+        <div class="faq-item">
+          <h3 class="faq-question">Why do portals have such small size limits like 50 KB or 20 KB?</h3>
+          <div class="faq-answer">
+            <p>
+              Government and university server portals receive millions of applications during narrow application windows. To conserve database bandwidth and ensure fast batch processing of admit cards, their servers enforce strict, low file size limits that standard smartphone cameras (capturing 3–10 MB files) immediately fail.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-question">Can I use IDSnap without an internet connection?</h3>
+          <div class="faq-answer">
+            <p>
+              Yes, 100%. All processing—including face cropping, image thresholding, and PDF compression—happens entirely on your phone's processor. You can run IDSnap in Airplane Mode with full functionality.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-question">Does IDSnap certify my application documents?</h3>
+          <div class="faq-answer">
+            <p>
+              No. IDSnap is an offline document digitizing and formatting tool. It does not provide legal notarization or government certification. Always review the published instructions on the official exam or visa portal before final submission.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section class="section bg-primary text-white text-center">
+    <div class="container max-w-reading">
+      <h2 class="cta-title">Submit your application without upload errors</h2>
+      <p class="cta-lead">
+        Get photos, signatures, and certificates properly sized on your very first try. 100% offline, free, and private.
+      </p>
+      <div class="cta-btn-wrap">
+        <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-light btn-lg">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.609 1.814L13.793 12 3.61 22.186a2.235 2.235 0 0 1-.61-.318c-.469-.34-.75-.89-.75-1.488V3.62c0-.598.281-1.148.75-1.488.196-.142.408-.25.61-.318zm11.603 11.603l2.607-2.607-12.01-6.93 9.403 9.537zm0 1.166l-9.403 9.537 12.01-6.93-2.607-2.607zm1.166-1.166l3.208 1.852c.983.567.983 1.493 0 2.06l-3.208 1.852V13.417z"/>
+          </svg>
+          <span>Get IDSnap Free on Google Play</span>
+        </a>
+      </div>
+      <p class="cta-subtext">No subscription required · Zero ads · Zero cloud tracking</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .tool-hero {
+    padding: 4rem 0 3rem;
+    background: linear-gradient(180deg, var(--surface-subtle) 0%, var(--surface) 100%);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+  .badge-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+  .hero-title {
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    line-height: 1.2;
+    margin-bottom: 1.25rem;
+    font-weight: 800;
+  }
+  .hero-lead {
+    font-size: 1.125rem;
+    color: var(--on-surface-muted);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+  .cta-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+  }
+  .trust-metrics {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .metric-val {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .metric-label {
+    font-size: 0.8125rem;
+    color: var(--on-surface-muted);
+  }
+  .metric-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--border-subtle);
+  }
+
+  /* Kit Card */
+  .kit-bundle-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 1.5rem;
+  }
+  .kit-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .kit-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .kit-icon {
+    font-size: 1.75rem;
+  }
+  .kit-name {
+    display: block;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--on-surface);
+  }
+  .kit-status {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--on-surface-muted);
+  }
+  .kit-check-badge {
+    background: #E6F4EA;
+    color: #137333;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+  }
+  [data-theme="dark"] .kit-check-badge {
+    background: rgba(19, 115, 51, 0.2);
+    color: #81C995;
+  }
+  .kit-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem 0;
+  }
+  .kit-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem;
+    background: var(--surface-subtle);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+  }
+  .kit-item-icon {
+    font-size: 1.5rem;
+  }
+  .kit-item-details {
+    flex: 1;
+  }
+  .item-name {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--on-surface);
+  }
+  .item-specs {
+    display: block;
+    font-size: 0.8125rem;
+    color: var(--on-surface-muted);
+  }
+  .item-status-pill {
+    text-align: right;
+  }
+  .size-text {
+    display: block;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: #137333;
+  }
+  [data-theme="dark"] .size-text {
+    color: #81C995;
+  }
+  .limit-text {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--on-surface-muted);
+  }
+  .kit-card-footer {
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .bundle-summary {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: var(--on-surface-muted);
+    margin-bottom: 0.75rem;
+  }
+  .verified-dot {
+    color: var(--secondary);
+    font-weight: 600;
+  }
+
+  /* Kit Grid */
+  .kit-feature-card {
+    padding: 1.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+  .card-tag {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+  .specs-list {
+    margin-top: 1.25rem;
+    padding-left: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--on-surface-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .specs-list strong {
+    color: var(--on-surface);
+  }
+
+  /* Deep Dive */
+  .feature-deepdive {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .signature-demo-box {
+    background: var(--surface-subtle);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+  .demo-split {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .demo-panel {
+    flex: 1;
+    text-align: center;
+  }
+  .panel-badge {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    background: var(--border);
+    color: var(--on-surface-muted);
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+  }
+  .panel-badge.success {
+    background: #E6F4EA;
+    color: #137333;
+  }
+  .sig-preview-img {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--border-subtle);
+  }
+  .sig-preview-img.shadowed {
+    background: #E8E5DD;
+  }
+  .sig-preview-img.crisp {
+    background: #FFFFFF;
+    border: 1px solid #137333;
+  }
+  .mock-sig {
+    font-family: 'Brush Script MT', cursive, sans-serif;
+    font-size: 1.5rem;
+    color: #555;
+    transform: rotate(-5deg);
+  }
+  .mock-sig.clean {
+    color: #000;
+    font-weight: bold;
+  }
+  .file-weight {
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .file-weight.alert {
+    color: #D93025;
+  }
+  .file-weight.good {
+    color: #137333;
+  }
+  .demo-arrow {
+    font-size: 1.5rem;
+    color: var(--on-surface-muted);
+  }
+
+  /* Benefits checklist */
+  .benefits-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .benefit-item {
+    display: flex;
+    gap: 1rem;
+  }
+  .check-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: rgba(14, 138, 126, 0.15);
+    color: var(--secondary);
+    border-radius: 50%;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  .benefit-item strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--on-surface);
+  }
+  .benefit-item p {
+    font-size: 0.9375rem;
+    color: var(--on-surface-muted);
+    margin: 0;
+  }
+
+  /* Steps */
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+  }
+  .step-number {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+  }
+  .step-heading {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .step-text {
+    font-size: 0.875rem;
+    color: var(--on-surface-muted);
+    line-height: 1.5;
+  }
+
+  /* FAQ Accordion */
+  .faq-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+  .faq-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+  }
+  .faq-question {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--on-surface);
+  }
+  .faq-answer p {
+    font-size: 0.9375rem;
+    color: var(--on-surface-muted);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  /* CTA */
+  .cta-title {
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #FFFFFF;
+  }
+  .cta-lead {
+    font-size: 1.125rem;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    color: #FFFFFF;
+  }
+  .cta-btn-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+  .cta-subtext {
+    font-size: 0.875rem;
+    opacity: 0.75;
+    color: #FFFFFF;
+  }
+
+  @media (max-width: 900px) {
+    .hero-grid, .feature-deepdive {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+</style>

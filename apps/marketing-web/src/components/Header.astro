@@ -1,4 +1,5 @@
 ---
+const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
 ---
 
 <header class="site-header" id="site-header">
@@ -24,10 +25,57 @@
     </a>
 
     <nav class="nav-desktop" aria-label="Main Navigation">
-      <a href="/#features" class="nav-link">Features</a>
-      <a href="/#identity" class="nav-link">Identity Suite</a>
-      <a href="/#authenticator" class="nav-link">2FA Authenticator</a>
-      <a href="/#tools" class="nav-link">Everyday Tools</a>
+      <div class="nav-dropdown">
+        <button class="nav-link dropdown-trigger" aria-haspopup="true" aria-expanded="false" type="button">
+          Tools & Features
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="dropdown-menu">
+          <a href="/id-card-scanner" class="dropdown-item">
+            <span class="item-icon">🪪</span>
+            <div class="item-text">
+              <span class="item-title">ID Card 1-Page Merger</span>
+              <span class="item-desc">Front & back on A4 with watermark</span>
+            </div>
+          </a>
+          <a href="/passport-photo-maker" class="dropdown-item">
+            <span class="item-icon">📸</span>
+            <div class="item-text">
+              <span class="item-title">Passport Photo Studio</span>
+              <span class="item-desc">35×45 mm, 2×2 in US Visa & auto-frame</span>
+            </div>
+          </a>
+          <a href="/compress-pdf" class="dropdown-item">
+            <span class="item-icon">⚡</span>
+            <div class="item-text">
+              <span class="item-title">Target-Size Compressor</span>
+              <span class="item-desc">Under 200 KB, 100 KB, 50 KB portals</span>
+            </div>
+          </a>
+          <a href="/exam-application-kits" class="dropdown-item">
+            <span class="item-icon">📋</span>
+            <div class="item-text">
+              <span class="item-title">Exam & Application Kits</span>
+              <span class="item-desc">UPSC, SSC, US Visa & college portals</span>
+            </div>
+          </a>
+          <a href="/authenticator" class="dropdown-item">
+            <span class="item-icon">🔐</span>
+            <div class="item-text">
+              <span class="item-title">Offline 2FA Authenticator</span>
+              <span class="item-desc">KeyStore-encrypted TOTP vault</span>
+            </div>
+          </a>
+          <a href="/document-vault" class="dropdown-item">
+            <span class="item-icon">📁</span>
+            <div class="item-text">
+              <span class="item-title">Encrypted Document Vault</span>
+              <span class="item-desc">Folders, biometric lock & expiry alerts</span>
+            </div>
+          </a>
+        </div>
+      </div>
+      <a href="/document-scanner" class="nav-link">Scanner</a>
       <a href="/security" class="nav-link">Security & Privacy</a>
       <a href="/contact" class="nav-link">Support</a>
     </nav>
@@ -51,7 +99,12 @@
         </svg>
       </button>
 
-      <a href="/#download" class="btn btn-primary header-download-btn">Get App</a>
+      <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary header-download-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M3.609 1.814L13.793 12 3.61 22.186a2.235 2.235 0 0 1-.61-.318c-.469-.34-.75-.89-.75-1.488V3.62c0-.598.281-1.148.75-1.488.196-.142.408-.25.61-.318zm11.603 11.603l2.607-2.607-12.01-6.93 9.403 9.537zm0 1.166l-9.403 9.537 12.01-6.93-2.607-2.607zm1.166-1.166l3.208 1.852c.983.567.983 1.493 0 2.06l-3.208 1.852V13.417z"/>
+        </svg>
+        <span>Google Play</span>
+      </a>
 
       <!-- Mobile Menu Toggle -->
       <button id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Open navigation menu" aria-expanded="false" type="button">
@@ -65,15 +118,25 @@
   <!-- Mobile Drawer -->
   <div id="mobile-nav-drawer" class="mobile-drawer" hidden>
     <nav class="mobile-nav-links" aria-label="Mobile Navigation">
-      <a href="/#features" class="mobile-link">Features</a>
-      <a href="/#identity" class="mobile-link">Identity Suite</a>
-      <a href="/#authenticator" class="mobile-link">2FA Authenticator</a>
-      <a href="/#tools" class="mobile-link">Everyday Tools</a>
-      <a href="/security" class="mobile-link">Security & Privacy</a>
+      <div class="mobile-section-label">Identity & Everyday Tools</div>
+      <a href="/id-card-scanner" class="mobile-link">🪪 ID Card 1-Sheet Scanner</a>
+      <a href="/passport-photo-maker" class="mobile-link">📸 Passport Photo Studio</a>
+      <a href="/compress-pdf" class="mobile-link">⚡ Target-Size Compressor</a>
+      <a href="/exam-application-kits" class="mobile-link">📋 Exam & Application Kits</a>
+      <a href="/authenticator" class="mobile-link">🔐 Offline 2FA Authenticator</a>
+      <a href="/document-vault" class="mobile-link">📁 Encrypted Document Vault</a>
+      <a href="/document-scanner" class="mobile-link">📄 Private Document Scanner</a>
+      <div class="mobile-section-label">Trust & Company</div>
+      <a href="/security" class="mobile-link">Security Architecture</a>
       <a href="/privacy" class="mobile-link">Privacy Policy</a>
       <a href="/terms" class="mobile-link">Terms of Service</a>
-      <a href="/contact" class="mobile-link">Support</a>
-      <a href="/#download" class="btn btn-primary mobile-download-btn">Download IDSnap</a>
+      <a href="/contact" class="mobile-link">Support & Contacts</a>
+      <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary mobile-download-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M3.609 1.814L13.793 12 3.61 22.186a2.235 2.235 0 0 1-.61-.318c-.469-.34-.75-.89-.75-1.488V3.62c0-.598.281-1.148.75-1.488.196-.142.408-.25.61-.318zm11.603 11.603l2.607-2.607-12.01-6.93 9.403 9.537zm0 1.166l-9.403 9.537 12.01-6.93-2.607-2.607zm1.166-1.166l3.208 1.852c.983.567.983 1.493 0 2.06l-3.208 1.852V13.417z"/>
+        </svg>
+        Download IDSnap on Google Play
+      </a>
     </nav>
   </div>
 </header>
@@ -146,7 +209,7 @@
   .nav-desktop {
     display: flex;
     align-items: center;
-    gap: 1.75rem;
+    gap: 1.5rem;
   }
 
   .nav-link {
@@ -155,11 +218,81 @@
     color: var(--on-surface-variant);
     text-decoration: none;
     transition: color 0.2s ease;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.5rem 0;
   }
 
   .nav-link:hover {
     color: var(--primary);
     text-decoration: none;
+  }
+
+  /* Dropdown Styles */
+  .nav-dropdown {
+    position: relative;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: -1rem;
+    width: 320px;
+    background-color: var(--surface);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 0.75rem;
+    display: none;
+    flex-direction: column;
+    gap: 0.25rem;
+    z-index: 100;
+  }
+
+  .nav-dropdown:hover .dropdown-menu,
+  .nav-dropdown:focus-within .dropdown-menu {
+    display: flex;
+  }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .dropdown-item:hover {
+    background-color: var(--surface-container-high);
+    text-decoration: none;
+  }
+
+  .item-icon {
+    font-size: 1.35rem;
+    flex-shrink: 0;
+  }
+
+  .item-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--on-surface);
+  }
+
+  .item-desc {
+    font-size: 0.75rem;
+    color: var(--on-surface-variant);
   }
 
   .header-actions {
@@ -196,6 +329,10 @@
   .header-download-btn {
     padding: 0.6rem 1.25rem;
     font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-full);
   }
 
   .mobile-menu-btn {
@@ -225,28 +362,43 @@
     background-color: var(--surface);
     border-bottom: 1px solid var(--outline-variant);
     padding: 1.5rem;
+    max-height: 80vh;
+    overflow-y: auto;
   }
 
   .mobile-nav-links {
     display: flex;
     flex-direction: column;
-    gap: 1.1rem;
+    gap: 0.75rem;
+  }
+
+  .mobile-section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--secondary);
+    margin-top: 0.5rem;
   }
 
   .mobile-link {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--on-surface);
     text-decoration: none;
-    padding: 0.4rem 0;
+    padding: 0.35rem 0;
   }
 
   .mobile-download-btn {
-    margin-top: 0.5rem;
+    margin-top: 1rem;
     width: 100%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 960px) {
     .nav-desktop { display: none; }
     .header-download-btn { display: none; }
     .mobile-menu-btn { display: flex; }

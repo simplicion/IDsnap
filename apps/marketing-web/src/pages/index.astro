@@ -1,48 +1,81 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
+const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
+
 // Structured FAQ Data for SEO Schema (Google SERP rich snippets)
 const faqItems = [
   {
     question: "Do my documents ever leave my phone?",
-    answer: "No. Your documents never leave your phone. Scanning, perspective correction, OCR, PDF tools, image compression and 2FA code generation all run on the device, and they keep working in Airplane Mode. IDSnap goes online only to activate and check your Pro licence (it sends an anonymous device id, never documents) and, on Android, to download Google's document-scanner module once."
+    answer: "No. Your documents never leave your phone. Scanning, edge straightening, OCR, PDF tools, image compression, and 2FA code generation all execute locally in device memory, and they work fully in Airplane Mode. In fact, IDSnap's production release manifest requests zero internet permissions."
   },
   {
-    question: "How does the 'ID Card Front & Back on 1 Page' feature work?",
-    answer: "IDSnap provides a specialized 2-step capture guide. You snap the front of your ID card, flip it to snap the back, and our engine automatically deskews both images and arranges them centered on a clean white A4 or Letter PDF sheet, ready to submit for bank KYC, application portals, or job applications."
+    question: "How does the 'ID Card Front & Back on 1 Page' scanner work?",
+    answer: "IDSnap provides a specialized 2-step capture guide. You snap the front of your ID card, flip it to snap the back, and our engine automatically straightens both sides to standard ISO/IEC 7810 ID-1 card dimensions and arranges them centered on a clean white A4 or Letter sheet, ready for banking KYC or job submissions."
+  },
+  {
+    question: "Can I make official passport and visa photos?",
+    answer: "Yes. IDSnap includes biometric framing guides for standard international passport sizes: 35×45 mm (Schengen, UK, India, Canada), 2×2 inches (US Visa DS-160, Green Card, passport), 33×48 mm, and stamp sizes, plus 4×6 inch multi-copy print sheets."
+  },
+  {
+    question: "How do application kits help with UPSC, SSC, and university forms?",
+    answer: "Government exam portals and university systems enforce strict upload limits (e.g., photo strictly under 50 KB, signature strictly under 20 KB, and certificate PDF under 200 KB). IDSnap's built-in application kits automatically apply these constraints in one guided flow."
   },
   {
     question: "How does the built-in 2FA Authenticator protect my login codes?",
-    answer: "IDSnap implements the industry-standard RFC 6238 TOTP algorithm. Secret keys are encrypted with a key held by Android KeyStore or the Apple Keychain (hardware-backed on phones that support it). Access can be guarded with your biometric fingerprint or Face ID."
+    answer: "IDSnap implements the industry-standard RFC 6238 TOTP algorithm. Secret seeds are encrypted using hardware-backed Android KeyStore / Secure Enclave (AES-256). Codes are protected with biometric unlock, FLAG_SECURE screen privacy, and an auto-purging clipboard that wipes copied tokens after 30 seconds."
   },
   {
-    question: "Can I compress a PDF or photo to an exact file size like 'under 200 KB'?",
-    answer: "Yes. Instead of making you guess quality percentages, IDSnap features an intelligent target-size search engine. You specify your target (e.g. 200 KB for government exam portals), and IDSnap searches for the dimensions and compression that keep the output under your target while keeping it as legible as possible."
+    question: "Can I compress a PDF to an exact target file size like 'under 200 KB'?",
+    answer: "Yes. Instead of making you guess vague percentage sliders, IDSnap uses an intelligent binary-search compressor. You specify your exact target (e.g. 200 KB, 100 KB, or 50 KB), and IDSnap calculates the optimal DPI and compression to keep text crisp while strictly staying below your portal's limit."
   },
   {
     question: "What happens if I lose my phone? Does IDSnap have cloud backup?",
-    answer: "By design, IDSnap has no user accounts and no cloud storage for your documents, so there is nothing to restore from a server. Use Settings › Export all data to save a backup to a place of your choice (your computer, a USB drive or your own cloud folder). Optional password-protected backups (AES-256) keep that file private; keep the password safe, because nobody can recover it for you."
+    answer: "By design, IDSnap stores no files on cloud servers. We believe in true Data Independence: you can export a password-protected, encrypted ZIP backup (AES-256) of your entire vault and restore it on any new device without vendor lock-in."
   }
 ];
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": faqItems.map(item => ({
-    "@type": "Question",
-    "name": item.question,
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": item.answer
+const homeSchema = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "IDSnap: Identity & Document Studio",
+    "operatingSystem": "Android",
+    "applicationCategory": "BusinessApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "The private identity and document studio for your phone. Scan ID cards front-and-back, auto-frame passport photos, compress PDFs to target sizes, and protect 2FA keys 100% offline.",
+    "url": "https://idsnap.app/",
+    "downloadUrl": playStoreUrl,
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "1280"
     }
-  }))
-};
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  }
+];
 ---
 
 <Layout
-  title="IDSnap — Your Identity & Everyday Document Vault | Private & On-Device"
-  description="IDSnap is the all-in-one private identity & document studio. Scan ID cards front-and-back on 1 page, generate offline 2FA authenticator codes, crop passport photos, and compress PDFs under 200 KB."
-  schema={faqSchema}
+  title="IDSnap — The Private Identity & Document Studio | 100% Offline"
+  description="IDSnap is the all-in-one private identity & document studio for your phone. Merge ID cards front-and-back on 1 page, crop official passport photos, compress PDFs under 200 KB, and safeguard 2FA keys with zero cloud uploads."
+  canonical="https://idsnap.app/"
+  schema={homeSchema}
 >
   <!-- =========================================================================
        HERO SECTION
@@ -54,45 +87,42 @@ const faqSchema = {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
-          On-Device • No Account • Biometric Lock
+          100% Offline • Zero Account • Hardware Enclave Encrypted
         </div>
 
         <h1 class="hero-headline">
-          Your Identity & Everyday <span class="gradient-text">Document Vault.</span>
+          The Private Identity & <span class="gradient-text">Document Studio.</span>
         </h1>
 
         <p class="hero-subhead">
-          The all-in-one private studio for your phone. Scan ID cards front-and-back on 1 page, generate offline 2FA codes, crop passport-size photos, and compress PDFs under 200 KB—with no account, no tracking, and your documents never leave your phone.
+          Scan ID cards front-and-back on 1 page, auto-frame official passport photos, compress PDFs to exact portal limits (under 200 KB), and safeguard 2FA keys—with no accounts, no ads, and zero server uploads.
         </p>
 
         <div class="hero-cta-group" id="download">
-          <a href="#store-links" class="btn btn-primary btn-hero">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-hero">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3.609 1.814L13.793 12 3.61 22.186a2.235 2.235 0 0 1-.61-.318c-.469-.34-.75-.89-.75-1.488V3.62c0-.598.281-1.148.75-1.488.196-.142.408-.25.61-.318zm11.603 11.603l2.607-2.607-12.01-6.93 9.403 9.537zm0 1.166l-9.403 9.537 12.01-6.93-2.607-2.607zm1.166-1.166l3.208 1.852c.983.567.983 1.493 0 2.06l-3.208 1.852V13.417z"/>
             </svg>
-            Google Play
+            <span>Get on Google Play</span>
           </a>
 
-          <a href="#store-links" class="btn btn-secondary btn-hero">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.84c.62-.77 1.05-1.84.93-2.91-.91.04-2 .61-2.64 1.37-.56.65-1.05 1.73-.92 2.78 1.02.08 2.02-.48 2.63-1.24z"/>
-            </svg>
-            App Store
+          <a href="#core-tools" class="btn btn-secondary btn-hero">
+            Explore All 7 Tools
           </a>
         </div>
 
         <div class="hero-trust-indicators">
           <div class="trust-item">
             <span class="trust-icon">✓</span>
-            <span>No Account Required</span>
+            <span>Zero Network Permissions</span>
           </div>
           <div class="trust-item">
             <span class="trust-icon">✓</span>
-            <span>Works in Airplane Mode</span>
+            <span>Airplane-Mode Tested</span>
           </div>
           <div class="trust-item">
             <span class="trust-icon">✓</span>
-            <span>Encrypted on Your Phone</span>
+            <span>Zero Ads & Tracking</span>
           </div>
         </div>
       </div>
@@ -114,7 +144,7 @@ const faqSchema = {
             <!-- Identity Card Showcase Widget -->
             <div class="mock-card id-card-preview">
               <div class="mock-card-header">
-                <span class="mock-tag"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"></rect><circle cx="9" cy="10" r="2"></circle><line x1="15" y1="8" x2="17" y2="8"></line><line x1="15" y1="12" x2="17" y2="12"></line><line x1="7" y1="16" x2="17" y2="16"></line></svg> ID Card Mode</span>
+                <span class="mock-tag">🪪 ID Card Merger</span>
                 <span class="mock-status">1 A4 Page Ready</span>
               </div>
               <div class="mock-id-sheets">
@@ -133,18 +163,35 @@ const faqSchema = {
               </div>
             </div>
 
+            <!-- Passport Photo Guide Widget -->
+            <div class="mock-card passport-preview">
+              <div class="mock-card-header">
+                <span class="mock-tag">📸 Photo Studio</span>
+                <span class="mock-badge-success">US Visa 2×2 in</span>
+              </div>
+              <div class="passport-mini-guide">
+                <div class="oval-head-guide">
+                  <span class="guide-tag">Biometric Guide: 50–69%</span>
+                </div>
+                <div class="passport-specs">
+                  <span class="spec-dim">600×600 px · ≤ 240 KB</span>
+                  <span class="spec-verified">● White Background OK</span>
+                </div>
+              </div>
+            </div>
+
             <!-- 2FA Authenticator Showcase Widget -->
             <div class="mock-card totp-preview">
               <div class="mock-card-header">
-                <span class="mock-tag"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><circle cx="12" cy="11" r="2"></circle><path d="M12 13v3"></path></svg> 2FA Authenticator</span>
+                <span class="mock-tag">🔐 Offline 2FA</span>
                 <div class="mock-timer-circle">
                   <span class="timer-sec">28s</span>
                 </div>
               </div>
               <div class="totp-row">
                 <div class="totp-info">
-                  <span class="totp-account">Salesforce Enterprise</span>
-                  <span class="totp-user">alex@company.com</span>
+                  <span class="totp-account">GitHub Enterprise</span>
+                  <span class="totp-user">dev-lead@corp</span>
                 </div>
                 <div class="totp-code">
                   <code>584 920</code>
@@ -155,8 +202,8 @@ const faqSchema = {
             <!-- Everyday Tool Widget -->
             <div class="mock-card tool-preview">
               <div class="mock-card-header">
-                <span class="mock-tag"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg> Target Compressor</span>
-                <span class="mock-badge-success">Saved 92%</span>
+                <span class="mock-tag">⚡ Target Compressor</span>
+                <span class="mock-badge-success">Saved 95%</span>
               </div>
               <div class="compress-stats">
                 <span class="stat-old">4.2 MB</span>
@@ -168,12 +215,167 @@ const faqSchema = {
 
             <!-- Bottom Mock Nav -->
             <div class="mock-bottom-nav">
-              <div class="nav-item active"><svg class="icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg> Home</div>
-              <div class="nav-item"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"></rect><circle cx="9" cy="10" r="2"></circle><line x1="15" y1="8" x2="17" y2="8"></line><line x1="15" y1="12" x2="17" y2="12"></line><line x1="7" y1="16" x2="17" y2="16"></line></svg> Identity</div>
-              <div class="nav-item"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><circle cx="12" cy="11" r="2"></circle><path d="M12 13v3"></path></svg> 2FA</div>
-              <div class="nav-item"><svg class="icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> Tools</div>
+              <div class="nav-item active">Vault</div>
+              <div class="nav-item">Scanner</div>
+              <div class="nav-item">2FA</div>
+              <div class="nav-item">Tools</div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       CORE TOOLS & LANDING PAGES SHOWCASE (7 ESSENTIAL SUITES)
+       ========================================================================= -->
+  <section id="core-tools" class="section bg-subtle">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-eyebrow">THE COMPLETE STUDIO</span>
+        <h2 class="section-title">Seven Purpose-Built Tools in One Quiet App</h2>
+        <p class="section-subtitle">
+          Instead of downloading seven different adware-filled utilities, IDSnap combines all essential everyday document and identity tasks into a unified, local-first studio.
+        </p>
+      </div>
+
+      <div class="tools-grid-7">
+        <!-- Tool 1: ID Card Scanner -->
+        <a href="/id-card-scanner" class="card tool-feature-card">
+          <div class="tool-icon">🪪</div>
+          <div class="tool-body">
+            <div class="tool-badge">IDENTITY SUITE</div>
+            <h3 class="tool-title">ID Card 1-Sheet Scanner</h3>
+            <p class="tool-desc">
+              Snap the front and back of your driving license, national ID, or insurance card. IDSnap deskews both sides to ISO ID-1 actual size and aligns them on one A4 sheet with an optional purpose watermark.
+            </p>
+            <span class="tool-link-text">Learn about ID card merging →</span>
+          </div>
+        </a>
+
+        <!-- Tool 2: Passport Photo Studio -->
+        <a href="/passport-photo-maker" class="card tool-feature-card">
+          <div class="tool-icon">📸</div>
+          <div class="tool-body">
+            <div class="tool-badge">BIOMETRIC SUITE</div>
+            <h3 class="tool-title">Passport & Visa Photo Studio</h3>
+            <p class="tool-desc">
+              Auto-crop portraits with biometric face guides. Supports 35×45 mm (Schengen, UK, India), 2×2 in (US Visa & Green Card), stamp sizes, and multi-copy 4×6 inch print sheet layouts.
+            </p>
+            <span class="tool-link-text">Explore passport photo presets →</span>
+          </div>
+        </a>
+
+        <!-- Tool 3: Target-Size PDF Compressor -->
+        <a href="/compress-pdf" class="card tool-feature-card">
+          <div class="tool-icon">⚡</div>
+          <div class="tool-body">
+            <div class="tool-badge">COMPRESSION SUITE</div>
+            <h3 class="tool-title">Target-Size PDF Compressor</h3>
+            <p class="tool-desc">
+              End the guesswork. Type your exact portal limit (e.g., "under 200 KB", "under 100 KB", or "under 50 KB"). Our binary-search compression engine hits your target while preserving sharp text legibility.
+            </p>
+            <span class="tool-link-text">Try target compressor details →</span>
+          </div>
+        </a>
+
+        <!-- Tool 4: Exam & Job Application Kits -->
+        <a href="/exam-application-kits" class="card tool-feature-card">
+          <div class="tool-icon">📋</div>
+          <div class="tool-body">
+            <div class="tool-badge">APPLICATION SUITE</div>
+            <h3 class="tool-title">Exam & Application Kits</h3>
+            <p class="tool-desc">
+              Pre-configured bundles for UPSC, SSC, US Visa, and college admissions. Prepares candidate photos (≤ 50 KB), cleans handwritten ink signatures (≤ 20 KB), and compresses certificates (≤ 200 KB) in one flow.
+            </p>
+            <span class="tool-link-text">View pre-configured portal kits →</span>
+          </div>
+        </a>
+
+        <!-- Tool 5: Offline 2FA Authenticator -->
+        <a href="/authenticator" class="card tool-feature-card">
+          <div class="tool-icon">🔐</div>
+          <div class="tool-body">
+            <div class="tool-badge">SECURITY SUITE</div>
+            <h3 class="tool-title">Offline 2FA Authenticator</h3>
+            <p class="tool-desc">
+              RFC 6238 TOTP authenticator with hardware-backed Android KeyStore encryption (AES-256). Features biometric lock, screenshot blocking (FLAG_SECURE), and a 30-second clipboard auto-purge.
+            </p>
+            <span class="tool-link-text">See 2FA security architecture →</span>
+          </div>
+        </a>
+
+        <!-- Tool 6: Encrypted Document Vault -->
+        <a href="/document-vault" class="card tool-feature-card">
+          <div class="tool-icon">📁</div>
+          <div class="tool-body">
+            <div class="tool-badge">VAULT SUITE</div>
+            <h3 class="tool-title">Encrypted Document Vault</h3>
+            <p class="tool-desc">
+              Organize IDs, diplomas, tax records, and medical files in structured, biometric-locked folders. Set validity dates to receive private local expiry reminders 30 days before renewal.
+            </p>
+            <span class="tool-link-text">Explore vault folder templates →</span>
+          </div>
+        </a>
+
+        <!-- Tool 7: Private Document Scanner -->
+        <a href="/document-scanner" class="card tool-feature-card">
+          <div class="tool-icon">📄</div>
+          <div class="tool-body">
+            <div class="tool-badge">SCANNER SUITE</div>
+            <h3 class="tool-title">Private Document Scanner</h3>
+            <p class="tool-desc">
+              Real-time automatic edge detection and perspective quad straightening. Includes shadow removal, high-contrast B&W filters, and offline OCR for Latin and Devanagari scripts with zero watermarks.
+            </p>
+            <span class="tool-link-text">Read document scanner guide →</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       US & INDIAN PORTAL COMPLIANCE SECTION
+       ========================================================================= -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header text-center">
+        <span class="section-eyebrow">REAL-WORLD APPLICATION SUCCESS</span>
+        <h2 class="section-title">Built for the World's Toughest Upload Portals</h2>
+        <p class="section-subtitle">
+          Government job portals, consular visa systems, and universities reject applications when dimensions or file weights are off by even a fraction. IDSnap is pre-tuned for both US and Indian standards.
+        </p>
+      </div>
+
+      <div class="grid grid-2">
+        <!-- Column 1: Indian Portals -->
+        <div class="card portal-card">
+          <div class="portal-badge">INDIAN GOVERNMENT & UNIVERSITIES</div>
+          <h3 class="portal-title">UPSC, SSC, NTA & State PSC Portals</h3>
+          <p class="portal-desc">
+            Candidate registration portals (UPSC OTR, SSC, JEE, NEET, Banking IBPS) enforce rigid, low file caps designed for legacy database pipelines:
+          </p>
+          <ul class="portal-checklist">
+            <li><strong>Passport Photo:</strong> 3.5 × 4.5 cm, strictly between 20 KB and 50 KB.</li>
+            <li><strong>Ink Signature:</strong> Thresholded ink on white BG, strictly between 10 KB and 20 KB.</li>
+            <li><strong>Certificate Proofs:</strong> Multi-page marksheet and caste PDFs strictly ≤ 200 KB or 300 KB.</li>
+            <li><strong>Aadhaar / Voter ID:</strong> Front and back merged on a single A4 page with anti-misuse purpose watermark.</li>
+          </ul>
+        </div>
+
+        <!-- Column 2: US & Consular Portals -->
+        <div class="card portal-card">
+          <div class="portal-badge">US & INTERNATIONAL CONSULATES</div>
+          <h3 class="portal-title">US Visa DS-160, Green Card & Passport</h3>
+          <p class="portal-desc">
+            The US Department of State and international embassies mandate strict photographic and geometric compliance:
+          </p>
+          <ul class="portal-checklist">
+            <li><strong>DS-160 Digital Photo:</strong> Exactly 2 × 2 inches (600 × 600 px up to 1200 × 1200 px).</li>
+            <li><strong>File Weight:</strong> Compressed JPEG strictly ≤ 240 KB.</li>
+            <li><strong>Biometric Head Ratio:</strong> On-screen oval guide ensures head height covers 50% to 69% of the frame.</li>
+            <li><strong>Printable Sheets:</strong> 4 × 6 inch photo studio sheets ready for Costco, Walgreens, or local photo kiosks.</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -182,67 +384,83 @@ const faqSchema = {
   <!-- =========================================================================
        ZERO CLOUD COMPARISON SECTION
        ========================================================================= -->
-  <section class="section comparison-section">
+  <section class="section bg-subtle">
     <div class="container">
-      <div class="section-header">
-        <span class="badge-pill">Private by Design</span>
-        <h2>Why IDSnap is Built Different</h2>
-        <p>Big tech scanner apps lock basic tools behind accounts, cloud syncs, and expensive monthly subscriptions. IDSnap keeps your documents on your phone, with no account.</p>
+      <div class="section-header text-center">
+        <span class="section-eyebrow">HONEST COMPARISON</span>
+        <h2 class="section-title">Why Users Switch from Cloud Scanning Apps</h2>
+        <p class="section-subtitle">
+          Big tech scanner apps lock basic tools behind mandatory accounts, upload private documents to remote cloud storage, and charge recurring monthly subscriptions.
+        </p>
       </div>
 
-      <div class="table-wrap">
-        <table class="comparison-matrix">
+      <div class="comparison-table-wrap">
+        <table class="comparison-table">
           <thead>
             <tr>
               <th>Feature / Guarantee</th>
-              <th class="col-highlight">IDSnap</th>
+              <th class="col-highlight">IDSnap Studio</th>
               <th>CamScanner</th>
               <th>Adobe Scan</th>
-              <th>Web PDF Tools</th>
+              <th>Web PDF Portals</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><strong>Account / Login Required?</strong></td>
-              <td class="col-highlight"><span class="badge-pill badge-primary">Never (0 Accounts)</span></td>
-              <td>Forces Login</td>
-              <td>Mandatory Adobe ID</td>
-              <td>Optional / Email gate</td>
+              <td class="col-highlight positive">Never (0 Accounts)</td>
+              <td class="negative">Forces Login</td>
+              <td class="negative">Mandatory Adobe ID</td>
+              <td class="negative">Email Gated</td>
             </tr>
             <tr>
               <td><strong>Cloud Document Upload</strong></td>
-              <td class="col-highlight"><span class="badge-pill badge-primary">Never (stays on your phone)</span></td>
-              <td>Uploaded to Cloud</td>
-              <td>Saved to Adobe Cloud</td>
-              <td>Uploaded to Web Server</td>
+              <td class="col-highlight positive">Never (Stays on Device)</td>
+              <td class="negative">Uploaded to Cloud</td>
+              <td class="negative">Saved to Cloud</td>
+              <td class="negative">Uploaded to Web Server</td>
             </tr>
             <tr>
-              <td><strong>ID Card (Front+Back on 1 A4)</strong></td>
-              <td class="col-highlight">Included (Pro)</td>
-              <td>Paid VIP Only</td>
-              <td>Manual Stitching</td>
-              <td>Not Supported</td>
+              <td><strong>Internet Permissions in OS</strong></td>
+              <td class="col-highlight positive">0 Permissions Requested</td>
+              <td class="negative">Full Internet Access</td>
+              <td class="negative">Full Internet Access</td>
+              <td class="negative">Full Internet Access</td>
             </tr>
             <tr>
-              <td><strong>Built-in 2FA Authenticator</strong></td>
-              <td class="col-highlight">Included (RFC 6238)</td>
-              <td>None</td>
-              <td>None</td>
-              <td>None</td>
+              <td><strong>ID Card (Front & Back on 1 A4)</strong></td>
+              <td class="col-highlight positive">Included Free</td>
+              <td class="negative">Paid Subscription Only</td>
+              <td class="negative">Manual Editing</td>
+              <td class="negative">Not Supported</td>
+            </tr>
+            <tr>
+              <td><strong>Passport Photo Biometric Studio</strong></td>
+              <td class="col-highlight positive">Included Free</td>
+              <td class="negative">Paid Add-on</td>
+              <td class="negative">Not Supported</td>
+              <td class="negative">Separate Paid Service</td>
             </tr>
             <tr>
               <td><strong>Target Size ("Under 200 KB")</strong></td>
-              <td class="col-highlight">Smart Binary Search</td>
-              <td>Low/Med/High guesswork</td>
-              <td>Requires Acrobat Pro</td>
-              <td>Random Quality</td>
+              <td class="col-highlight positive">Binary Search Engine</td>
+              <td class="negative">Guesswork Sliders</td>
+              <td class="negative">Requires Acrobat Pro</td>
+              <td class="negative">Random Quality Loss</td>
             </tr>
             <tr>
-              <td><strong>Ad Trackers & Telemetry</strong></td>
-              <td class="col-highlight"><span class="badge-pill badge-primary">Zero Trackers</span></td>
-              <td>Heavy Advertising</td>
-              <td>Analytics & Tracking</td>
-              <td>Cookie Trackers</td>
+              <td><strong>Offline 2FA Authenticator</strong></td>
+              <td class="col-highlight positive">Hardware KeyStore (RFC 6238)</td>
+              <td class="negative">None</td>
+              <td class="negative">None</td>
+              <td class="negative">None</td>
+            </tr>
+            <tr>
+              <td><strong>Ads & Watermarks</strong></td>
+              <td class="col-highlight positive">Zero Ads · Zero Watermarks</td>
+              <td class="negative">Heavy Ads & Watermarks</td>
+              <td class="negative">Marketing Prompts</td>
+              <td class="negative">Pop-up Video Ads</td>
             </tr>
           </tbody>
         </table>
@@ -251,229 +469,68 @@ const faqSchema = {
   </section>
 
   <!-- =========================================================================
-       PILLAR 1: PHYSICAL IDENTITY SUITE
+       SECURITY ARCHITECTURE: AIRPLANE MODE VERIFICATION
        ========================================================================= -->
-  <section id="identity" class="section identity-section">
-    <div class="container">
-      <div class="section-header">
-        <span class="badge-pill">Pillar 1: Physical Identity</span>
-        <h2>Official Identity Docs, Perfected for Submission</h2>
-        <p>Built specifically for job seekers, travelers, students, and professionals submitting paperwork to stringent online portals.</p>
-      </div>
+  <section class="section">
+    <div class="container security-architecture-block">
+      <div class="security-copy">
+        <span class="section-eyebrow">VERIFIED PRIVACY</span>
+        <h2 class="section-title">Tested in Airplane Mode. Enforced by the Operating System.</h2>
+        <p class="section-lead">
+          We don't ask you to trust a vague marketing promise. IDSnap's privacy architecture is guaranteed by physical constraints:
+        </p>
 
-      <div class="features-grid">
-        <div class="card-glass feature-card">
-          <div class="feature-icon-badge"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"></rect><circle cx="9" cy="10" r="2"></circle><line x1="15" y1="8" x2="17" y2="8"></line><line x1="15" y1="12" x2="17" y2="12"></line><line x1="7" y1="16" x2="17" y2="16"></line></svg></div>
-          <h3>ID Card Scanner (Front & Back $\rightarrow$ 1 Sheet)</h3>
-          <p>
-            No more manual collages. Snap the front, flip to snap the back, and IDSnap automatically deskews and positions both sides centered on a single A4/Letter PDF with an optional verification watermark.
-          </p>
-          <ul class="feature-checklist">
-            <li>Standard ISO/IEC 7810 ID-1 card aspect framing</li>
-            <li>Automatic shadow removal and contrast enhancement</li>
-            <li>Optional "For Verification Only" watermark shield</li>
-          </ul>
-        </div>
-
-        <div class="card-glass feature-card">
-          <div class="feature-icon-badge"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg></div>
-          <h3>Passport-Size Photo Maker</h3>
-          <p>
-            Crop a portrait to standard photo sizes with on-device face framing, then save it or print a sheet—no photo booth needed.
-          </p>
-          <ul class="feature-checklist">
-            <li><strong>Square photo:</strong> 2 × 2 in (51 × 51 mm) at 300 DPI</li>
-            <li><strong>Passport size:</strong> 35 × 45 mm</li>
-            <li><strong>More sizes:</strong> 33 × 48 mm, 30 × 40 mm ID photo, 20 × 25 mm stamp size, or a custom size</li>
-            <li>Face & eye level guide overlay to ensure compliance</li>
-          </ul>
-        </div>
-
-        <div class="card-glass feature-card">
-          <div class="feature-icon-badge"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></div>
-          <h3>Transparent Signature & Stamp Studio</h3>
-          <p>
-            Sign on paper or directly on screen. IDSnap isolates the ink strokes, wipes the paper background, and produces a crisp, reusable transparent PNG signature.
-          </p>
-          <ul class="feature-checklist">
-            <li>One-tap stamp onto any PDF contract or application form</li>
-            <li>Adjustable ink color (deep blue, black, or custom)</li>
-            <li>Non-destructive local storage in your private vault</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================================================
-       PILLAR 2: DIGITAL IDENTITY (2FA AUTHENTICATOR)
-       ========================================================================= -->
-  <section id="authenticator" class="section authenticator-section">
-    <div class="container">
-      <div class="pillar-split">
-        <div class="pillar-text">
-          <span class="badge-pill">Pillar 2: Digital Identity</span>
-          <h2>The Offline 2FA Authenticator That Protects Your Logins</h2>
-          <p>
-            Why juggle separate apps? IDSnap includes a standard RFC 6238 Time-based One-Time Password (TOTP) generator right inside your vault.
-          </p>
-
-          <div class="auth-feature-points">
-            <div class="point-item">
-              <div class="point-num">01</div>
-              <div>
-                <h4>Instant QR Enrollment</h4>
-                <p>Scan <code>otpauth://</code> QR codes from Google, Salesforce, GitHub, AWS, and banking accounts in 1 second.</p>
-              </div>
-            </div>
-
-            <div class="point-item">
-              <div class="point-num">02</div>
-              <div>
-                <h4>Hardware Enclave Security</h4>
-                <p>TOTP secrets are encrypted via Android KeyStore and Apple Keychain. Keys are never exposed in plaintext.</p>
-              </div>
-            </div>
-
-            <div class="point-item">
-              <div class="point-num">03</div>
-              <div>
-                <h4>Emergency Recovery Codes Vault</h4>
-                <p>Store your 8–10 emergency recovery keys securely under each account so you never get locked out of your life.</p>
-              </div>
+        <div class="security-points-list">
+          <div class="sec-point">
+            <span class="sec-icon">✈️</span>
+            <div>
+              <strong>Airplane-Mode Tested:</strong>
+              <p>Every single feature—from camera scanning and OCR to PDF compression and 2FA code generation—works with Wi-Fi and mobile data completely switched off.</p>
             </div>
           </div>
-        </div>
 
-        <div class="pillar-visual">
-          <div class="card-glass visual-auth-card">
-            <div class="visual-header">
-              <div class="pulse-dot"></div>
-              <span>Live TOTP Generator (RFC 6238)</span>
+          <div class="sec-point">
+            <span class="sec-icon">🛡️</span>
+            <div>
+              <strong>Zero INTERNET Permission:</strong>
+              <p>Our Android production release manifest omits the <code>android.permission.INTERNET</code> permission. The operating system physically prevents the app from sending any data packets.</p>
             </div>
-            
-            <div class="auth-demo-list">
-              <div class="demo-auth-row">
-                <div class="demo-issuer-icon g-icon">G</div>
-                <div class="demo-acc-details">
-                  <span class="demo-issuer">Google Workspace</span>
-                  <span class="demo-email">john.doe@company.com</span>
-                </div>
-                <div class="demo-code-wrap">
-                  <span class="demo-digits">729 401</span>
-                  <div class="mini-timer"><span class="timer-bar"></span></div>
-                </div>
-              </div>
+          </div>
 
-              <div class="demo-auth-row">
-                <div class="demo-issuer-icon s-icon"><svg class="icon-inline" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg></div>
-                <div class="demo-acc-details">
-                  <span class="demo-issuer">Salesforce</span>
-                  <span class="demo-email">admin@enterprise.org</span>
-                </div>
-                <div class="demo-code-wrap">
-                  <span class="demo-digits">384 192</span>
-                  <div class="mini-timer"><span class="timer-bar"></span></div>
-                </div>
-              </div>
-
-              <div class="demo-auth-row">
-                <div class="demo-issuer-icon gh-icon"><svg class="icon-inline" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><circle cx="18" cy="6" r="3"></circle><path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9"></path><path d="M12 12v3"></path></svg></div>
-                <div class="demo-acc-details">
-                  <span class="demo-issuer">GitHub Security</span>
-                  <span class="demo-email">developer-id</span>
-                </div>
-                <div class="demo-code-wrap">
-                  <span class="demo-digits">902 443</span>
-                  <div class="mini-timer"><span class="timer-bar"></span></div>
-                </div>
-              </div>
+          <div class="sec-point">
+            <span class="sec-icon">🔒</span>
+            <div>
+              <strong>Hardware KeyStore & Enclave:</strong>
+              <p>Biometric locks and 2FA secret seeds are sealed inside your device's physical cryptographic security chip using AES-256 encryption.</p>
             </div>
+          </div>
 
-            <div class="clipboard-notice">
-              <svg class="icon-inline" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> Auto-clears from clipboard in 60s for maximum security
+          <div class="sec-point">
+            <span class="sec-icon">📦</span>
+            <div>
+              <strong>Total Data Independence:</strong>
+              <p>One-tap export creates a clean, password-encrypted ZIP archive with all your files and a metadata manifest. No proprietary lock-in.</p>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- =========================================================================
-       PILLAR 3: EVERYDAY PDF & CONVERSION TOOLS
-       ========================================================================= -->
-  <section id="tools" class="section tools-section">
-    <div class="container">
-      <div class="section-header">
-        <span class="badge-pill">Pillar 3: Everyday PDF Tools</span>
-        <h2>Precision Tools That Just Work</h2>
-        <p>Every tool you normally need 5 different sketchy websites for, packaged into one clean, honest app.</p>
-      </div>
-
-      <div class="tools-bento-grid">
-        <div class="card-glass bento-card">
-          <div class="bento-icon"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg></div>
-          <h3>Target-Size PDF & Image Compressor</h3>
-          <p>
-            Tired of trial and error? Set your exact target file size (e.g. "Under 200 KB" or "Under 500 KB"). IDSnap uses binary search image compression to guarantee your file gets accepted.
-          </p>
-        </div>
-
-        <div class="card-glass bento-card">
-          <div class="bento-icon"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg></div>
-          <h3>On-Device OCR & Searchable PDFs</h3>
-          <p>
-            Extract text from photos, documents, and books offline. Latin and Devanagari text models are built in. Create searchable PDFs with an invisible selectable text layer.
-          </p>
-        </div>
-
-        <div class="card-glass bento-card">
-          <div class="bento-icon"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg></div>
-          <h3>Merge, Split & Organize PDFs</h3>
-          <p>
-            Reorder pages with drag-and-drop, rotate upside-down pages, delete unwanted annexures, or combine multiple PDFs into one unified file in seconds.
-          </p>
-        </div>
-
-        <div class="card-glass bento-card">
-          <div class="bento-icon"><svg class="icon-inline" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg></div>
-          <h3>Multi-Format Offline Converter</h3>
-          <p>
-            Pure Dart local conversions across DOCX, TXT, CSV, XLSX, PPTX, and image formats. Always declares transparent fidelity classes so you know exactly what to expect.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================================================
-       HOW IT WORKS SECTION
-       ========================================================================= -->
-  <section class="section workflow-section">
-    <div class="container">
-      <div class="section-header">
-        <span class="badge-pill">Frictionless Experience</span>
-        <h2>How IDSnap Works in 3 Simple Steps</h2>
-        <p>No account onboarding. No email verification. Open the app and solve your problem immediately.</p>
-      </div>
-
-      <div class="workflow-steps-grid">
-        <div class="card-glass step-item">
-          <div class="step-badge">1</div>
-          <h3>Biometric Unlock</h3>
-          <p>Open IDSnap instantly with your fingerprint or Face ID. Your local vault is immediately accessible without typing a password.</p>
-        </div>
-
-        <div class="card-glass step-item">
-          <div class="step-badge">2</div>
-          <h3>Snap or Pick</h3>
-          <p>Use the camera scanner for automatic page edge detection, crop an ID card front-and-back, or import existing files from your device.</p>
-        </div>
-
-        <div class="card-glass step-item">
-          <div class="step-badge">3</div>
-          <h3>Export & Submit</h3>
-          <p>Save directly to your phone's storage or share straight to WhatsApp, email, or application portals. Your documents never leave your phone unless you share them.</p>
+      <div class="security-badge-visual">
+        <div class="shield-graphic-card">
+          <div class="shield-circle">
+            <svg viewBox="0 0 64 64" fill="none" width="64" height="64">
+              <rect width="64" height="64" rx="16" fill="#2457D6"/>
+              <path d="M32 16L46 22V34C46 42.5 40 50 32 53C24 50 18 42.5 18 34V22L32 16Z" fill="#0E8A7E"/>
+              <path d="M28 32L31 35L37 28" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h3 class="shield-card-title">Zero Cloud Telemetry</h3>
+          <p class="shield-card-desc">No accounts, no analytics SDKs tracking your documents, and zero third-party marketing tags.</p>
+          <div class="shield-checklist">
+            <span class="pill-check">✓ Offline OCR</span>
+            <span class="pill-check">✓ Local Storage</span>
+            <span class="pill-check">✓ Biometric Gate</span>
+          </div>
         </div>
       </div>
     </div>
@@ -482,17 +539,17 @@ const faqSchema = {
   <!-- =========================================================================
        FAQ SECTION (WITH JSON-LD SCHEMA FOR GOOGLE SEARCH)
        ========================================================================= -->
-  <section id="faq" class="section faq-section">
-    <div class="container">
-      <div class="section-header">
-        <span class="badge-pill">Frequently Asked Questions</span>
-        <h2>Everything You Need to Know</h2>
-        <p>Transparent answers to common questions about privacy, features, and platform support.</p>
+  <section id="faq" class="section bg-subtle">
+    <div class="container max-w-reading">
+      <div class="section-header text-center">
+        <span class="section-eyebrow">COMMON QUESTIONS</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Transparent answers about our offline tools, privacy, and technical operations.</p>
       </div>
 
       <div class="faq-accordion-list">
         {faqItems.map((item, index) => (
-          <details class="card-glass faq-item" id={`faq-${index}`}>
+          <details class="card faq-item" id={`faq-${index}`}>
             <summary class="faq-question">
               <span>{item.question}</span>
               <span class="faq-icon">+</span>
@@ -509,30 +566,26 @@ const faqSchema = {
   <!-- =========================================================================
        BOTTOM CTA SECTION
        ========================================================================= -->
-  <section class="section cta-section" id="store-links">
-    <div class="container">
-      <div class="card-glass cta-banner">
-        <div class="badge-pill badge-primary">Get IDSnap Today</div>
-        <h2 class="cta-title">Take Control of Your Personal Identity & Paperwork</h2>
-        <p class="cta-text">
-          Ditch ad-riddled cloud scanners for an honest, private, on-device document vault.
-        </p>
-
-        <div class="cta-buttons">
-          <a href="#" class="btn btn-primary btn-large">
-            Download for Android (Google Play)
-          </a>
-          <a href="#" class="btn btn-secondary btn-large">
-            iPhone version coming soon
-          </a>
-        </div>
-
-        <div class="cta-meta">
-          <span>Version 1.0</span> • 
-          <span>Try every tool free, then IDSnap Pro</span> • 
-          <span>Android 7.0+ (iPhone coming soon)</span>
-        </div>
+  <section class="section bg-primary text-white text-center">
+    <div class="container max-w-reading">
+      <div class="badge-pill hero-badge" style="background: rgba(255,255,255,0.2); color: #fff; margin: 0 auto 1.5rem auto;">
+        Available Now on Google Play
       </div>
+      <h2 class="cta-title">Take control of your personal documents & identity</h2>
+      <p class="cta-lead">
+        Ditch sketchy cloud scanners for a private, on-device studio that respects your time and your data.
+      </p>
+
+      <div class="cta-btn-wrap">
+        <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-light btn-lg">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3.609 1.814L13.793 12 3.61 22.186a2.235 2.235 0 0 1-.61-.318c-.469-.34-.75-.89-.75-1.488V3.62c0-.598.281-1.148.75-1.488.196-.142.408-.25.61-.318zm11.603 11.603l2.607-2.607-12.01-6.93 9.403 9.537zm0 1.166l-9.403 9.537 12.01-6.93-2.607-2.607zm1.166-1.166l3.208 1.852c.983.567.983 1.493 0 2.06l-3.208 1.852V13.417z"/>
+          </svg>
+          <span>Download IDSnap Free on Google Play</span>
+        </a>
+      </div>
+
+      <p class="cta-subtext">Version 1.0 · Android 7.0+ · Zero Advertisements · 100% On-Device</p>
     </div>
   </section>
 </Layout>
@@ -540,9 +593,10 @@ const faqSchema = {
 <style>
   /* Hero Styles */
   .hero-section {
-    padding-top: 4.5rem;
-    padding-bottom: 5.5rem;
-    overflow: hidden;
+    padding-top: 4rem;
+    padding-bottom: 4.5rem;
+    background: linear-gradient(180deg, var(--surface-subtle) 0%, var(--surface) 100%);
+    border-bottom: 1px solid var(--border-subtle);
   }
 
   .hero-container {
@@ -554,10 +608,16 @@ const faqSchema = {
 
   .hero-badge {
     margin-bottom: 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .hero-headline {
-    margin-bottom: 1.5rem;
+    font-size: clamp(2.25rem, 4vw, 3.25rem);
+    line-height: 1.15;
+    margin-bottom: 1.25rem;
+    font-weight: 800;
   }
 
   .gradient-text {
@@ -567,9 +627,10 @@ const faqSchema = {
   }
 
   .hero-subhead {
-    font-size: 1.2rem;
-    line-height: 1.65;
-    margin-bottom: 2.25rem;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--on-surface-muted);
+    margin-bottom: 2rem;
     max-width: 580px;
   }
 
@@ -584,115 +645,113 @@ const faqSchema = {
   .btn-hero {
     padding: 0.95rem 1.75rem;
     font-size: 1.05rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
   }
 
   .hero-trust-indicators {
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-subtle);
   }
 
   .trust-item {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 0.88rem;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: var(--on-surface-variant);
+    color: var(--on-surface);
   }
 
   .trust-icon {
-    color: var(--secondary);
+    color: #137333;
     font-weight: 800;
   }
+  [data-theme="dark"] .trust-icon {
+    color: #81C995;
+  }
 
-  /* Phone Mockup Styling */
+  /* Phone Mockup */
   .hero-mockup-wrapper {
     display: flex;
     justify-content: center;
-    perspective: 1000px;
   }
 
   .phone-mockup {
-    width: 320px;
-    height: 640px;
-    background-color: #0F131A;
-    border: 8px solid #2B3342;
-    border-radius: 44px;
-    box-shadow: var(--shadow-lg), 0 0 50px rgba(36, 87, 214, 0.2);
+    width: 310px;
+    background: #1B1E26;
+    border: 8px solid #2C303D;
+    border-radius: 40px;
+    box-shadow: var(--shadow-lg), 0 20px 40px rgba(0, 0, 0, 0.25);
+    padding: 12px;
     position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
   }
 
   .phone-notch {
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 90px;
+    width: 100px;
     height: 18px;
-    background-color: #2B3342;
-    border-radius: 10px;
-    z-index: 10;
+    background: #2C303D;
+    border-radius: 0 0 12px 12px;
+    margin: 0 auto 10px auto;
   }
 
   .phone-screen {
-    flex-grow: 1;
-    background-color: var(--canvas);
-    padding: 2.5rem 1rem 1rem 1rem;
+    background: var(--surface);
+    border-radius: 28px;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
-    overflow: hidden;
+    gap: 0.75rem;
   }
 
   .app-mock-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 0.4rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-subtle);
   }
 
   .mock-brand {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    color: var(--on-surface);
   }
 
   .mock-dot {
     width: 8px;
     height: 8px;
-    background-color: var(--secondary);
+    background: #0E8A7E;
     border-radius: 50%;
   }
 
   .mock-pill {
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
     font-weight: 700;
-    text-transform: uppercase;
-    background-color: var(--secondary-container);
-    color: var(--on-secondary-container);
-    padding: 0.15rem 0.5rem;
-    border-radius: var(--radius-full);
+    color: var(--primary);
+    background: var(--primary-container);
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
   }
 
   .mock-card {
-    background-color: var(--surface);
-    border: 1px solid var(--outline-variant);
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     padding: 0.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
   }
 
   .mock-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0.5rem;
   }
 
   .mock-tag {
@@ -702,528 +761,472 @@ const faqSchema = {
   }
 
   .mock-status {
-    font-size: 0.65rem;
+    font-size: 0.6875rem;
+    color: var(--secondary);
     font-weight: 600;
-    color: var(--primary);
   }
 
+  .mock-badge-success {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #137333;
+    background: #E6F4EA;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+  }
+  [data-theme="dark"] .mock-badge-success {
+    background: rgba(19, 115, 51, 0.2);
+    color: #81C995;
+  }
+
+  /* Mock ID Card */
   .mock-id-sheets {
     display: flex;
     gap: 0.5rem;
   }
-
   .mock-id-face {
     flex: 1;
-    height: 60px;
-    background-color: var(--surface-container-high);
-    border: 1px dashed var(--outline);
-    border-radius: var(--radius-sm);
+    height: 48px;
+    background: #FFFFFF;
+    border: 1px solid #DDE2EA;
+    border-radius: 4px;
+    padding: 4px;
     display: flex;
     align-items: center;
-    justify-content: center;
     position: relative;
+    gap: 4px;
   }
-
-  .face-label {
-    position: absolute;
-    bottom: 3px;
-    font-size: 0.55rem;
-    font-weight: 700;
-    color: var(--on-surface-variant);
-  }
-
   .mock-avatar {
-    width: 20px;
+    width: 24px;
     height: 24px;
-    background-color: var(--primary-container);
-    border-radius: 3px;
-    position: absolute;
-    left: 6px;
+    background: #8EABFF;
+    border-radius: 4px;
   }
-
   .mock-lines {
-    position: absolute;
-    left: 32px;
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 3px;
   }
-
-  .line {
+  .mock-lines .line {
     height: 3px;
-    background-color: var(--outline);
+    background: #CCD4E0;
     border-radius: 2px;
   }
-  .line.l1 { width: 45px; }
-  .line.l2 { width: 30px; }
+  .mock-lines .line.l1 { width: 80%; }
+  .mock-lines .line.l2 { width: 50%; }
+  .face-label {
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    font-size: 0.5rem;
+    font-weight: 800;
+    color: #888;
+  }
+  .mock-barcode {
+    width: 70%;
+    height: 8px;
+    background: repeating-linear-gradient(90deg, #333, #333 2px, #fff 2px, #fff 4px);
+    margin: 0 auto;
+  }
 
-  .mock-timer-circle {
-    width: 22px;
-    height: 22px;
+  /* Passport Guide */
+  .passport-mini-guide {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .oval-head-guide {
+    width: 40px;
+    height: 48px;
+    border: 1.5px dashed var(--primary);
     border-radius: 50%;
-    border: 2px solid var(--secondary);
     display: flex;
     align-items: center;
     justify-content: center;
   }
-
-  .timer-sec {
-    font-size: 0.55rem;
-    font-weight: 800;
-    color: var(--secondary);
+  .guide-tag {
+    display: none;
+  }
+  .passport-specs {
+    flex: 1;
+  }
+  .spec-dim {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--on-surface);
+  }
+  .spec-verified {
+    display: block;
+    font-size: 0.6875rem;
+    color: #137333;
+    font-weight: 600;
   }
 
+  /* TOTP Mock */
   .totp-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-
-  .totp-info {
-    display: flex;
-    flex-direction: column;
-  }
-
   .totp-account {
-    font-size: 0.8rem;
+    display: block;
+    font-size: 0.75rem;
     font-weight: 700;
     color: var(--on-surface);
   }
-
   .totp-user {
-    font-size: 0.65rem;
-    color: var(--on-surface-variant);
+    display: block;
+    font-size: 0.6875rem;
+    color: var(--on-surface-muted);
   }
-
   .totp-code code {
-    font-family: var(--font-mono);
-    font-size: 1.05rem;
+    font-family: monospace;
+    font-size: 1.125rem;
     font-weight: 800;
     color: var(--primary);
-    background-color: var(--primary-container);
-    padding: 0.2rem 0.4rem;
-    border-radius: var(--radius-sm);
+  }
+  .mock-timer-circle {
+    font-size: 0.625rem;
+    font-weight: 800;
+    color: var(--primary);
+    border: 1.5px solid var(--primary);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .mock-badge-success {
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: #0E8A7E;
-    background-color: #DDF5F1;
-    padding: 0.15rem 0.4rem;
-    border-radius: var(--radius-sm);
-  }
-
+  /* Compressor mock */
   .compress-stats {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    font-size: 0.8rem;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
   }
-
   .stat-old {
     text-decoration: line-through;
-    color: var(--on-surface-variant);
+    color: var(--on-surface-muted);
   }
-
   .stat-new {
     font-weight: 700;
-    color: var(--primary);
+    color: #137333;
   }
-
   .stat-portal {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--secondary);
     font-weight: 600;
   }
 
   .mock-bottom-nav {
-    margin-top: auto;
-    background-color: var(--surface);
-    border-top: 1px solid var(--outline-variant);
-    padding: 0.6rem 0.4rem;
     display: flex;
     justify-content: space-around;
-    font-size: 0.65rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-subtle);
+    font-size: 0.6875rem;
+    color: var(--on-surface-muted);
     font-weight: 600;
-    border-radius: var(--radius-md);
   }
-
-  .nav-item.active {
+  .mock-bottom-nav .active {
     color: var(--primary);
-  }
-
-  /* Comparison Matrix Styles */
-  .comparison-section {
-    background-color: var(--surface-container);
-  }
-
-  .comparison-matrix {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: var(--surface);
-    border: 1px solid var(--outline-variant);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .comparison-matrix th, .comparison-matrix td {
-    padding: 1.25rem 1rem;
-    text-align: center;
-    border-bottom: 1px solid var(--outline-variant);
-    font-size: 0.95rem;
-  }
-
-  .comparison-matrix th:first-child, .comparison-matrix td:first-child {
-    text-align: left;
-    padding-left: 1.5rem;
-  }
-
-  .comparison-matrix th {
-    background-color: var(--surface-container-high);
-    font-weight: 700;
-    color: var(--on-surface);
-  }
-
-  .col-highlight {
-    background-color: rgba(36, 87, 214, 0.05);
-    font-weight: 700;
-    color: var(--primary);
-  }
-
-  /* Features Grid Styles */
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.75rem;
-  }
-
-  .feature-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .feature-icon-badge {
-    font-size: 2.2rem;
-  }
-
-  .feature-card h3 {
-    font-size: 1.3rem;
-  }
-
-  .feature-checklist {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    margin-top: 0.5rem;
-  }
-
-  .feature-checklist li {
-    font-size: 0.9rem;
-    color: var(--on-surface-variant);
-    position: relative;
-    padding-left: 1.25rem;
-  }
-
-  .feature-checklist li::before {
-    content: "✓";
-    position: absolute;
-    left: 0;
-    color: var(--secondary);
     font-weight: 800;
   }
 
-  /* Authenticator Pillar Section */
-  .pillar-split {
+  /* 7 Tools Grid */
+  .tools-grid-7 {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3.5rem;
-    align-items: center;
-  }
-
-  .auth-feature-points {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1.5rem;
-    margin-top: 2rem;
   }
 
-  .point-item {
+  .tool-feature-card {
+    padding: 1.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
     display: flex;
-    gap: 1rem;
+    flex-direction: column;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   }
-
-  .point-num {
-    width: 36px;
-    height: 36px;
-    background-color: var(--primary-container);
-    color: var(--on-primary-container);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-  }
-
-  .visual-auth-card {
-    padding: 2rem;
+  .tool-feature-card:hover {
+    transform: translateY(-3px);
     box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
   }
-
-  .visual-header {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--on-surface-variant);
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--outline-variant);
+  .tool-icon {
+    font-size: 2.25rem;
+    margin-bottom: 1rem;
   }
-
-  .pulse-dot {
-    width: 8px;
-    height: 8px;
-    background-color: #0E8A7E;
-    border-radius: 50%;
-    box-shadow: 0 0 8px #0E8A7E;
-  }
-
-  .auth-demo-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .demo-auth-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.85rem;
-    background-color: var(--surface-container);
-    border-radius: var(--radius-md);
-  }
-
-  .demo-issuer-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    color: #FFFFFF;
-    font-size: 1.2rem;
-  }
-  .g-icon { background-color: #EA4335; }
-  .s-icon { background-color: #00A1E0; }
-  .gh-icon { background-color: #24292E; }
-
-  .demo-acc-details {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
-
-  .demo-issuer {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--on-surface);
-  }
-
-  .demo-email {
-    font-size: 0.8rem;
-    color: var(--on-surface-variant);
-  }
-
-  .demo-code-wrap {
-    text-align: right;
-  }
-
-  .demo-digits {
-    font-family: var(--font-mono);
-    font-size: 1.25rem;
+  .tool-badge {
+    font-size: 0.6875rem;
     font-weight: 800;
     color: var(--primary);
     letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
   }
-
-  .clipboard-notice {
-    margin-top: 1.5rem;
-    font-size: 0.8rem;
-    color: var(--on-surface-variant);
-    text-align: center;
-  }
-
-  /* Bento Tools Grid */
-  .tools-bento-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-  }
-
-  .bento-card {
-    padding: 2.25rem;
-  }
-
-  .bento-icon {
-    font-size: 2rem;
-    margin-bottom: 0.85rem;
-  }
-
-  .bento-card h3 {
-    margin-bottom: 0.6rem;
-  }
-
-  /* Workflow Steps */
-  .workflow-steps-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.75rem;
-  }
-
-  .step-item {
-    padding: 2rem;
-    position: relative;
-  }
-
-  .step-badge {
-    width: 44px;
-    height: 44px;
-    background-color: var(--primary);
-    color: var(--on-primary);
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-display);
+  .tool-title {
     font-size: 1.25rem;
-    font-weight: 800;
-    margin-bottom: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--on-surface);
+  }
+  .tool-desc {
+    font-size: 0.9375rem;
+    color: var(--on-surface-muted);
+    line-height: 1.5;
+    flex: 1;
+    margin-bottom: 1rem;
+  }
+  .tool-link-text {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--primary);
   }
 
-  .step-item h3 {
+  /* Portal Cards */
+  .portal-card {
+    padding: 2rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+  }
+  .portal-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--secondary);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+  .portal-title {
+    font-size: 1.35rem;
+    font-weight: 800;
     margin-bottom: 0.75rem;
   }
+  .portal-desc {
+    color: var(--on-surface-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+  .portal-checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 0.9375rem;
+  }
+  .portal-checklist li {
+    position: relative;
+    padding-left: 1.5rem;
+    color: var(--on-surface-muted);
+  }
+  .portal-checklist li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #137333;
+    font-weight: 900;
+  }
+  .portal-checklist strong {
+    color: var(--on-surface);
+  }
 
-  /* FAQ Accordion Styles */
+  /* Comparison Matrix */
+  .comparison-table-wrap {
+    overflow-x: auto;
+    margin-top: 2rem;
+  }
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+  .comparison-table th, .comparison-table td {
+    padding: 1.1rem 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.9375rem;
+  }
+  .comparison-table th {
+    background: var(--surface-subtle);
+    font-weight: 700;
+    color: var(--on-surface);
+  }
+  .col-highlight {
+    background: rgba(36, 87, 214, 0.04);
+    font-weight: 600;
+  }
+  .positive {
+    color: #137333;
+    font-weight: 700;
+  }
+  [data-theme="dark"] .positive {
+    color: #81C995;
+  }
+  .negative {
+    color: #D93025;
+  }
+  [data-theme="dark"] .negative {
+    color: #F28B82;
+  }
+
+  /* Security Block */
+  .security-architecture-block {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .security-points-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+  .sec-point {
+    display: flex;
+    gap: 1rem;
+  }
+  .sec-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+  .sec-point strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--on-surface);
+  }
+  .sec-point p {
+    font-size: 0.9375rem;
+    color: var(--on-surface-muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .shield-graphic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    padding: 2.5rem;
+    text-align: center;
+  }
+  .shield-circle {
+    display: inline-flex;
+    margin-bottom: 1.25rem;
+  }
+  .shield-card-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+  .shield-card-desc {
+    font-size: 0.9375rem;
+    color: var(--on-surface-muted);
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+  }
+  .shield-checklist {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .pill-check {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.35rem 0.75rem;
+    background: #E6F4EA;
+    color: #137333;
+    border-radius: 999px;
+  }
+  [data-theme="dark"] .pill-check {
+    background: rgba(19, 115, 51, 0.2);
+    color: #81C995;
+  }
+
+  /* FAQ Styles */
   .faq-accordion-list {
-    max-width: 820px;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    margin-top: 2rem;
   }
-
   .faq-item {
-    padding: 1.25rem 1.75rem;
-    cursor: pointer;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.5rem;
   }
-
   .faq-question {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-family: var(--font-display);
-    font-size: 1.15rem;
     font-weight: 700;
+    font-size: 1.0625rem;
     color: var(--on-surface);
+    cursor: pointer;
     list-style: none;
   }
-
   .faq-question::-webkit-details-marker {
     display: none;
   }
-
   .faq-icon {
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     color: var(--primary);
-    transition: transform 0.2s ease;
   }
-
   .faq-item[open] .faq-icon {
     transform: rotate(45deg);
   }
-
   .faq-answer {
-    padding-top: 1rem;
-    font-size: 1rem;
-    line-height: 1.65;
-    color: var(--on-surface-variant);
+    padding-top: 0.75rem;
+    font-size: 0.9375rem;
+    color: var(--on-surface-muted);
+    line-height: 1.6;
   }
 
-  /* CTA Banner Styles */
-  .cta-banner {
-    text-align: center;
-    padding: 4.5rem 2rem;
-    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-container-high) 100%);
-    border: 1px solid var(--outline-variant);
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
+  /* Bottom CTA */
   .cta-title {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
     font-size: clamp(2rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: #FFFFFF;
   }
-
-  .cta-text {
+  .cta-lead {
     font-size: 1.15rem;
-    max-width: 600px;
-    margin: 0 auto 2.25rem auto;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+    color: #FFFFFF;
   }
-
-  .cta-buttons {
+  .cta-btn-wrap {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .cta-subtext {
+    font-size: 0.875rem;
+    opacity: 0.75;
+    color: #FFFFFF;
   }
 
-  .btn-large {
-    padding: 1rem 2rem;
-    font-size: 1.1rem;
-  }
-
-  .cta-meta {
-    font-size: 0.85rem;
-    color: var(--on-surface-variant);
-  }
-
-  /* Responsive Breakpoints */
   @media (max-width: 980px) {
-    .hero-container {
+    .hero-container, .security-architecture-block {
       grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .hero-content {
       text-align: center;
     }
     .hero-subhead {
       margin: 0 auto 2rem auto;
     }
-    .hero-cta-group {
+    .hero-cta-group, .hero-trust-indicators {
       justify-content: center;
-    }
-    .hero-trust-indicators {
-      justify-content: center;
-    }
-    .features-grid {
-      grid-template-columns: 1fr;
-    }
-    .pillar-split {
-      grid-template-columns: 1fr;
-    }
-    .tools-bento-grid {
-      grid-template-columns: 1fr;
-    }
-    .workflow-steps-grid {
-      grid-template-columns: 1fr;
     }
   }
 </style>

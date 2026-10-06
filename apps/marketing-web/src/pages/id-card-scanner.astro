@@ -1,0 +1,645 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
+
+const faqItems = [
+  {
+    question: "How does IDSnap combine the front and back of an ID card onto one page?",
+    answer: "IDSnap uses a specialized 2-step capture guide. You snap the front of your ID card inside the on-screen card guide, flip the card to snap the back, and our on-device engine automatically deskews both images, corrects perspective, and composes both sides cleanly centered onto a single A4 or Letter PDF sheet."
+  },
+  {
+    question: "Does the output maintain standard ID card dimensions (actual size)?",
+    answer: "Yes. IDSnap supports 'Actual Size' mode, which prints both cards matching the international ISO/IEC 7810 ID-1 standard (85.60 × 53.98 mm). When printed at 100% scale, your photocopies match physical card dimensions exactly. You can also select 'Fit to Page' for maximum legibility."
+  },
+  {
+    question: "What is the anti-misuse watermark feature?",
+    answer: "To prevent identity theft and unauthorized document reuse by third parties, IDSnap lets you stamp a subtle, diagonal watermark across your ID copy (e.g., 'COPY — For Bank KYC Only' or 'COPY — For Rental Agreement Only') at 12% opacity. The watermark cannot be removed without damaging the document text."
+  },
+  {
+    question: "Do my ID card photos ever get uploaded to any servers?",
+    answer: "Never. Scanning, corner detection, perspective correction, filter enhancement, and PDF generation run 100% locally on your phone's processor. IDSnap has no user accounts, no document servers, and operates fully in Airplane Mode."
+  },
+  {
+    question: "Can I use existing photos of my ID from my phone's gallery?",
+    answer: "Yes. You can import existing images from your photo gallery for either the front, the back, or both sides. IDSnap detects the card borders and lets you refine corners manually if needed."
+  }
+];
+
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Scan ID Card Front and Back on One Single Page PDF",
+  "description": "Step-by-step instructions for merging both sides of any government ID, Aadhaar, driving license, or work permit onto a single A4 PDF page using IDSnap.",
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Place front of card inside viewfinder",
+      "text": "Open IDSnap and select 'ID Card (Front & Back)'. Position the front of your card within the card guide. The camera auto-detects edges and captures the card."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Flip card and capture the back",
+      "text": "Flip your card over and capture the back side. IDSnap applies automatic perspective correction and high-fidelity text enhancement."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Choose layout and optional watermark",
+      "text": "Select your layout (Stacked or Side-by-side) and sizing (Actual 85.6×54mm or Fit). Add an anti-misuse watermark with your specific submission purpose."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Save and export PDF",
+      "text": "Tap Save PDF. Your document is saved to your private on-device vault, ready to share directly to bank portals, email, or print."
+    }
+  ]
+};
+
+const pageSchema = [
+  howToSchema,
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  }
+];
+---
+
+<Layout
+  title="ID Card Front and Back on One Page PDF Scanner | IDSnap"
+  description="Merge front and back of any ID card, driving license, Aadhaar, or residency card onto 1 clean A4 page. 100% on-device, ISO ID-1 actual size, anti-misuse watermark."
+  schema={pageSchema}
+>
+  <!-- HERO SECTION -->
+  <section class="section tool-hero">
+    <div class="container hero-grid">
+      <div class="hero-text-col">
+        <div class="badge-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="3" y="4" width="18" height="16" rx="3"/>
+            <path d="M7 8h10M7 12h6M7 16h4"/>
+          </svg>
+          2-Step Capture • ISO/IEC 7810 ID-1 Standard • 100% Offline
+        </div>
+        <h1 class="hero-title">
+          ID Card Front & Back on <span class="gradient-text">One Single Page</span>
+        </h1>
+        <p class="hero-desc">
+          Stop taking two separate photos and struggling to stitch them together. IDSnap captures both sides of your national ID, Aadhaar, driving license, voter ID, or residency card and arranges them cleanly on a single A4 PDF sheet—with authentic actual-size dimensions and anti-misuse watermarking.
+        </p>
+
+        <div class="hero-actions">
+          <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-hero">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3.609 1.814L13.793 12 3.61 22.186a2.235 2.235 0 0 1-.61-.318c-.469-.34-.75-.89-.75-1.488V3.62c0-.598.281-1.148.75-1.488.196-.142.408-.25.61-.318zm11.603 11.603l2.607-2.607-12.01-6.93 9.403 9.537zm0 1.166l-9.403 9.537 12.01-6.93-2.607-2.607zm1.166-1.166l3.208 1.852c.983.567.983 1.493 0 2.06l-3.208 1.852V13.417z"/>
+            </svg>
+            Download Free on Google Play
+          </a>
+          <span class="trust-badge-mini">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E8A7E" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            Zero cloud uploads • Airplane mode verified
+          </span>
+        </div>
+      </div>
+
+      <!-- VISUAL DEMO INTERACTIVE CARD -->
+      <div class="hero-visual-col">
+        <div class="card-glass a4-sheet-preview">
+          <div class="a4-header-bar">
+            <span class="a4-tag">A4 Document Sheet (Preview)</span>
+            <span class="a4-tag a4-tag-active">Actual Size: 85.6 × 54 mm</span>
+          </div>
+
+          <div class="a4-sheet-canvas">
+            <!-- Diagonal Watermark Overlay -->
+            <div class="watermark-overlay" id="watermark-text">COPY — FOR BANK KYC ONLY</div>
+
+            <!-- Front Card Simulation -->
+            <div class="simulated-id-card card-front">
+              <div class="card-chip"></div>
+              <div class="card-avatar"></div>
+              <div class="card-lines">
+                <div class="line line-title"></div>
+                <div class="line line-sub"></div>
+                <div class="line line-detail"></div>
+              </div>
+              <span class="side-indicator">FRONT</span>
+            </div>
+
+            <!-- Back Card Simulation -->
+            <div class="simulated-id-card card-back">
+              <div class="card-barcode"></div>
+              <div class="card-lines">
+                <div class="line line-address"></div>
+                <div class="line line-address-2"></div>
+                <div class="line line-qr-row"></div>
+              </div>
+              <div class="card-qr-box"></div>
+              <span class="side-indicator">BACK</span>
+            </div>
+          </div>
+
+          <div class="a4-controls-mock">
+            <div class="control-row">
+              <span class="control-label">Layout:</span>
+              <button class="pill-btn pill-btn-active">Stacked (Vertical)</button>
+              <button class="pill-btn">Side-by-Side</button>
+            </div>
+            <div class="control-row">
+              <span class="control-label">Watermark:</span>
+              <span class="watermark-pill">COPY — For Bank KYC</span>
+              <span class="watermark-badge">Anti-Misuse Protected</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM VS SOLUTION GRID -->
+  <section class="section comparison-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">The Everyday Identity Problem Solved</h2>
+        <p class="section-desc">
+          Banks, HR departments, rental agreements, and government portals constantly demand both sides of your ID on a single page. Here is how IDSnap makes it effortless and private.
+        </p>
+      </div>
+
+      <div class="feature-grid-3">
+        <div class="card-glass feature-detail-card">
+          <div class="feature-icon-badge">📐</div>
+          <h3 class="feature-detail-title">True ISO/IEC 7810 Sizing</h3>
+          <p class="feature-detail-text">
+            Standard cards (credit cards, driver's licenses, national IDs) measure exactly 85.60 × 53.98 mm. IDSnap enforces this exact aspect ratio, ensuring your printed PDF looks crisp, proportional, and photocopier-accurate.
+          </p>
+        </div>
+
+        <div class="card-glass feature-detail-card">
+          <div class="feature-icon-badge">🛡️</div>
+          <h3 class="feature-detail-title">Anti-Misuse Purpose Watermark</h3>
+          <p class="feature-detail-text">
+            Never send a blank ID copy that could be repurposed for unauthorized SIM activations or loans. Stamp a 12% opacity diagonal watermark stating your exact purpose ("FOR VISA APPLICATION ONLY").
+          </p>
+        </div>
+
+        <div class="card-glass feature-detail-card">
+          <div class="feature-icon-badge">📴</div>
+          <h3 class="feature-detail-title">Zero Cloud Leakage</h3>
+          <p class="feature-detail-text">
+            Never upload sensitive government ID numbers to untrusted cloud servers. Every crop, perspective transform, and PDF conversion executes strictly on your local device CPU.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP BY STEP GUIDE -->
+  <section class="section steps-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="badge-pill">Fast 2-Step Flow</div>
+        <h2 class="section-title">How It Works in Under 30 Seconds</h2>
+      </div>
+
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Scan Front of Card</h3>
+          <p class="step-text">Place the front of your card inside the on-screen card guide. IDSnap detects the 4 corners, deskews perspective, and enhances text clarity.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3 class="step-title">Flip & Scan Back</h3>
+          <p class="step-text">Flip your card over. IDSnap snaps the back with matching perspective and uniform contrast.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Preview on Clean A4 Sheet</h3>
+          <p class="step-text">Choose Stacked or Side-by-Side arrangement. Select Actual Size (85.6 × 54 mm) or Fit. Optionally add your purpose watermark.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <h3 class="step-title">Save & Share Single PDF</h3>
+          <p class="step-text">Export one validated PDF document ready for WhatsApp, email, printing, or secure storage inside your encrypted IDSnap Vault.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ SECTION -->
+  <section class="section faq-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-desc">Everything you need to know about scanning ID cards on one page.</p>
+      </div>
+
+      <div class="faq-list">
+        {faqItems.map((item) => (
+          <div class="card-glass faq-card">
+            <h3 class="faq-q">{item.question}</h3>
+            <p class="faq-a">{item.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM CTA -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="card-glass cta-banner text-center">
+        <h2 class="cta-title">Scan Both Sides of Your ID on One Page Now</h2>
+        <p class="cta-text">
+          Free, 100% offline, and completely private. Available now on Google Play.
+        </p>
+        <div class="cta-buttons">
+          <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-large">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3.609 1.814L13.793 12 3.61 22.186a2.235 2.235 0 0 1-.61-.318c-.469-.34-.75-.89-.75-1.488V3.62c0-.598.281-1.148.75-1.488.196-.142.408-.25.61-.318zm11.603 11.603l2.607-2.607-12.01-6.93 9.403 9.537zm0 1.166l-9.403 9.537 12.01-6.93-2.607-2.607zm1.166-1.166l3.208 1.852c.983.567.983 1.493 0 2.06l-3.208 1.852V13.417z"/>
+            </svg>
+            Download IDSnap on Google Play
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .tool-hero {
+    padding-top: 4rem;
+    padding-bottom: 5rem;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin: 1.25rem 0 1rem 0;
+  }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: var(--on-surface-variant);
+    margin-bottom: 2rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .btn-hero {
+    padding: 0.85rem 1.75rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .trust-badge-mini {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--on-surface-variant);
+    font-weight: 500;
+  }
+
+  /* A4 Sheet Interactive Visualizer */
+  .a4-sheet-preview {
+    padding: 1.5rem;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .a4-header-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .a4-tag {
+    color: var(--on-surface-variant);
+  }
+
+  .a4-tag-active {
+    color: var(--secondary);
+  }
+
+  .a4-sheet-canvas {
+    position: relative;
+    background: #FFFFFF;
+    aspect-ratio: 1 / 1.414; /* A4 aspect ratio */
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    overflow: hidden;
+  }
+
+  .watermark-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: rgba(36, 87, 214, 0.16);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+    white-space: nowrap;
+    border: 2px dashed rgba(36, 87, 214, 0.2);
+    padding: 0.5rem 1.5rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .simulated-id-card {
+    position: relative;
+    width: 82%;
+    height: 38%;
+    background: linear-gradient(135deg, #F0F4FF 0%, #E2ECFF 100%);
+    border: 1px solid #C4D7FE;
+    border-radius: 8px;
+    padding: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  .card-avatar {
+    width: 38px;
+    height: 48px;
+    background-color: #B9C1CE;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .card-lines {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .line {
+    background-color: #A4B8D9;
+    border-radius: 2px;
+  }
+
+  .line-title { width: 60%; height: 6px; }
+  .line-sub { width: 85%; height: 5px; }
+  .line-detail { width: 45%; height: 5px; }
+
+  .line-address { width: 90%; height: 5px; }
+  .line-address-2 { width: 75%; height: 5px; }
+  .line-qr-row { width: 50%; height: 5px; }
+
+  .card-qr-box {
+    width: 32px;
+    height: 32px;
+    background-color: #A4B8D9;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .side-indicator {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #2457D6;
+    letter-spacing: 0.05em;
+  }
+
+  .a4-controls-mock {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+  }
+
+  .control-label {
+    font-weight: 600;
+    color: var(--on-surface-variant);
+  }
+
+  .pill-btn {
+    background: var(--surface-container-high);
+    border: 1px solid var(--outline-variant);
+    color: var(--on-surface);
+    padding: 0.25rem 0.65rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .pill-btn-active {
+    background: var(--primary);
+    color: var(--on-primary);
+    border-color: var(--primary);
+  }
+
+  .watermark-pill {
+    background: rgba(36, 87, 214, 0.1);
+    color: var(--primary);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .watermark-badge {
+    color: var(--secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  /* Grid details */
+  .feature-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem;
+    margin-top: 3rem;
+  }
+
+  .feature-detail-card {
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .feature-icon-badge {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-detail-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--on-surface);
+  }
+
+  .feature-detail-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--on-surface-variant);
+  }
+
+  /* Steps section */
+  .steps-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.25rem;
+    position: relative;
+  }
+
+  .step-number {
+    width: 36px;
+    height: 36px;
+    background: var(--primary);
+    color: var(--on-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--on-surface);
+  }
+
+  .step-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--on-surface-variant);
+  }
+
+  /* FAQ */
+  .faq-list {
+    max-width: 820px;
+    margin: 2.5rem auto 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-card {
+    padding: 1.5rem 1.75rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .faq-q {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--on-surface);
+    margin-bottom: 0.5rem;
+  }
+
+  .faq-a {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--on-surface-variant);
+  }
+
+  /* CTA */
+  .cta-banner {
+    padding: 4rem 2rem;
+    border-radius: var(--radius-xl);
+  }
+
+  .cta-title {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .cta-text {
+    font-size: 1.1rem;
+    color: var(--on-surface-variant);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .btn-large {
+    padding: 0.95rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .feature-grid-3 { grid-template-columns: 1fr; }
+    .steps-container { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .steps-container { grid-template-columns: 1fr; }
+    .hero-title { font-size: 2.2rem; }
+  }
+</style>

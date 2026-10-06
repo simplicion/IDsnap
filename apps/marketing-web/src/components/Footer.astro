@@ -1,5 +1,6 @@
 ---
 const currentYear = new Date().getFullYear();
+const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
 ---
 
 <footer class="site-footer">
@@ -18,37 +19,40 @@ const currentYear = new Date().getFullYear();
           <span class="footer-brand-name">IDSnap</span>
         </a>
         <p class="footer-tagline">
-          The all-in-one private identity & document studio. Scan ID cards front-and-back, generate 2FA codes, crop official passport photos, and compress PDFs—your documents never leave your phone.
+          The calm, private identity & document studio for your phone. Scan ID cards front-and-back, auto-frame official passport photos, compress PDFs to exact portal sizes, and safeguard 2FA keys—100% on-device.
         </p>
-        <div class="footer-badge-wrap">
-          <span class="badge-pill">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        
+        <div class="footer-play-cta">
+          <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary footer-play-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3.609 1.814L13.793 12 3.61 22.186a2.235 2.235 0 0 1-.61-.318c-.469-.34-.75-.89-.75-1.488V3.62c0-.598.281-1.148.75-1.488.196-.142.408-.25.61-.318zm11.603 11.603l2.607-2.607-12.01-6.93 9.403 9.537zm0 1.166l-9.403 9.537 12.01-6.93-2.607-2.607zm1.166-1.166l3.208 1.852c.983.567.983 1.493 0 2.06l-3.208 1.852V13.417z"/>
             </svg>
-            On-Device Architecture
-          </span>
+            <span>Get it on Google Play</span>
+          </a>
         </div>
       </div>
 
       <div class="footer-links-col">
-        <h3 class="footer-heading">Features</h3>
+        <h3 class="footer-heading">Identity & Tools</h3>
         <ul class="footer-nav-list">
-          <li><a href="/#identity">ID Card 1-Sheet Scanner</a></li>
-          <li><a href="/#authenticator">Offline 2FA Authenticator</a></li>
-          <li><a href="/#passport">Passport-Size Photo Maker</a></li>
-          <li><a href="/#compress">Target-Size PDF Compressor</a></li>
-          <li><a href="/#ocr">On-Device OCR & Text</a></li>
-          <li><a href="/#convert">Offline Format Converter</a></li>
+          <li><a href="/id-card-scanner">ID Card 1-Sheet Scanner</a></li>
+          <li><a href="/passport-photo-maker">Passport & Visa Photo Studio</a></li>
+          <li><a href="/compress-pdf">Target-Size PDF Compressor</a></li>
+          <li><a href="/exam-application-kits">Exam & Application Kits</a></li>
+          <li><a href="/authenticator">Offline 2FA Authenticator</a></li>
+          <li><a href="/document-vault">Encrypted Document Vault</a></li>
+          <li><a href="/document-scanner">Private Document Scanner</a></li>
         </ul>
       </div>
 
       <div class="footer-links-col">
-        <h3 class="footer-heading">Security & Trust</h3>
+        <h3 class="footer-heading">Security & Architecture</h3>
         <ul class="footer-nav-list">
           <li><a href="/security">Security Architecture</a></li>
           <li><a href="/security#airplane-mode">Airplane Mode Verification</a></li>
-          <li><a href="/security#keychain">Biometric KeyStore & Keychain</a></li>
-          <li><a href="/data-deletion">Data & Account Deletion</a></li>
+          <li><a href="/security#keychain">Biometric KeyStore & Enclave</a></li>
+          <li><a href="/data-deletion">Data & Privacy Control</a></li>
+          <li><a href="/store-assets">Press & Google Play Assets</a></li>
         </ul>
       </div>
 
@@ -57,9 +61,9 @@ const currentYear = new Date().getFullYear();
         <ul class="footer-nav-list">
           <li><a href="/privacy">Privacy Policy</a></li>
           <li><a href="/terms">Terms of Service</a></li>
-          <li><a href="/privacy#gdpr">GDPR & CCPA Rights</a></li>
+          <li><a href="/privacy#gdpr">GDPR & CCPA Transparency</a></li>
           <li><a href="/privacy#google-play">Google Play Data Safety</a></li>
-          <li><a href="/contact">Developer Support & Security Contact</a></li>
+          <li><a href="/contact">Developer Support & Security</a></li>
         </ul>
       </div>
     </div>
@@ -67,10 +71,10 @@ const currentYear = new Date().getFullYear();
     <div class="footer-bottom">
       <div class="footer-disclaimers">
         <p class="disclaimer-text">
-          <strong>Compliance Notice:</strong> IDSnap operates exclusively on the user's local device. No personal identity records, biometric templates, 2FA secret seeds, document images, or OCR text layers are ever uploaded, transmitted, or stored on remote servers.
+          <strong>Privacy By Design:</strong> IDSnap operates exclusively on your local device. No personal identity records, biometric templates, 2FA secret seeds, document images, or OCR text layers are ever uploaded, transmitted, or stored on remote servers. The Android release build requests zero internet permissions for core document workflows.
         </p>
         <p class="disclaimer-text">
-          Digital scans produced by IDSnap are digitized copies. Photo and document requirements must be verified against the guidelines of the portal or office you submit to.
+          <strong>Compliance Notice:</strong> Digital scans produced by IDSnap are digitized representations. Always verify specific dimensions, file weight limits, and background requirements against the published guidelines of the official portal, embassy, or institution you submit to.
         </p>
       </div>
 
@@ -80,7 +84,8 @@ const currentYear = new Date().getFullYear();
         </p>
         <div class="footer-compliance-badges">
           <span class="compliance-tag">Google Play Verified</span>
-          <span class="compliance-tag">Apple App Privacy Nutrition Label Compliant</span>
+          <span class="compliance-tag">Zero Cloud Uploads</span>
+          <span class="compliance-tag">Hardware Enclave Encrypted</span>
           <span class="compliance-tag">GDPR Ready</span>
         </div>
       </div>
@@ -99,7 +104,7 @@ const currentYear = new Date().getFullYear();
 
   .footer-top {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 1.1fr 1.1fr 1.1fr;
     gap: 3rem;
     padding-bottom: 3.5rem;
     border-bottom: 1px solid var(--outline-variant);
@@ -125,7 +130,22 @@ const currentYear = new Date().getFullYear();
     font-size: 0.95rem;
     line-height: 1.6;
     margin-bottom: 1.5rem;
-    max-width: 360px;
+    max-width: 380px;
+    color: var(--on-surface-variant);
+  }
+
+  .footer-play-cta {
+    margin-top: 1.25rem;
+  }
+
+  .footer-play-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 1.35rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: var(--radius-full);
   }
 
   .footer-heading {
@@ -168,14 +188,14 @@ const currentYear = new Date().getFullYear();
   .footer-disclaimers {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.65rem;
     border-left: 3px solid var(--outline);
     padding-left: 1.25rem;
   }
 
   .disclaimer-text {
     font-size: 0.8rem;
-    line-height: 1.5;
+    line-height: 1.55;
     color: var(--on-surface-variant);
   }
 

@@ -1,0 +1,728 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const playStoreUrl = "https://play.google.com/store/apps/details?id=com.idsnap.app&hl=en";
+
+const presets = [
+  {
+    name: "Passport Size",
+    dims: "35 × 45 mm",
+    head: "71% – 80% (32–36 mm)",
+    margin: "9% crown gap",
+    countries: "Indian Passport, Schengen Visa, UK, Canada, Australia, Singapore, New Zealand",
+    usage: "International passports, visa applications, government identity registries."
+  },
+  {
+    name: "Square Photo",
+    dims: "2 × 2 in (51 × 51 mm / 600×600 px)",
+    head: "50% – 69% (1 – 1 3/8 in)",
+    margin: "12% crown gap",
+    countries: "US Visa, US Green Card (DV Lottery), Indian OCI & PAN Card",
+    usage: "Consular visa interviews, DS-160 forms, Overseas Citizenship of India."
+  },
+  {
+    name: "ID Photo",
+    dims: "30 × 40 mm",
+    head: "62% – 78%",
+    margin: "10% crown gap",
+    countries: "European & Asian Standards, Driving Licenses, Staff Badges",
+    usage: "University ID cards, company badges, driver's licenses."
+  },
+  {
+    name: "Stamp Size",
+    dims: "20 × 25 mm",
+    head: "55% – 72%",
+    margin: "10% crown gap",
+    countries: "Exam Admit Cards, College Forms, Bank Account Opening",
+    usage: "Competitive exam entrance hall tickets, school admissions."
+  }
+];
+
+const faqItems = [
+  {
+    question: "How does IDSnap ensure my photo complies with official passport head-size ratios?",
+    answer: "IDSnap uses on-device Google ML Kit face detection to automatically locate the crown of your head, eyes, and chin. It frames the photo so your head fills the exact required percentage (e.g., 50–69% for US Visa, 70–80% for 35×45 mm Schengen/Indian passport) and maintains the mandatory gap above your hair."
+  },
+  {
+    question: "Can I generate a US Visa 2x2 inch photo with a max file size under 240 KB?",
+    answer: "Yes. The US Department of State requires a 2×2 inch photo between 600×600 px and 1200×1200 px, with a file size under 240 KB. IDSnap's built-in target compressor automatically enforces the resolution and keeps the JPEG file size strictly below 240 KB without manual compression guessing."
+  },
+  {
+    question: "Can I print multiple passport photos on a 4x6 or A4 sheet?",
+    answer: "Yes. Once your photo is cropped and framed, IDSnap can tile it onto standard 4×6 inch (10×15 cm) photo paper or A4 sheets with neat cut marks. You can take the exported JPEG to any local pharmacy, print kiosk, or home printer for pennies."
+  },
+  {
+    question: "Does the app replace or whiten the background?",
+    answer: "IDSnap provides real-time lighting and background contrast guides on the camera viewfinder, helping you snap against an existing plain off-white or light wall. By avoiding fake AI synthetic cutouts, your photo avoids rejection by biometric verification systems at embassies and border control."
+  },
+  {
+    question: "Can I enter a custom photo size for a specific university or job portal?",
+    answer: "Yes. IDSnap includes a full Custom Preset builder. You can specify width and height in millimeters, inches, or exact pixels (e.g., 413 × 531 px), choose your desired DPI (300 DPI by default), and cap the maximum file weight (e.g., max 50 KB)."
+  }
+];
+
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Make Official Passport & Visa Photos on Your Phone",
+  "description": "Step-by-step instructions for taking, auto-framing, and exporting official 35x45mm or 2x2 inch passport photos using IDSnap.",
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Select your standard preset",
+      "text": "Choose 'Passport size (35 × 45 mm)', 'Square (2 × 2 in / US Visa)', or enter custom dimensions in mm, inches, or pixels."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Align your face with the biometric guide",
+      "text": "Position your face inside the on-screen oval. The guide indicates eye level, chin position, and head margin to ensure official compliance."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Review auto-crop and color fidelity",
+      "text": "IDSnap automatically crops your photo to the exact millimeter aspect ratio and fine-tunes lighting and sharpness."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Export single photo or printable sheet",
+      "text": "Save as a single compressed JPEG under portal limits (e.g. ≤ 50 KB or ≤ 240 KB) or generate a printable 4x6 inch grid for physical printing."
+    }
+  ]
+};
+
+const pageSchema = [
+  howToSchema,
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  }
+];
+---
+
+<Layout
+  title="Passport Photo Maker & Resizer — 35x45mm, 2x2 in & Custom | IDSnap"
+  description="Make official passport & visa photos on your phone. Auto-framed 35x45 mm, 2x2 inch US Visa, Indian passport, and exam portal photos under 50 KB. 100% on-device."
+  schema={pageSchema}
+>
+  <!-- HERO SECTION -->
+  <section class="section tool-hero">
+    <div class="container hero-grid">
+      <div class="hero-text-col">
+        <div class="badge-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          35×45 mm • 2×2 in US Visa • Biometric Head Guides • Print Sheets
+        </div>
+        <h1 class="hero-title">
+          Official Passport & Visa Photo Maker <span class="gradient-text">On Your Phone</span>
+        </h1>
+        <p class="hero-desc">
+          Skip expensive photo studios and sketchy online uploaders. IDSnap crops and auto-frames your portrait to exact international passport specifications: 35×45 mm for Schengen & Indian passports, 2×2 in for US Visas, and custom sizes under 50 KB for exam portals—with 100% on-device biometric alignment.
+        </p>
+
+        <div class="hero-actions">
+          <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-hero">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3.609 1.814L13.793 12 3.61 22.186a2.235 2.235 0 0 1-.61-.318c-.469-.34-.75-.89-.75-1.488V3.62c0-.598.281-1.148.75-1.488.196-.142.408-.25.61-.318zm11.603 11.603l2.607-2.607-12.01-6.93 9.403 9.537zm0 1.166l-9.403 9.537 12.01-6.93-2.607-2.607zm1.166-1.166l3.208 1.852c.983.567.983 1.493 0 2.06l-3.208 1.852V13.417z"/>
+            </svg>
+            Download Free on Google Play
+          </a>
+          <span class="trust-badge-mini">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E8A7E" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            On-device face alignment • No cloud uploads
+          </span>
+        </div>
+      </div>
+
+      <!-- VISUAL VIEWFINDER CARD -->
+      <div class="hero-visual-col">
+        <div class="card-glass viewfinder-card">
+          <div class="viewfinder-header">
+            <span class="vf-badge">Live Alignment Guide</span>
+            <span class="vf-preset-name">35 × 45 mm (Passport)</span>
+          </div>
+
+          <div class="viewfinder-lens">
+            <div class="grid-bracket tl"></div>
+            <div class="grid-bracket tr"></div>
+            <div class="grid-bracket bl"></div>
+            <div class="grid-bracket br"></div>
+
+            <!-- Crown Margin Indicator -->
+            <div class="crown-guide-line">
+              <span class="guide-tag">Crown Gap (9%)</span>
+            </div>
+
+            <!-- Head Oval Guide -->
+            <div class="head-oval-guide">
+              <div class="eye-line-guide">
+                <span class="guide-tag-eye">Eye Level (47%)</span>
+              </div>
+            </div>
+
+            <!-- Chin Baseline Indicator -->
+            <div class="chin-guide-line">
+              <span class="guide-tag">Chin Line (75% Head Ratio)</span>
+            </div>
+          </div>
+
+          <div class="viewfinder-footer">
+            <div class="vf-stat">
+              <span class="stat-lbl">Dimensions</span>
+              <span class="stat-val">35 × 45 mm (413 × 531 px @ 300 DPI)</span>
+            </div>
+            <div class="vf-stat">
+              <span class="stat-lbl">Max File Size</span>
+              <span class="stat-val stat-val-green">Strictly ≤ 50 KB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESETS COMPARISON TABLE -->
+  <section class="section presets-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">Standardized Photo Presets Built In</h2>
+        <p class="section-desc">
+          Compliant with international civil aviation (ICAO Doc 9303) and state government specifications.
+        </p>
+      </div>
+
+      <div class="presets-table-wrap card-glass">
+        <table class="presets-table">
+          <thead>
+            <tr>
+              <th>Preset Name</th>
+              <th>Dimensions</th>
+              <th>Head Ratio</th>
+              <th>Crown Margin</th>
+              <th>Standard Authorities & Uses</th>
+            </tr>
+          </thead>
+          <tbody>
+            {presets.map((p) => (
+              <tr>
+                <td><strong>{p.name}</strong></td>
+                <td><span class="pill-dim">{p.dims}</span></td>
+                <td>{p.head}</td>
+                <td>{p.margin}</td>
+                <td>
+                  <p class="countries-text">{p.countries}</p>
+                  <span class="usage-note">{p.usage}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES 3-COL -->
+  <section class="section features-detail-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="badge-pill">Precision Engineering</div>
+        <h2 class="section-title">Why IDSnap Photos Pass Biometric Checks</h2>
+      </div>
+
+      <div class="feature-grid-3">
+        <div class="card-glass feature-detail-card">
+          <div class="feature-icon-badge">🎯</div>
+          <h3 class="feature-detail-title">On-Device Face Framing</h3>
+          <p class="feature-detail-text">
+            Using Google ML Kit, IDSnap detects the subject's face boundaries in milliseconds. It aligns the crown and chin to the exact percentage required by visa guidelines, avoiding rejection for improper head height.
+          </p>
+        </div>
+
+        <div class="card-glass feature-detail-card">
+          <div class="feature-icon-badge">🖨️</div>
+          <h3 class="feature-detail-title">Printable 4×6 & A4 Sheets</h3>
+          <p class="feature-detail-text">
+            Need physical photos for embassy interviews? Export a printable sheet with 6 or 12 photos tiled at true 300 DPI with light border guidelines for razor-sharp scissor cutting.
+          </p>
+        </div>
+
+        <div class="card-glass feature-detail-card">
+          <div class="feature-icon-badge">⚖️</div>
+          <h3 class="feature-detail-title">Exact Target Size Search</h3>
+          <p class="feature-detail-text">
+            Applying online? University and job portals strictly reject photos over 50 KB or 100 KB. IDSnap searches compression levels dynamically to keep your photo right under the threshold while retaining crisp facial clarity.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW TO GUIDE -->
+  <section class="section steps-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">How to Create Your Passport Photo in 4 Steps</h2>
+      </div>
+
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Choose Preset or Custom</h3>
+          <p class="step-text">Select 35×45 mm, 2×2 inch US Visa, or enter custom width and height in mm, inches, or pixels.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3 class="step-title">Align with Biometric Oval</h3>
+          <p class="step-text">Position your eyes on the eye-line guide and crown within the top margin indicator for verified compliance.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Set Max File Size</h3>
+          <p class="step-text">If your upload portal requires files under 50 KB or 240 KB, toggle the file-size limiter.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <h3 class="step-title">Save or Print</h3>
+          <p class="step-text">Export an individual digital photo or tile onto a 4×6 inch photo sheet ready to print locally.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ SECTION -->
+  <section class="section faq-section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-desc">Common questions regarding passport, visa, and admit-card photo creation.</p>
+      </div>
+
+      <div class="faq-list">
+        {faqItems.map((item) => (
+          <div class="card-glass faq-card">
+            <h3 class="faq-q">{item.question}</h3>
+            <p class="faq-a">{item.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- BOTTOM CTA -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="card-glass cta-banner text-center">
+        <h2 class="cta-title">Create Official Passport Photos in Seconds</h2>
+        <p class="cta-text">
+          Never overpay at a photo booth again. Private, on-device, and 100% free to try on Google Play.
+        </p>
+        <div class="cta-buttons">
+          <a href={playStoreUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-large">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3.609 1.814L13.793 12 3.61 22.186a2.235 2.235 0 0 1-.61-.318c-.469-.34-.75-.89-.75-1.488V3.62c0-.598.281-1.148.75-1.488.196-.142.408-.25.61-.318zm11.603 11.603l2.607-2.607-12.01-6.93 9.403 9.537zm0 1.166l-9.403 9.537 12.01-6.93-2.607-2.607zm1.166-1.166l3.208 1.852c.983.567.983 1.493 0 2.06l-3.208 1.852V13.417z"/>
+            </svg>
+            Download IDSnap on Google Play
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .tool-hero {
+    padding-top: 4rem;
+    padding-bottom: 5rem;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin: 1.25rem 0 1rem 0;
+  }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: var(--on-surface-variant);
+    margin-bottom: 2rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .btn-hero {
+    padding: 0.85rem 1.75rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+
+  .trust-badge-mini {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--on-surface-variant);
+    font-weight: 500;
+  }
+
+  /* Viewfinder Card */
+  .viewfinder-card {
+    padding: 1.75rem;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .viewfinder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .vf-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--secondary);
+  }
+
+  .vf-preset-name {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--on-surface);
+  }
+
+  .viewfinder-lens {
+    position: relative;
+    background: #FAFBFC;
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-md);
+    aspect-ratio: 35 / 45;
+    max-height: 360px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .grid-bracket {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: var(--primary);
+    border-style: solid;
+  }
+  .grid-bracket.tl { top: 12px; left: 12px; border-width: 2.5px 0 0 2.5px; }
+  .grid-bracket.tr { top: 12px; right: 12px; border-width: 2.5px 2.5px 0 0; }
+  .grid-bracket.bl { bottom: 12px; left: 12px; border-width: 0 0 2.5px 2.5px; }
+  .grid-bracket.br { bottom: 12px; right: 12px; border-width: 0 2.5px 2.5px 0; }
+
+  .crown-guide-line {
+    position: absolute;
+    top: 9%;
+    width: 80%;
+    border-bottom: 1px dashed rgba(36, 87, 214, 0.4);
+    text-align: right;
+  }
+
+  .head-oval-guide {
+    position: relative;
+    width: 55%;
+    height: 75%;
+    border: 2px dashed #2457D6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .eye-line-guide {
+    position: absolute;
+    top: 47%;
+    width: 100%;
+    border-bottom: 1.5px solid rgba(14, 138, 126, 0.6);
+  }
+
+  .chin-guide-line {
+    position: absolute;
+    bottom: 16%;
+    width: 80%;
+    border-top: 1px dashed rgba(36, 87, 214, 0.4);
+    text-align: right;
+  }
+
+  .guide-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--primary);
+    background: rgba(36, 87, 214, 0.1);
+    padding: 1px 4px;
+    border-radius: 2px;
+  }
+
+  .guide-tag-eye {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--secondary);
+    background: rgba(14, 138, 126, 0.12);
+    padding: 1px 4px;
+    border-radius: 2px;
+    position: absolute;
+    right: -24px;
+    top: -12px;
+  }
+
+  .viewfinder-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.25rem;
+    gap: 1rem;
+  }
+
+  .vf-stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-lbl {
+    font-size: 0.72rem;
+    color: var(--on-surface-variant);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .stat-val {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--on-surface);
+  }
+
+  .stat-val-green {
+    color: var(--secondary);
+  }
+
+  /* Table wrap */
+  .presets-table-wrap {
+    overflow-x: auto;
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .presets-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+
+  .presets-table th {
+    text-align: left;
+    padding: 0.85rem 1rem;
+    border-bottom: 2px solid var(--outline-variant);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    color: var(--on-surface-variant);
+  }
+
+  .presets-table td {
+    padding: 1.1rem 1rem;
+    border-bottom: 1px solid var(--outline-variant);
+    vertical-align: top;
+  }
+
+  .pill-dim {
+    background: rgba(36, 87, 214, 0.08);
+    color: var(--primary);
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+  }
+
+  .countries-text {
+    font-weight: 600;
+    color: var(--on-surface);
+    margin-bottom: 0.25rem;
+  }
+
+  .usage-note {
+    font-size: 0.8rem;
+    color: var(--on-surface-variant);
+  }
+
+  /* Feature Grid */
+  .feature-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.75rem;
+    margin-top: 3rem;
+  }
+
+  .feature-detail-card {
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .feature-icon-badge {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-detail-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--on-surface);
+  }
+
+  .feature-detail-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--on-surface-variant);
+  }
+
+  /* Steps section */
+  .steps-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .step-card {
+    background: var(--surface);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.25rem;
+  }
+
+  .step-number {
+    width: 36px;
+    height: 36px;
+    background: var(--primary);
+    color: var(--on-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .step-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--on-surface);
+  }
+
+  .step-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--on-surface-variant);
+  }
+
+  /* FAQ */
+  .faq-list {
+    max-width: 820px;
+    margin: 2.5rem auto 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-card {
+    padding: 1.5rem 1.75rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .faq-q {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--on-surface);
+    margin-bottom: 0.5rem;
+  }
+
+  .faq-a {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--on-surface-variant);
+  }
+
+  /* CTA */
+  .cta-banner {
+    padding: 4rem 2rem;
+    border-radius: var(--radius-xl);
+  }
+
+  .cta-title {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+
+  .cta-text {
+    font-size: 1.1rem;
+    color: var(--on-surface-variant);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .btn-large {
+    padding: 0.95rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 960px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .feature-grid-3 { grid-template-columns: 1fr; }
+    .steps-container { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .steps-container { grid-template-columns: 1fr; }
+    .hero-title { font-size: 2.2rem; }
+  }
+</style>

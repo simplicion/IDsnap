@@ -54,7 +54,8 @@ final _adWidgetUse = RegExp(
   r'\b(AdBannerSlot|AdNativeSlot)\s*\(|\bmaybeShowResultInterstitial\s*\(',
 );
 
-/// Feature folders that must never contain any ad code at all.
+/// Feature folders that must never show or request an ad. (Settings may
+/// only reopen the consent form: "Ad privacy choices".)
 const _adFreePackages = {
   'packages/features/library', // ID Vault, folders, document viewer
   'packages/features/authenticator',
@@ -163,9 +164,10 @@ void main() {
         }
         if (_adFreePackages.contains(name) &&
             RegExp(
-              r'adsServiceProvider|AdsService\b|AdNative|AdBanner',
+              'AdNative|AdBanner|takeNative|buildBanner|resolveBannerHeight|'
+              '[sS]howInterstitial|loadInterstitial',
             ).hasMatch(source)) {
-          violations.add('$rel is in an ad-free area but touches ads');
+          violations.add('$rel is in an ad-free area but shows ads');
         }
       }
     }

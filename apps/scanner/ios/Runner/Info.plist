@@ -19,7 +19,7 @@
 	<!-- Ads (docs/adr/0013-free-with-ads.md). The App ID comes from
 	     Flutter/AdMob.xcconfig. Ads are OFF on iOS until iOS AdMob IDs exist.
 	     IDSnap never asks for the advertising identifier (IDFA): there is no
-	     NSUserTrackingUsageDescription and no App Tracking Transparency
+	     tracking usage description and no App Tracking Transparency
 	     prompt, so iOS ads are not based on cross-app tracking. Nothing is
 	     measured before the app starts the ads SDK (after consent). -->
 	<key>GADApplicationIdentifier</key>
