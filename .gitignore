@@ -27,3 +27,22 @@ key.properties
 .DS_Store
 Thumbs.db
 apps/docs/assets/docs/
+# Licence server: secrets and databases never go in git
+apps/license_server/.env
+apps/license_server/.env.*
+!apps/license_server/.env.example
+*.db
+*.db-wal
+*.db-shm
+# Release outputs and signing material (never commit)
+build-artifacts/
+**/build/symbols/
+*.p12
+*.p8
+*.mobileprovision
+**/android/app/upload.jks
+# Environment files anywhere (keep checked-in examples)
+.env
+.env.*
+!.env.example
+!**/.env.example

@@ -105,6 +105,11 @@ void main() {
     tester,
   ) async {
     await pumpSave(tester);
+    await tester.scrollUntilVisible(
+      find.byType(Switch),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tester.tap(find.byType(Switch));
     await tester.pump();
     await tester.tap(find.text('Save PDF'));

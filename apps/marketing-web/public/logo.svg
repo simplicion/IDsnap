@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" fill="none">
+  <defs>
+    <filter id="badgeShadow" x="-10%" y="-10%" width="130%" height="130%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#14234A" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- Monogram Icon Mark with Crisp White Background -->
+  <g transform="translate(4, 4)">
+    <!-- Base Rounded White Badge with Precision Outline -->
+    <rect width="56" height="56" rx="14" fill="#FFFFFF" stroke="#DDE2EA" stroke-width="1.5" filter="url(#badgeShadow)"/>
+    
+    <!-- Viewfinder Corner Brackets in Royal Blue (#2457D6) -->
+    <path d="M13 21V15C13 13.9 13.9 13 15 13H21" stroke="#2457D6" stroke-width="2.75" stroke-linecap="round"/>
+    <path d="M43 13H37M43 13C44.1 13 45 13.9 45 15V21" stroke="#2457D6" stroke-width="2.75" stroke-linecap="round"/>
+    <path d="M13 35V41C13 42.1 13.9 43 15 43H21" stroke="#2457D6" stroke-width="2.75" stroke-linecap="round"/>
+    <path d="M43 43H37M43 43C44.1 43 45 42.1 45 41V35" stroke="#2457D6" stroke-width="2.75" stroke-linecap="round"/>
+    
+    <!-- Bold 'ID' Typography Inside -->
+    <text x="17" y="37" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-weight="900" font-size="21" fill="#2457D6" letter-spacing="0.5">ID</text>
+    
+    <!-- Security Verification Node in Teal -->
+    <circle cx="41" cy="35" r="3.5" fill="#0E8A7E"/>
+    <circle cx="41" cy="35" r="1.5" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Typographic Wordmark -->
+  <g transform="translate(74, 43)">
+    <text font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-size="34" font-weight="900" letter-spacing="-0.03em">
+      <tspan fill="#2457D6">ID</tspan><tspan fill="#0F172A">Snap</tspan>
+    </text>
+  </g>
+</svg>

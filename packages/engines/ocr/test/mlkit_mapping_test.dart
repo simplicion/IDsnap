@@ -112,4 +112,70 @@ void main() {
       FailureCode.notFound,
     );
   });
+
+  group('classifyMlKitError uses code AND message (audit 2026-09)', () {
+    test('generic TextRecognizerError is classified by its message', () {
+      expect(
+        classifyMlKitError(
+          'TextRecognizerError',
+          'Waiting for the text optional module to be downloaded',
+        ),
+        FailureCode.modelUnavailable,
+      );
+      expect(
+        classifyMlKitError('TextRecognizerError', 'java.lang.OutOfMemoryError'),
+        FailureCode.memoryLimitExceeded,
+      );
+      expect(
+        classifyMlKitError(
+          'InputImageConverterError',
+          'Unable to decode bitmap',
+        ),
+        FailureCode.corruptFile,
+      );
+      expect(
+        classifyMlKitError('error', 'FileNotFoundException: no such file'),
+        FailureCode.notFound,
+      );
+    });
+
+    test('unrecognized errors stay unknown (shown with Copy details)', () {
+      expect(classifyMlKitError('error', 'something odd'), FailureCode.unknown);
+    });
+  });
+
+  test('line angle is kept for rotation hints', () {
+    final text = mlkit.RecognizedText(
+      text: 'x',
+      blocks: [
+        mlkit.TextBlock(
+          text: 'x',
+          lines: [
+            mlkit.TextLine(
+              text: 'Sideways',
+              elements: const [],
+              boundingBox: const Rect.fromLTWH(10, 10, 20, 200),
+              recognizedLanguages: const [],
+              cornerPoints: const <Point<int>>[],
+              confidence: 0.8,
+              angle: 90,
+            ),
+          ],
+          boundingBox: const Rect.fromLTWH(10, 10, 20, 200),
+          recognizedLanguages: const [],
+          cornerPoints: const [],
+        ),
+      ],
+    );
+    expect(toOcrResult(text, 100, 400, OcrScript.latin).lines.single.angle, 90);
+  });
+
+  test('a script that is not bundled fails typed with the reason', () async {
+    final on = MlKitTextRecognizer(isSupportedPlatform: true);
+    final f = (await on.recognize('x.jpg', OcrScript.japanese)).failureOrNull!;
+    expect(f.code, FailureCode.modelUnavailable);
+    expect(f.detail, 'Japanese');
+    expect(f.recovery, contains('not installed'));
+    expect(f.nextAction, FailureAction.changeLanguage);
+  });
 }

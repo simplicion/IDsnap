@@ -1,0 +1,24 @@
+{
+  "name": "apps-marketing-web",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "deploy:pages": "astro build && npx wrangler pages deploy dist --project-name=idsnap"
+  },
+  "dependencies": {
+    "astro": "^7.3.5"
+  },
+  "devDependencies": {
+    "wrangler": "^4.139.0"
+  },
+  "allowScripts": {
+    "esbuild": true
+  }
+}

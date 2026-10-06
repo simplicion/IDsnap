@@ -1,5 +1,7 @@
 import 'package:feature_settings/src/about_screen.dart';
+import 'package:feature_settings/src/data_screen.dart';
 import 'package:feature_settings/src/privacy_screen.dart';
+import 'package:feature_settings/src/security_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,6 +11,16 @@ List<RouteBase> settingsRoutes(GlobalKey<NavigatorState> rootKey) => [
     path: 'privacy',
     parentNavigatorKey: rootKey,
     builder: (context, state) => const PrivacyScreen(),
+  ),
+  GoRoute(
+    path: 'security',
+    parentNavigatorKey: rootKey,
+    builder: (context, state) => const SecurityScreen(),
+  ),
+  GoRoute(
+    path: 'data',
+    parentNavigatorKey: rootKey,
+    builder: (context, state) => const DataScreen(),
   ),
   GoRoute(
     path: 'about',

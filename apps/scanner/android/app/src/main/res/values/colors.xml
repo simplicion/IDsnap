@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#FFFFFF</color>
+    <!-- DsColors.blue600 (packages/design_system): splash background. -->
+    <color name="brand_primary">#2457D6</color>
+</resources>

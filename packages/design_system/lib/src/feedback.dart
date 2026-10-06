@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:docscan_core/docscan_core.dart';
+import 'package:docscan_design_system/src/support.dart';
 import 'package:flutter/material.dart';
 
 /// Shows a floating snackbar, optionally with an undo-style action.
@@ -20,8 +23,21 @@ void showAppSnack(
     );
 }
 
-void showFailureSnack(BuildContext context, AppFailure failure) =>
-    showAppSnack(context, '${failure.title}. ${failure.recovery}');
+/// Shows "`title`. `recovery`". Unexpected failures also get a "Support"
+/// action that opens an email draft (code and app version only).
+void showFailureSnack(BuildContext context, AppFailure failure) {
+  final support =
+      failure.nextAction == FailureAction.contactSupport ||
+      (failure.code == FailureCode.unknown && SupportContact.available);
+  showAppSnack(
+    context,
+    '${failure.title}. ${failure.recovery}',
+    actionLabel: support ? 'Support' : null,
+    onAction: support
+        ? () => unawaited(SupportContact.contact(context, failure: failure))
+        : null,
+  );
+}
 
 /// Confirmation for destructive or overwrite actions.
 Future<bool> confirmAction(

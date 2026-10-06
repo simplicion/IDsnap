@@ -6,45 +6,59 @@ import 'package:docscan_design_system/docscan_design_system.dart';
 import 'package:docscan_domain/docscan_domain.dart';
 import 'package:feature_library/src/document_actions.dart';
 import 'package:feature_library/src/document_tile.dart';
+import 'package:feature_library/src/folders/add_menu.dart';
+import 'package:feature_library/src/folders/folder_actions.dart';
+import 'package:feature_library/src/folders/folder_lock.dart';
+import 'package:feature_library/src/folders/folder_providers.dart';
+import 'package:feature_library/src/folders/folder_visuals.dart';
 import 'package:feature_library/src/library_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Searchable, filterable, multi-select document list used by the Files tab
-/// and folder screens.
-class DocumentBrowser extends ConsumerStatefulWidget {
-  const DocumentBrowser({
-    required this.title,
-    super.key,
-    this.folderId,
-    this.actions = const [],
-    this.header,
-    this.emptyTitle = 'No documents yet',
-    this.emptyMessage =
-        'Scan a page or import a file and it will appear here. Everything stays on this device.',
-  });
+/// The ID Vault browser: one level of the folder tree (the top level when
+/// [folderId] is null). Subfolders first, then files; a "+" button to add
+/// folders, upload files or scan; search across this folder and everything
+/// below it (never inside locked folders that aren't unlocked).
+class VaultBrowser extends ConsumerStatefulWidget {
+  const VaultBrowser({super.key, this.folderId, this.leading});
 
-  final String title;
   final String? folderId;
-  final List<Widget> actions;
 
-  /// Optional sliver shown above the documents (e.g. folders row).
-  final Widget? header;
-  final String emptyTitle;
-  final String emptyMessage;
+  /// Optional sliver above the search field (the privacy banner).
+  final Widget? leading;
 
   @override
-  ConsumerState<DocumentBrowser> createState() => _DocumentBrowserState();
+  ConsumerState<VaultBrowser> createState() => _VaultBrowserState();
 }
 
-class _DocumentBrowserState extends ConsumerState<DocumentBrowser> {
-  late DocumentQuery _query = DocumentQuery(folderId: widget.folderId);
+class _VaultBrowserState extends ConsumerState<VaultBrowser> {
   final _search = TextEditingController();
+  String _text = '';
+  DocumentSort _sort = DocumentSort.newest;
+  DocumentFilter _filter = DocumentFilter.all;
   bool _grid = false;
   final Set<String> _selected = {};
 
   bool get _selecting => _selected.isNotEmpty;
+  bool get _searching => _text.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    final id = widget.folderId;
+    if (id != null) {
+      // Opening a locked folder asks to unlock straight away.
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted) return;
+        final tree = await ref.read(folderTreeProvider.future);
+        if (!mounted) return;
+        if (!tree.isAccessible(id, ref.read(folderAccessProvider))) {
+          await ensureFolderAccess(context, ref, id);
+        }
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -64,65 +78,116 @@ class _DocumentBrowserState extends ConsumerState<DocumentBrowser> {
     }
   }
 
+  void _openFolder(Folder f) => unawaited(context.push(Routes.folder(f.id)));
+
+  void _clearSearch() {
+    _search.clear();
+    setState(() {
+      _text = '';
+      _filter = DocumentFilter.all;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final async = ref.watch(documentsProvider(_query));
-    final hidden = ref.watch(pendingDeletesProvider);
-    final docs = (async.value ?? const <Document>[])
-        .where((d) => !hidden.contains(d.id))
-        .toList();
-    final selectedDocs = docs.where((d) => _selected.contains(d.id)).toList();
+    final id = widget.folderId;
+    final treeAsync = ref.watch(folderTreeProvider);
+    final tree = treeAsync.value;
+    final folder = tree?[id];
 
-    return PopScope(
-      canPop: !_selecting,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) setState(_selected.clear);
-      },
-      child: Scaffold(
-        appBar: _selecting ? _selectionBar(selectedDocs) : _normalBar(),
-        body: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(child: _searchField()),
-            SliverToBoxAdapter(child: _filters()),
-            ?widget.header,
-            if (async.hasError && async.value == null)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: FailureView(
-                  const AppFailure(FailureCode.unknown),
-                  onRetry: () => ref.invalidate(documentsProvider(_query)),
+    if (id != null && tree != null && folder == null) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: const EmptyState(
+          icon: Icons.folder_off_rounded,
+          title: 'Folder not found',
+          message: 'It may have been moved or deleted.',
+        ),
+      );
+    }
+    final title = folder?.name ?? (id == null ? 'ID Vault' : 'Folder');
+    final accessible = canOpenFolder(ref, id);
+    final underLock = tree != null && tree.locksOnPath(id).isNotEmpty;
+
+    if (id != null && !accessible) {
+      return Scaffold(
+        appBar: AppBar(title: Text(title)),
+        body: tree == null
+            ? const Center(child: CircularProgressIndicator())
+            : LockedFolderView(
+                name: title,
+                onUnlock: () => ensureFolderAccess(context, ref, id),
+              ),
+      );
+    }
+
+    return FolderSecureScope(
+      active: underLock,
+      child: PopScope(
+        canPop: !_selecting,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) setState(_selected.clear);
+        },
+        child: Scaffold(
+          appBar: _selecting ? _selectionBar() : _normalBar(title, folder),
+          floatingActionButton: _selecting
+              ? null
+              : FloatingActionButton(
+                  tooltip: 'Add',
+                  onPressed: () => showAddMenu(context, ref, folderId: id),
+                  child: const Icon(Icons.add_rounded),
                 ),
-              )
-            else if (async.isLoading && async.value == null)
-              const SliverFillRemaining(
-                child: Center(child: CircularProgressIndicator()),
-              )
-            else if (docs.isEmpty)
-              SliverFillRemaining(hasScrollBody: false, child: _empty())
-            else if (_grid)
-              _gridSliver(docs)
-            else
-              _listSliver(docs),
-            const SliverToBoxAdapter(child: SizedBox(height: Space.x12)),
-          ],
+          body: CustomScrollView(
+            slivers: [
+              ?widget.leading,
+              if (tree != null && id != null)
+                SliverToBoxAdapter(child: _breadcrumb(tree.pathTo(id))),
+              SliverToBoxAdapter(child: _searchField()),
+              SliverToBoxAdapter(child: _filters()),
+              if (tree == null && treeAsync.hasError)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: FailureView(
+                    const AppFailure(
+                      FailureCode.unknown,
+                      message:
+                          "Your files couldn't be listed. They are still on "
+                          'this phone — try again.',
+                    ),
+                    onRetry: () => ref.invalidate(folderTreeProvider),
+                  ),
+                )
+              else if (tree == null)
+                const SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (_searching)
+                ..._searchResults(tree)
+              else
+                ..._contents(),
+              const SliverToBoxAdapter(child: SizedBox(height: 96)),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  PreferredSizeWidget _normalBar() => AppBar(
-    title: Text(widget.title),
+  // ── App bars ──────────────────────────────────────────────────────────────
+
+  PreferredSizeWidget _normalBar(String title, Folder? folder) => AppBar(
+    title: Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
     actions: [
       PopupMenuButton<DocumentSort>(
         tooltip: 'Sort',
         icon: const Icon(Icons.sort_rounded),
-        initialValue: _query.sort,
-        onSelected: (s) => setState(() => _query = _query.copyWith(sort: s)),
+        initialValue: _sort,
+        onSelected: (s) => setState(() => _sort = s),
         itemBuilder: (_) => [
           for (final s in DocumentSort.values)
             CheckedPopupMenuItem(
               value: s,
-              checked: s == _query.sort,
+              checked: s == _sort,
               child: Text(s.label),
             ),
         ],
@@ -132,12 +197,26 @@ class _DocumentBrowserState extends ConsumerState<DocumentBrowser> {
         icon: Icon(_grid ? Icons.view_list_rounded : Icons.grid_view_rounded),
         onPressed: () => setState(() => _grid = !_grid),
       ),
-      ...widget.actions,
+      if (folder != null)
+        IconButton(
+          tooltip: 'Folder actions',
+          icon: const Icon(Icons.more_vert_rounded),
+          onPressed: () => showFolderActions(
+            context,
+            ref,
+            folder,
+            showOpen: false,
+            onDeleted: () {
+              if (mounted && context.canPop()) context.pop();
+            },
+          ),
+        ),
     ],
   );
 
-  PreferredSizeWidget _selectionBar(List<Document> selected) {
+  PreferredSizeWidget _selectionBar() {
     final actions = DocumentActions(ref);
+    final selected = _visibleSelected();
     final allPdf =
         selected.length >= 2 &&
         selected.every((d) => d.format == DocumentFormat.pdf);
@@ -190,6 +269,68 @@ class _DocumentBrowserState extends ConsumerState<DocumentBrowser> {
     );
   }
 
+  List<Document> _visibleDocs() {
+    final hidden = ref.watch(pendingDeletesProvider);
+    final List<Document> docs;
+    if (_searching) {
+      docs = ref.watch(folderSearchProvider(_searchQuery())).value ?? const [];
+    } else {
+      docs =
+          ref
+              .watch(folderContentsProvider((widget.folderId, _sort, _filter)))
+              .value
+              ?.documents ??
+          const [];
+    }
+    return [
+      for (final d in docs)
+        if (!hidden.contains(d.id)) d,
+    ];
+  }
+
+  List<Document> _visibleSelected() => [
+    for (final d in _visibleDocs())
+      if (_selected.contains(d.id)) d,
+  ];
+
+  // ── Header widgets ────────────────────────────────────────────────────────
+
+  Widget _breadcrumb(List<Folder> path) => SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    padding: const EdgeInsets.symmetric(horizontal: Space.x2),
+    child: Row(
+      children: [
+        TextButton.icon(
+          icon: const Icon(Icons.shield_outlined, size: 18),
+          label: const Text('ID Vault'),
+          onPressed: () => context.go(Routes.files),
+        ),
+        for (final (i, f) in path.indexed) ...[
+          Icon(
+            Icons.chevron_right_rounded,
+            size: 18,
+            color: context.ds.textSecondary,
+          ),
+          if (i == path.length - 1)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Space.x2),
+              child: Text(
+                f.name,
+                style: context.text.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            )
+          else
+            TextButton(
+              onPressed: () => context.go(Routes.folder(f.id)),
+              child: Text(f.name),
+            ),
+        ],
+      ],
+    ),
+  );
+
   Widget _searchField() => Padding(
     padding: const EdgeInsets.fromLTRB(
       Space.gutter,
@@ -201,21 +342,22 @@ class _DocumentBrowserState extends ConsumerState<DocumentBrowser> {
       controller: _search,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
-        hintText: 'Search by name',
+        hintText: widget.folderId == null
+            ? 'Search your vault'
+            : 'Search in this folder',
         prefixIcon: const Icon(Icons.search_rounded),
-        suffixIcon: _query.search.isEmpty
+        suffixIcon: _text.isEmpty
             ? null
             : IconButton(
                 tooltip: 'Clear search',
                 icon: const Icon(Icons.close_rounded),
                 onPressed: () {
                   _search.clear();
-                  setState(() => _query = _query.copyWith(search: ''));
+                  setState(() => _text = '');
                 },
               ),
       ),
-      onChanged: (v) =>
-          setState(() => _query = _query.copyWith(search: v.trim())),
+      onChanged: (v) => setState(() => _text = v.trim()),
     ),
   );
 
@@ -230,43 +372,173 @@ class _DocumentBrowserState extends ConsumerState<DocumentBrowser> {
             padding: const EdgeInsets.only(right: Space.x2),
             child: ChoiceChip(
               label: Text(f.label),
-              selected: _query.filter == f,
-              onSelected: (_) =>
-                  setState(() => _query = _query.copyWith(filter: f)),
+              selected: _filter == f,
+              onSelected: (_) => setState(() => _filter = f),
             ),
           ),
       ],
     ),
   );
 
-  Widget _empty() {
-    final searching =
-        _query.search.isNotEmpty || _query.filter != DocumentFilter.all;
-    if (searching) {
-      return EmptyState(
-        icon: Icons.search_off_rounded,
-        title: 'No matches',
-        message: 'Nothing matches your search or filter. Try a different name.',
-        actionLabel: 'Clear filters',
-        onAction: () {
-          _search.clear();
-          setState(
-            () => _query = _query.copyWith(
-              search: '',
-              filter: DocumentFilter.all,
+  // ── Contents ──────────────────────────────────────────────────────────────
+
+  List<Widget> _contents() {
+    final async = ref.watch(
+      folderContentsProvider((widget.folderId, _sort, _filter)),
+    );
+    final contents = async.value;
+    if (contents == null) {
+      if (async.hasError) {
+        return [
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: FailureView(
+              const AppFailure(
+                FailureCode.unknown,
+                message:
+                    "Your files couldn't be listed. They are still on this "
+                    'phone — try again.',
+              ),
+              onRetry: () => ref.invalidate(folderContentsProvider),
             ),
-          );
-        },
+          ),
+        ];
+      }
+      return const [
+        SliverFillRemaining(child: Center(child: CircularProgressIndicator())),
+      ];
+    }
+    final docs = _visibleDocs();
+    final folders = contents.folders;
+    if (folders.isEmpty && docs.isEmpty) {
+      return [SliverFillRemaining(hasScrollBody: false, child: _empty())];
+    }
+    return [
+      if (folders.isNotEmpty) ...[
+        const SliverToBoxAdapter(child: SectionHeader('Folders')),
+        _foldersSliver(folders),
+      ],
+      if (docs.isNotEmpty) ...[
+        const SliverToBoxAdapter(child: SectionHeader('Files')),
+        if (_grid) _gridSliver(docs) else _listSliver(docs),
+      ] else if (_filter != DocumentFilter.all)
+        SliverToBoxAdapter(child: _noMatches()),
+    ];
+  }
+
+  FolderSearch _searchQuery() => FolderSearch(
+    text: _text,
+    withinFolderId: widget.folderId,
+    unlockedFolderIds: ref.watch(folderAccessProvider),
+    sort: _sort,
+    filter: _filter,
+  );
+
+  List<Widget> _searchResults(FolderTree tree) {
+    final unlocked = ref.watch(folderAccessProvider);
+    final hidden = tree.hiddenContentIds(unlocked);
+    final scope = widget.folderId == null
+        ? tree.all.map((f) => f.id).toSet()
+        : (tree.subtreeIds(widget.folderId!)..remove(widget.folderId));
+    final needle = _text.toLowerCase();
+    final folders = [
+      for (final f in tree.all)
+        if (scope.contains(f.id) &&
+            !hidden.contains(f.parentId) &&
+            f.name.toLowerCase().contains(needle))
+          f,
+    ]..sort(FolderTree.compareFolders);
+    final docs = _visibleDocs();
+    if (folders.isEmpty && docs.isEmpty) {
+      return [SliverFillRemaining(hasScrollBody: false, child: _noMatches())];
+    }
+    return [
+      if (folders.isNotEmpty) ...[
+        const SliverToBoxAdapter(child: SectionHeader('Folders')),
+        _foldersSliver(folders),
+      ],
+      if (docs.isNotEmpty) ...[
+        const SliverToBoxAdapter(child: SectionHeader('Files')),
+        if (_grid) _gridSliver(docs) else _listSliver(docs),
+      ],
+    ];
+  }
+
+  Widget _noMatches() => EmptyState(
+    icon: Icons.search_off_rounded,
+    title: 'No matches',
+    message: 'Nothing matches your search or filter. Try a different name.',
+    actionLabel: 'Clear filters',
+    onAction: _clearSearch,
+  );
+
+  Widget _empty() {
+    final id = widget.folderId;
+    if (_filter != DocumentFilter.all) return _noMatches();
+    if (id == null) {
+      return EmptyState(
+        icon: Icons.folder_special_rounded,
+        title: 'Your vault is empty',
+        message:
+            'Create a folder such as "IDs & Proofs", then upload files or '
+            'scan documents into it. Everything stays on this device.',
+        actionLabel: 'Create a folder',
+        onAction: () => showNewFolderSheet(context, ref, parentId: null),
       );
     }
     return EmptyState(
       icon: Icons.folder_open_rounded,
-      title: widget.emptyTitle,
-      message: widget.emptyMessage,
-      actionLabel: widget.folderId == null ? 'Scan a document' : null,
-      onAction: widget.folderId == null
-          ? () => context.push(Routes.scan())
-          : null,
+      title: 'This folder is empty',
+      message: 'Add a folder inside it, upload files or scan a document.',
+      actionLabel: 'Add to this folder',
+      onAction: () => showAddMenu(context, ref, folderId: id),
+    );
+  }
+
+  Widget _foldersSliver(List<Folder> folders) {
+    final stats = ref.watch(folderStatsProvider);
+    final unlocked = ref.watch(folderAccessProvider);
+    String subtitle(Folder f) => folderStatsLabel(
+      stats[f.id],
+      locked: f.isLocked && !unlocked.contains(f.id),
+    );
+    void more(Folder f) => showFolderActions(context, ref, f);
+    if (_grid) {
+      return SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+        sliver: SliverGrid.builder(
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 220,
+            mainAxisSpacing: Space.x3,
+            crossAxisSpacing: Space.x3,
+            childAspectRatio: 1.25,
+          ),
+          itemCount: folders.length,
+          itemBuilder: (context, i) {
+            final f = folders[i];
+            return FolderGridTile(
+              key: ValueKey('folder-${f.id}'),
+              folder: f,
+              subtitle: subtitle(f),
+              onTap: () => _openFolder(f),
+              onMore: () => more(f),
+            );
+          },
+        ),
+      );
+    }
+    return SliverList.builder(
+      itemCount: folders.length,
+      itemBuilder: (context, i) {
+        final f = folders[i];
+        return FolderListTile(
+          key: ValueKey('folder-${f.id}'),
+          folder: f,
+          subtitle: subtitle(f),
+          onTap: () => _openFolder(f),
+          onMore: () => more(f),
+        );
+      },
     );
   }
 
@@ -314,43 +586,52 @@ class _DocumentBrowserState extends ConsumerState<DocumentBrowser> {
     final actions = DocumentActions(ref);
     final choice = await showModalBottomSheet<String>(
       context: context,
+      isScrollControlled: true,
       builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: Text(d.name, style: context.text.titleMedium),
-              subtitle: Text(documentMeta(d)),
-            ),
-            const Divider(),
-            _sheetItem(context, 'open', Icons.open_in_new_rounded, 'Open'),
-            _sheetItem(context, 'share', Icons.ios_share_rounded, 'Share'),
-            _sheetItem(
-              context,
-              'rename',
-              Icons.drive_file_rename_outline_rounded,
-              'Rename',
-            ),
-            _sheetItem(
-              context,
-              'favorite',
-              d.favorite ? Icons.star_rounded : Icons.star_outline_rounded,
-              d.favorite ? 'Remove from favorites' : 'Add to favorites',
-            ),
-            _sheetItem(
-              context,
-              'move',
-              Icons.drive_file_move_rounded,
-              'Move to folder',
-            ),
-            _sheetItem(
-              context,
-              'delete',
-              Icons.delete_outline_rounded,
-              'Delete',
-              destructive: true,
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(d.name, style: context.text.titleMedium),
+                subtitle: Text(documentMeta(d)),
+              ),
+              const Divider(),
+              _sheetItem(context, 'open', Icons.open_in_new_rounded, 'Open'),
+              _sheetItem(context, 'share', Icons.ios_share_rounded, 'Share'),
+              _sheetItem(
+                context,
+                'protect',
+                Icons.lock_rounded,
+                'Protect & share',
+              ),
+              _sheetItem(
+                context,
+                'rename',
+                Icons.drive_file_rename_outline_rounded,
+                'Rename',
+              ),
+              _sheetItem(
+                context,
+                'favorite',
+                d.favorite ? Icons.star_rounded : Icons.star_outline_rounded,
+                d.favorite ? 'Remove from favorites' : 'Add to favorites',
+              ),
+              _sheetItem(
+                context,
+                'move',
+                Icons.drive_file_move_rounded,
+                'Move to folder',
+              ),
+              _sheetItem(
+                context,
+                'delete',
+                Icons.delete_outline_rounded,
+                'Delete',
+                destructive: true,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -360,6 +641,8 @@ class _DocumentBrowserState extends ConsumerState<DocumentBrowser> {
         _open(d);
       case 'share':
         await actions.share(context, [d]);
+      case 'protect':
+        await actions.protectAndShare(context, d);
       case 'rename':
         await actions.rename(context, d);
       case 'favorite':

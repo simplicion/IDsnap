@@ -1,0 +1,16 @@
+name: engine_license
+description: "Engine: IDSnap licence token codec (Ed25519-signed, verified offline). Pure Dart: shared by the app and apps/license_server."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  crypto: ^3.0.6
+  cryptography: ^2.9.0
+  meta: ^1.16.0
+
+dev_dependencies:
+  test: ^1.25.0

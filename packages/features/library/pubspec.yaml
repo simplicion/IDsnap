@@ -17,6 +17,9 @@ dependencies:
     path: ../../../packages/domain
   docscan_core:
     path: ../../../packages/core
+  # Folder PIN hashing and the secure-window flag (on-device only).
+  engine_security:
+    path: ../../../packages/engines/security
   flutter:
     sdk: flutter
   flutter_riverpod: ^3.4.3

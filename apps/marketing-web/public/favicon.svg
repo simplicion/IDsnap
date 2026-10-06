@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Clean Crisp White Squircle with Precision Border -->
+  <rect width="64" height="64" rx="16" fill="#FFFFFF"/>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.25" stroke="#DDE2EA" stroke-width="1.5"/>
+  
+  <!-- Viewfinder Frame Brackets in Royal Blue (#2457D6) -->
+  <path d="M14 24V16C14 14.9 14.9 14 16 14H24" stroke="#2457D6" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M50 14H42M50 14C51.1 14 52 14.9 52 16V24" stroke="#2457D6" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M14 40V48C14 49.1 14.9 50 16 50H24" stroke="#2457D6" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M50 50H42M50 50C51.1 50 52 49.1 52 48V40" stroke="#2457D6" stroke-width="3.5" stroke-linecap="round"/>
+  
+  <!-- Bold Clean 'ID' Typography in Deep Royal Blue -->
+  <text x="18" y="42" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-weight="900" font-size="26" fill="#2457D6" letter-spacing="1">ID</text>
+  
+  <!-- Security Node in Teal -->
+  <circle cx="47" cy="38" r="4.5" fill="#0E8A7E"/>
+  <circle cx="47" cy="38" r="2" fill="#FFFFFF"/>
+</svg>

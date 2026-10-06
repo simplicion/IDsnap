@@ -82,7 +82,9 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      MaterialApp(theme: AppTheme.dark(), home: const PrivacyScreen()),
+      ProviderScope(
+        child: MaterialApp(theme: AppTheme.dark(), home: const PrivacyScreen()),
+      ),
     );
     expect(find.text('No uploads'), findsOneWidget);
     await tester.scrollUntilVisible(find.text('Not a certified copy'), 200);

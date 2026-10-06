@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ADR-0013 / ADR-0012: cleartext is refused everywhere and only system
+     CAs are trusted (no user CAs, so a user-installed proxy certificate
+     can't read or change the traffic).
+
+     Free build (the default): the only network traffic is the Google Mobile
+     Ads SDK's (ads, consent form), over HTTPS to Google's ad hosts. Those
+     hosts are many and change, so TLS must NOT be restricted to one domain
+     here: a domain-config that trusts only the licence host would stop
+     every ad from loading.
+
+     Licence build (IDSNAP_MONETIZATION=licence, no ads) only: TLS may be
+     restricted to the licence server by replacing the base-config with
+       <base-config cleartextTrafficPermitted="false"><trust-anchors /></base-config>
+       <domain-config cleartextTrafficPermitted="false">
+           <domain includeSubdomains="false">licence.example.com</domain>
+           <trust-anchors><certificates src="system" /></trust-anchors>
+       </domain-config>
+     using the host of IDSNAP_LICENSE_URL. Never do this in a build that
+     shows ads. Checkout and the 180 Pay portal open in the browser, which
+     is not affected by this file. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

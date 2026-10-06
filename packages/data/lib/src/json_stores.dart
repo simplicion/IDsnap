@@ -14,9 +14,13 @@ Future<void> writeAtomically(String path, String content) async {
 
 /// Current scan draft at `<root>/drafts/current.json`.
 class JsonDraftStore implements DraftStore {
-  JsonDraftStore(this.root);
+  JsonDraftStore(this.root, {this.onCleared});
 
   final String root;
+
+  /// Runs after a draft is cleared (a scan was saved or discarded); the app
+  /// sweeps the document scanner's plaintext output here (audit H-07).
+  final Future<void> Function()? onCleared;
 
   String get _path => p.join(root, 'drafts', 'current.json');
 
@@ -52,6 +56,14 @@ class JsonDraftStore implements DraftStore {
     }
     final f = File(_path);
     if (f.existsSync()) await f.delete();
+    final hook = onCleared;
+    if (hook != null) {
+      try {
+        await hook();
+      } on Object {
+        // Best effort: the next launch sweeps again.
+      }
+    }
   }
 }
 
@@ -61,7 +73,10 @@ class JsonSettingsStore implements SettingsStore {
 
   final String root;
 
-  String get _path => p.join(root, 'settings.json');
+  /// The settings file.
+  String get path => p.join(root, 'settings.json');
+
+  String get _path => path;
 
   @override
   Future<AppSettings> load() async {

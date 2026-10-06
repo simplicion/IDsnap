@@ -1,14 +1,16 @@
+import 'package:docscan_contracts/docscan_contracts.dart';
 import 'package:docscan_design_system/docscan_design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// App version, principles and open-source licenses.
-class AboutScreen extends StatelessWidget {
-  const AboutScreen({super.key, this.version = '0.1.0'});
+class AboutScreen extends ConsumerWidget {
+  const AboutScreen({super.key, this.version = '1.0.0'});
 
   final String version;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context, WidgetRef ref) => Scaffold(
     appBar: AppBar(title: const Text('About')),
     body: ListView(
       padding: const EdgeInsets.all(Space.gutter),
@@ -18,7 +20,13 @@ class AboutScreen extends StatelessWidget {
           child: IconBadge(Icons.document_scanner_rounded, size: 88),
         ),
         const SizedBox(height: Space.x4),
-        Center(child: Text('DocScan', style: context.text.headlineSmall)),
+        Center(child: Text('IDSnap', style: context.text.headlineSmall)),
+        Center(
+          child: Text(
+            'Identity & Everyday Document Vault',
+            style: context.text.bodyMedium,
+          ),
+        ),
         Center(
           child: Text(
             'Version $version',
@@ -34,8 +42,10 @@ class AboutScreen extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(Space.x4),
             child: Text(
-              'Scan, organize and convert documents privately on your phone. '
-              'No account, no uploads, and the essential tools are free.',
+              'Scan and keep your ID cards and everyday documents privately '
+              'on your phone. No account and no uploads. Your vault files '
+              'and database are encrypted on this phone (AES-256). '
+              '${privacyLineFor(ref.watch(monetizationModeProvider))}',
               style: context.text.bodyLarge,
             ),
           ),
@@ -49,7 +59,7 @@ class AboutScreen extends StatelessWidget {
                 leading: Icon(Icons.menu_book_outlined),
                 title: Text('Documentation'),
                 subtitle: Text(
-                  'Guides and format support are in the DocScan docs app',
+                  'Guides and format support are in the IDSnap official guide',
                 ),
               ),
               const Divider(indent: Space.x4, endIndent: Space.x4),
@@ -59,7 +69,7 @@ class AboutScreen extends StatelessWidget {
                 trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => showLicensePage(
                   context: context,
-                  applicationName: 'DocScan',
+                  applicationName: 'IDSnap',
                   applicationVersion: version,
                 ),
               ),

@@ -66,5 +66,12 @@ Future<void> deleteDocumentsNow(Ref ref, List<Document> docs) async {
     final thumb = d.thumbnailPath;
     if (thumb != null) await files.delete(thumb);
     await repo.remove(d.id);
+    if (d.expiresAt != null) {
+      try {
+        await ref.read(reminderSchedulerProvider).cancel(d.id);
+      } on Object {
+        // Reminders not wired: nothing was scheduled.
+      }
+    }
   }
 }

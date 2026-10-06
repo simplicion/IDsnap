@@ -1,0 +1,219 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const deletionSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "IDSnap Account & Data Deletion Instructions",
+  "description": "Official Data Deletion policy for IDSnap as required by Google Play Store policies. Explains our accountless, local storage model and instant wipe procedures.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "IDSnap",
+    "url": "https://idsnap.app"
+  }
+};
+---
+
+<Layout
+  title="Account & Data Deletion Policy (Google Play Compliance)"
+  description="How to delete your data from IDSnap. Because IDSnap keeps your documents only on your phone, you have total and immediate control over wiping your records."
+  schema={deletionSchema}
+>
+  <div class="container legal-page-container">
+    <div class="legal-header">
+      <div class="badge-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        </svg>
+        Google Play Store Compliance
+      </div>
+      <h1 class="legal-title">Account & Data Deletion Policy</h1>
+      <p class="legal-meta">In compliance with Google Play Developer Policy on User Data & Account Deletion</p>
+    </div>
+
+    <!-- Overview Banner -->
+    <div class="card-glass summary-box">
+      <h3>No Accounts and No Document Servers</h3>
+      <p>
+        <strong>IDSnap does not have user accounts or logins, and never uploads your documents.</strong> We do not store your name, documents, photos, or 2FA keys on any server. (If you buy Pro, our licence server keeps an anonymous device id and the purchase record; contact us to have it deleted.) Because 100% of your data resides locally on your physical phone, you do not need to submit a ticket, wait for an administrator, or verify your email to delete your data. You possess instant, sovereign control over your data deletion at all times.
+      </p>
+    </div>
+
+    <div class="legal-body">
+      <section class="legal-section">
+        <h2>How to Delete Your Data</h2>
+        <p>You can permanently delete your data using any of the following methods:</p>
+
+        <div class="deletion-steps-grid">
+          <div class="step-card">
+            <div class="step-num">Method 1</div>
+            <h3>Delete Individual Files or 2FA Accounts In-App</h3>
+            <p>
+              Open IDSnap $\rightarrow$ navigate to the file or 2FA entry $\rightarrow$ swipe or tap the three dots $\rightarrow$ tap <strong>Delete</strong>.
+            </p>
+            <p class="step-sub">
+              The file is immediately unlinked and its physical bytes on the local storage partition are overwritten and erased.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">Method 2</div>
+            <h3>Wipe All App Data via Device Settings (Instant Total Wipe)</h3>
+            <p>
+              To delete all documents, ID cards, 2FA keys, drafts, and database entries at once without uninstalling:
+            </p>
+            <ol class="steps-list">
+              <li>Open your phone's <strong>Settings</strong> app.</li>
+              <li>Tap <strong>Apps</strong> or <strong>Application Manager</strong>.</li>
+              <li>Select <strong>IDSnap</strong>.</li>
+              <li>Tap <strong>Storage & Cache</strong> $\rightarrow$ tap <strong>Clear Storage / Clear Data</strong>.</li>
+            </ol>
+            <p class="step-sub">
+              This completely erases the local SQLite database, KeyStore entries, and application sandbox.
+            </p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-num">Method 3</div>
+            <h3>Uninstall the Application</h3>
+            <p>
+              Press and hold the IDSnap app icon on your home screen or app drawer, and tap <strong>Uninstall</strong>.
+            </p>
+            <p class="step-sub">
+              The mobile operating system (Android / iOS) automatically destroys the app's sandboxed storage directory, eliminating 100% of all files, keys, and configurations.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="legal-section">
+        <h2>Data Retention Period</h2>
+        <p>
+          Since IDSnap never transmits your documents, their retention period on our side is <strong>Zero (0) days</strong>: once you delete a file or uninstall the app, it is gone. There are no backups, snapshots, or logs containing your documents on any remote server.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>Need Assistance?</h2>
+        <p>
+          If you have questions regarding data storage or wish to verify our on-device architecture, reach out to our team:
+        </p>
+        <div class="contact-box">
+          <p><strong>Email:</strong> <a href="mailto:support@idsnap.app">support@idsnap.app</a></p>
+          <p><strong>Subject:</strong> Data Deletion Inquiry</p>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .legal-page-container {
+    padding-top: 3.5rem;
+    padding-bottom: 5rem;
+    max-width: 840px;
+  }
+
+  .legal-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .legal-title {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+
+  .legal-meta {
+    font-size: 0.95rem;
+    color: var(--on-surface-variant);
+  }
+
+  .summary-box {
+    margin-bottom: 3.5rem;
+    background-color: var(--surface-container-high);
+    border: 1px solid var(--outline-variant);
+  }
+
+  .summary-box h3 {
+    margin-bottom: 0.75rem;
+    color: var(--on-surface);
+  }
+
+  .summary-box p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+
+  .legal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .legal-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--on-surface);
+    border-bottom: 2px solid var(--outline-variant);
+    padding-bottom: 0.5rem;
+  }
+
+  .deletion-steps-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .step-card {
+    background-color: var(--surface);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+  }
+
+  .step-num {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--primary);
+    background-color: var(--primary-container);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.75rem;
+  }
+
+  .step-card h3 {
+    margin-bottom: 0.6rem;
+    font-size: 1.2rem;
+  }
+
+  .steps-list {
+    margin: 0.75rem 0 0.75rem 1.5rem;
+    color: var(--on-surface-variant);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .step-sub {
+    font-size: 0.85rem;
+    color: var(--on-surface-variant);
+    margin-top: 0.6rem;
+    font-style: italic;
+  }
+
+  .contact-box {
+    background-color: var(--surface-container);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+</style>

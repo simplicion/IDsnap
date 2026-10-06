@@ -4,6 +4,7 @@ import 'package:docscan_design_system/docscan_design_system.dart';
 import 'package:docscan_domain/docscan_domain.dart';
 import 'package:feature_tools/src/common/input_picker.dart';
 import 'package:feature_tools/src/common/job.dart';
+import 'package:feature_tools/src/common/providers.dart';
 import 'package:feature_tools/src/common/tool_scaffold.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,7 +74,18 @@ class _MergeScreenState extends ConsumerState<MergeScreen>
     final inputs = [..._inputs];
     final name = _name.text.trim().isEmpty ? 'Merged document' : _name.text;
     final pdf = ref.read(pdfEngineProvider);
+    final inspect = ref.read(inspectInputProvider);
     ref.read(jobProvider(_job).notifier).start((report) async {
+      for (final input in inputs) {
+        final pre = await inspect(
+          input.path,
+          accepts: const {DocumentFormat.pdf},
+          nameHint: input.fileLabel,
+        );
+        if (pre case Err(:final failure)) {
+          return Err(failure.withDetail(input.fileLabel));
+        }
+      }
       var total = 0;
       for (final (i, input) in inputs.indexed) {
         final count = await pdf.pageCount(input.path);

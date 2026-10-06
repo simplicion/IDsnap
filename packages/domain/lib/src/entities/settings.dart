@@ -27,6 +27,7 @@ class AppSettings {
     this.showPrivacyBanner = true,
     this.hideEmptyCategories = false,
     this.expiryReminders = true,
+    this.authenticatorRequireUnlock = true,
   });
 
   factory AppSettings.fromJson(Map<String, dynamic> j) {
@@ -49,6 +50,8 @@ class AppSettings {
       showPrivacyBanner: (j['showPrivacyBanner'] as bool?) ?? true,
       hideEmptyCategories: (j['hideEmptyCategories'] as bool?) ?? false,
       expiryReminders: (j['expiryReminders'] as bool?) ?? true,
+      authenticatorRequireUnlock:
+          (j['authenticatorRequireUnlock'] as bool?) ?? true,
     );
   }
 
@@ -71,6 +74,10 @@ class AppSettings {
   final bool hideEmptyCategories;
   final bool expiryReminders;
 
+  /// Authenticator codes stay hidden until biometric / device-credential
+  /// unlock (when the device supports it).
+  final bool authenticatorRequireUnlock;
+
   AppSettings copyWith({
     ThemePreference? theme,
     QualityPreset? quality,
@@ -84,6 +91,7 @@ class AppSettings {
     bool? showPrivacyBanner,
     bool? hideEmptyCategories,
     bool? expiryReminders,
+    bool? authenticatorRequireUnlock,
   }) => AppSettings(
     theme: theme ?? this.theme,
     quality: quality ?? this.quality,
@@ -97,6 +105,8 @@ class AppSettings {
     showPrivacyBanner: showPrivacyBanner ?? this.showPrivacyBanner,
     hideEmptyCategories: hideEmptyCategories ?? this.hideEmptyCategories,
     expiryReminders: expiryReminders ?? this.expiryReminders,
+    authenticatorRequireUnlock:
+        authenticatorRequireUnlock ?? this.authenticatorRequireUnlock,
   );
 
   Map<String, dynamic> toJson() => {
@@ -112,5 +122,6 @@ class AppSettings {
     'showPrivacyBanner': showPrivacyBanner,
     'hideEmptyCategories': hideEmptyCategories,
     'expiryReminders': expiryReminders,
+    'authenticatorRequireUnlock': authenticatorRequireUnlock,
   };
 }

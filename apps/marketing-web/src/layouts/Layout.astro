@@ -1,0 +1,67 @@
+---
+import SeoHead from '../components/SeoHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/design-tokens.css';
+
+export interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogType?: string;
+  schema?: object | object[];
+}
+
+const { title, description, canonical, ogType, schema } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <SeoHead
+      title={title}
+      description={description}
+      canonical={canonical}
+      ogType={ogType}
+      schema={schema}
+    />
+    <script is:inline>
+      (function() {
+        const stored = localStorage.getItem('theme') || 
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', stored);
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <Header />
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <style>
+      .skip-to-content {
+        position: absolute;
+        top: -100px;
+        left: 1rem;
+        background: var(--primary);
+        color: var(--on-primary);
+        padding: 0.75rem 1.25rem;
+        border-radius: var(--radius-sm);
+        z-index: 9999;
+        font-weight: 600;
+        transition: top 0.2s ease;
+      }
+
+      .skip-to-content:focus {
+        top: 1rem;
+      }
+    </style>
+  </body>
+</html>

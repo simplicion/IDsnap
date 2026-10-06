@@ -1,4 +1,8 @@
 import 'package:docscan_contracts/docscan_contracts.dart';
+import 'package:feature_tools/src/kits/kit_screen.dart';
+import 'package:feature_tools/src/kits/kits_hub_screen.dart';
+import 'package:feature_tools/src/protect/protect_file_screen.dart';
+import 'package:feature_tools/src/protect/remove_password_screen.dart';
 import 'package:feature_tools/src/screens/compress_image_screen.dart';
 import 'package:feature_tools/src/screens/compress_pdf_screen.dart';
 import 'package:feature_tools/src/screens/convert_screen.dart';
@@ -10,6 +14,8 @@ import 'package:feature_tools/src/screens/pdf_to_images_screen.dart';
 import 'package:feature_tools/src/screens/photo_crop_screen.dart';
 import 'package:feature_tools/src/screens/resize_image_screen.dart';
 import 'package:feature_tools/src/screens/split_screen.dart';
+import 'package:feature_tools/src/signature/my_signature_screen.dart';
+import 'package:feature_tools/src/signature/sign_pdf_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
@@ -35,6 +41,26 @@ List<RouteBase> toolRoutes(GlobalKey<NavigatorState> rootKey) {
     route(ToolId.compressImage, (d) => CompressImageScreen(initialDocId: d)),
     route(ToolId.photoCrop, (d) => PhotoCropScreen(initialDocId: d)),
     route(ToolId.resizeImage, (d) => ResizeImageScreen(initialDocId: d)),
+    route(ToolId.signPdf, (d) => SignPdfScreen(initialDocId: d)),
+    route(ToolId.mySignature, (_) => const MySignatureScreen()),
+    route(ToolId.protectFile, (d) => ProtectFileScreen(initialDocId: d)),
+    route(
+      ToolId.removePdfPassword,
+      (d) => RemovePdfPasswordScreen(initialDocId: d),
+    ),
+    GoRoute(
+      path: ToolId.kits.path,
+      parentNavigatorKey: rootKey,
+      builder: (context, state) => const KitsHubScreen(),
+      routes: [
+        GoRoute(
+          path: ':kitId',
+          parentNavigatorKey: rootKey,
+          builder: (context, state) =>
+              KitScreen(kitId: state.pathParameters['kitId']!),
+        ),
+      ],
+    ),
     GoRoute(
       path: ToolId.convert.path,
       parentNavigatorKey: rootKey,

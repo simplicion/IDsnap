@@ -7,6 +7,7 @@ import 'package:docscan_data/docscan_data.dart';
 import 'package:docscan_domain/docscan_domain.dart';
 import 'package:docscan_scanner/app.dart';
 import 'package:drift/native.dart';
+import 'package:engine_authenticator/engine_authenticator.dart';
 import 'package:engine_conversion/engine_conversion.dart';
 import 'package:engine_imaging/engine_imaging.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +72,15 @@ void main() {
           shareServiceProvider.overrideWithValue(_FakeShare()),
           conversionEngineProvider.overrideWithValue(conversion),
           faceLocatorProvider.overrideWithValue(_FakeFace()),
+          appLockProvider.overrideWithValue(_FakeLock()),
+          otpCodecProvider.overrideWithValue(const OtpCodecImpl()),
+          authenticatorRepositoryProvider.overrideWithValue(
+            DriftAuthenticatorRepository(
+              data.database,
+              secrets: _MemorySecrets(),
+              codec: const OtpCodecImpl(),
+            ),
+          ),
         ],
         child: const DocScanApp(),
       ),
@@ -91,7 +101,15 @@ void main() {
   testWidgets('all four tabs render', (tester) async {
     await pumpApp(tester);
     expect(find.text('Scan a document'), findsOneWidget);
-    for (final tab in ['Files', 'Tools', 'Settings', 'Home']) {
+    // Settings is no longer a tab.
+    expect(
+      find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text('Settings'),
+      ),
+      findsNothing,
+    );
+    for (final tab in ['Authenticator', 'ID Vault', 'Tools', 'Home']) {
       await tester.tap(find.text(tab).last);
       await tester.runAsync(
         () => Future<void>.delayed(const Duration(milliseconds: 50)),
@@ -109,8 +127,15 @@ void main() {
       for (final t in ToolId.values) Routes.tool(t),
       Routes.convert('pdf-to-docx'),
       Routes.convert('txt-to-pdf'),
+      Routes.settings,
       Routes.privacy,
       Routes.about,
+      Routes.authenticator,
+      Routes.authenticatorAdd,
+      Routes.authenticatorScan,
+      Routes.qrScanner,
+      Routes.qrGenerate,
+      Routes.qrHistory,
     ];
     for (final location in locations) {
       router.go(location);
@@ -121,6 +146,45 @@ void main() {
       expect(tester.takeException(), isNull, reason: '$location threw');
       expect(find.byType(Scaffold), findsWidgets, reason: location);
     }
+    await unmount(tester);
+  });
+
+  testWidgets('Home gear pushes Settings full-screen over the shell', (
+    tester,
+  ) async {
+    await pumpApp(tester);
+    await tester.tap(find.byTooltip('Settings'));
+    await settle(tester);
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(tester.takeException(), isNull);
+    await tester.pageBack();
+    await settle(tester);
+    expect(find.byType(NavigationBar), findsOneWidget);
+    await unmount(tester);
+  });
+
+  testWidgets('Authenticator tab shows a stored account and its code', (
+    tester,
+  ) async {
+    await pumpApp(tester);
+    final repo = DriftAuthenticatorRepository(
+      data.database,
+      secrets: _MemorySecrets(),
+      codec: const OtpCodecImpl(),
+    );
+    await tester.runAsync(
+      () => repo.add(
+        const NewOtpAccount(
+          label: 'me@example.com',
+          issuer: 'GitHub',
+          secret: 'JBSWY3DPEHPK3PXP',
+        ),
+      ),
+    );
+    await tester.tap(find.text('Authenticator').last);
+    await settle(tester);
+    expect(find.text('GitHub'), findsOneWidget);
+    expect(tester.takeException(), isNull);
     await unmount(tester);
   });
 
@@ -145,9 +209,16 @@ void main() {
     expect(doc!.isOk, isTrue);
 
     await pumpApp(tester);
-    await tester.tap(find.text('Files').last);
+    await tester.tap(find.text('ID Vault').last);
     await tester.runAsync(
       () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await settle(tester);
+    // The vault categories sit above the list; scroll down to the document.
+    await tester.scrollUntilVisible(
+      find.text('Meeting notes'),
+      300,
+      scrollable: find.byType(Scrollable).first,
     );
     await settle(tester);
     expect(find.text('Meeting notes'), findsWidgets);
@@ -270,4 +341,30 @@ class _FakeFace implements FaceLocator {
   @override
   Future<Result<NRect?>> locateLargestFace(String imagePath) async =>
       const Ok(null);
+}
+
+class _FakeLock implements AppLock {
+  // No screen lock in tests: authenticator codes show with a hint.
+  @override
+  Future<EngineCapability> capability() async =>
+      const EngineCapability(available: false, worksOffline: true);
+
+  @override
+  Future<Result<bool>> authenticate(String reason) async => const Ok(true);
+}
+
+class _MemorySecrets implements SecretStore {
+  final _values = <String, String>{};
+
+  @override
+  Future<String?> read(String key) async => _values[key];
+
+  @override
+  Future<void> write(String key, String value) async => _values[key] = value;
+
+  @override
+  Future<void> delete(String key) async => _values.remove(key);
+
+  @override
+  Future<Set<String>> keys() async => _values.keys.toSet();
 }

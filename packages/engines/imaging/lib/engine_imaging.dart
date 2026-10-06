@@ -14,3 +14,12 @@ export 'src/raster.dart'
         decodeRgb,
         encodeJpeg,
         encodePng;
+export 'src/signature/signature_processor.dart'
+    show
+        SignatureOutcome,
+        SignatureProcessorImpl,
+        alphaBounds,
+        backgroundUniformity,
+        backgroundUniformitySync,
+        cleanSignatureSync,
+        extractTransparentSignatureSync;

@@ -15,6 +15,7 @@ void main() {
 
   group('FilesScreen', () {
     testWidgets('lists documents and filters by type', (tester) async {
+      useTallPhone(tester);
       final repo = FakeRepository(docs);
       await tester.pumpWidget(
         harness(
@@ -35,6 +36,7 @@ void main() {
     });
 
     testWidgets('search with no results shows an empty state', (tester) async {
+      useTallPhone(tester);
       final repo = FakeRepository(docs);
       await tester.pumpWidget(
         harness(
@@ -53,7 +55,10 @@ void main() {
       expect(find.text('Invoice March'), findsOneWidget);
     });
 
-    testWidgets('empty library invites the user to scan', (tester) async {
+    testWidgets('empty library invites the user to create a folder', (
+      tester,
+    ) async {
+      useTallPhone(tester);
       await tester.pumpWidget(
         harness(
           const FilesScreen(),
@@ -61,8 +66,9 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('No documents yet'), findsOneWidget);
-      expect(find.text('Scan a document'), findsOneWidget);
+      expect(find.text('Your vault is empty'), findsOneWidget);
+      expect(find.text('Create a folder'), findsOneWidget);
+      expect(find.byTooltip('Add'), findsOneWidget);
     });
   });
 

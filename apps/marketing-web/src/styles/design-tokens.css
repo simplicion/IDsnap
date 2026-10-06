@@ -1,0 +1,270 @@
+/* ==========================================================================
+   IDSnap Design Tokens & Foundations (Strictly based on docs/design/DESIGN.md)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Light Theme Color Tokens (DESIGN.md section 4.1) */
+  --primary: #2457D6;
+  --on-primary: #FFFFFF;
+  --primary-container: #EAF0FF;
+  --on-primary-container: #14234A;
+
+  --secondary: #0E8A7E;
+  --on-secondary: #FFFFFF;
+  --secondary-container: #DDF5F1;
+  --on-secondary-container: #053B35;
+
+  --tertiary: #9A5B00;
+  --on-tertiary: #FFFFFF;
+
+  --error: #B42318;
+  --error-container: #FDE7E5;
+
+  --surface: #FFFFFF;
+  --surface-container-low: #FAFBFC;
+  --surface-container: #F7F8FA;
+  --surface-container-high: #EEF1F6;
+  --surface-container-highest: #E6EAF1;
+  --canvas: #F7F8FA;
+
+  --on-surface: #171A21;
+  --on-surface-variant: #5F6877;
+  --outline: #B9C1CE;
+  --outline-variant: #DDE2EA;
+
+  /* Typography */
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Elevation & Shadows */
+  --shadow-sm: 0 1px 3px rgba(20, 35, 74, 0.05), 0 1px 2px rgba(20, 35, 74, 0.03);
+  --shadow-md: 0 4px 12px -2px rgba(20, 35, 74, 0.08), 0 2px 6px -1px rgba(20, 35, 74, 0.04);
+  --shadow-lg: 0 12px 24px -4px rgba(20, 35, 74, 0.12), 0 4px 8px -2px rgba(20, 35, 74, 0.06);
+  --shadow-glow: 0 0 32px rgba(36, 87, 214, 0.2);
+
+  /* Radius Tokens */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Layout */
+  --max-width: 1200px;
+  --header-height: 72px;
+  --header-bg: rgba(255, 255, 255, 0.88);
+}
+
+[data-theme="dark"] {
+  /* Dark Theme Color Tokens (DESIGN.md section 4.1) */
+  --primary: #8EABFF;
+  --on-primary: #14234A;
+  --primary-container: #223A78;
+  --on-primary-container: #DCE5FF;
+
+  --secondary: #6FD6C8;
+  --on-secondary: #053B35;
+  --secondary-container: #0F4B44;
+  --on-secondary-container: #C4F2EA;
+
+  --tertiary: #FFC36B;
+  --on-tertiary: #4E2C00;
+
+  --error: #FF8D86;
+  --error-container: #5A1D18;
+
+  --surface: #191C22;
+  --surface-container-low: #15181D;
+  --surface-container: #191C22;
+  --surface-container-high: #252A33;
+  --surface-container-highest: #2E3440;
+  --canvas: #101216;
+
+  --header-bg: rgba(16, 18, 22, 0.88);
+
+  --on-surface: #F3F5F8;
+  --on-surface-variant: #B4BBC7;
+  --outline: #5A6373;
+  --outline-variant: #343B47;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 36px rgba(142, 171, 255, 0.25);
+}
+
+/* Base Resets */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--canvas);
+  color: var(--on-surface);
+  line-height: 1.6;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Typography Elements */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--on-surface);
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+h2 {
+  font-size: clamp(1.85rem, 3.5vw, 2.75rem);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+p {
+  color: var(--on-surface-variant);
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Layout Utilities */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.section {
+  padding: 5.5rem 0;
+  position: relative;
+}
+
+/* Badge & Pill Styles (DESIGN.md 4.1 secondaryContainer) */
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background-color: var(--secondary-container);
+  color: var(--on-secondary-container);
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid rgba(14, 138, 126, 0.2);
+}
+
+.badge-primary {
+  background-color: var(--primary-container);
+  color: var(--on-primary-container);
+  border: 1px solid rgba(36, 87, 214, 0.2);
+}
+
+/* Button Styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: var(--on-primary);
+  box-shadow: 0 4px 14px rgba(36, 87, 214, 0.3);
+}
+
+.btn-primary:hover {
+  background-color: #1e4ac0;
+  color: var(--on-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(36, 87, 214, 0.4);
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background-color: var(--surface);
+  color: var(--on-surface);
+  border-color: var(--outline-variant);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background-color: var(--surface-container-high);
+  border-color: var(--outline);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+/* Glassmorphism Card Style */
+.card-glass {
+  background-color: var(--surface);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.card-glass:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--outline);
+}
+
+/* Section Header Component */
+.section-header {
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto 3.5rem auto;
+}
+
+.section-header h2 {
+  margin-top: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.section-header p {
+  font-size: 1.15rem;
+}

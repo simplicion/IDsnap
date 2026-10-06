@@ -10,6 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+/// [saveFolderProvider] key of the scan flow.
+const scanSaveFlow = 'scan';
+
 /// Name, quality, page size, searchable text and folder → Save as PDF.
 class SaveScreen extends ConsumerStatefulWidget {
   const SaveScreen({super.key, this.now});
@@ -26,7 +29,6 @@ class _SaveScreenState extends ConsumerState<SaveScreen> {
   QualityPreset? _quality;
   PdfPageSize? _pageSize;
   bool? _searchable;
-  String? _folderId;
 
   @override
   void initState() {
@@ -34,6 +36,12 @@ class _SaveScreenState extends ConsumerState<SaveScreen> {
     _name = TextEditingController(
       text: defaultScanName(widget.now ?? DateTime.now()),
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref
+          .read(saveFolderProvider(scanSaveFlow).notifier)
+          .start(ref.read(scanTargetFolderProvider));
+    });
   }
 
   @override
@@ -42,9 +50,14 @@ class _SaveScreenState extends ConsumerState<SaveScreen> {
     super.dispose();
   }
 
-  void _save(AppSettings settings) {
+  Future<void> _save(AppSettings settings) async {
     FocusScope.of(context).unfocus();
     final name = _name.text.trim();
+    final folderId = await existingSaveFolder(
+      () => ref.read(folderRepositoryProvider),
+      ref.read(saveFolderProvider(scanSaveFlow)),
+    );
+    if (!mounted) return;
     unawaited(
       ref
           .read(saveScanControllerProvider.notifier)
@@ -54,7 +67,7 @@ class _SaveScreenState extends ConsumerState<SaveScreen> {
               quality: _quality ?? settings.quality,
               pageSize: _pageSize ?? settings.pageSize,
               searchable: _searchable ?? settings.searchablePdf,
-              folderId: _folderId,
+              folderId: folderId,
             ),
           ),
     );
@@ -65,14 +78,27 @@ class _SaveScreenState extends ConsumerState<SaveScreen> {
       final path = await ref
           .read(fileStoreProvider)
           .exportCopy(doc.relativePath, doc.fileName);
+      final plain = ref.read(plainFileAccessProvider);
       final result = await ref.read(shareServiceProvider).share([
         path,
       ], subject: doc.name);
+      // Shred the decrypted copy after the target app had time to read it
+      // (and at the next launch otherwise; ADR-0010).
+      await plain.releaseTemp(path, grace: const Duration(minutes: 2));
       if (!mounted) return;
       if (result case Err(:final failure)) showFailureSnack(context, failure);
     } on Object catch (e) {
       if (mounted) {
-        showFailureSnack(context, AppFailure(FailureCode.unknown, cause: e));
+        showFailureSnack(
+          context,
+          AppFailure(
+            FailureCode.unknown,
+            cause: e,
+            message:
+                "The file couldn't be shared. It is saved in ID Vault — "
+                'try sharing it again from there.',
+          ),
+        );
       }
     }
   }
@@ -132,7 +158,6 @@ class _SaveScreenState extends ConsumerState<SaveScreen> {
   }
 
   Widget _form(AppSettings settings, int pageCount) {
-    final folders = ref.watch(foldersProvider).value ?? const <Folder>[];
     final quality = _quality ?? settings.quality;
     final pageSize = _pageSize ?? settings.pageSize;
     final searchable = _searchable ?? settings.searchablePdf;
@@ -188,6 +213,8 @@ class _SaveScreenState extends ConsumerState<SaveScreen> {
                     ),
                 ],
               ),
+              const _Label('Save to'),
+              const SaveFolderField(flow: scanSaveFlow),
               const _Label('Options'),
               Card(
                 child: Column(
@@ -200,29 +227,6 @@ class _SaveScreenState extends ConsumerState<SaveScreen> {
                       subtitle: const Text(
                         'Recognizes text on this phone so you can search and copy it. '
                         'Works for Latin-script languages such as English.',
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.folder_outlined),
-                      title: const Text('Folder'),
-                      trailing: DropdownButton<String?>(
-                        value: folders.any((f) => f.id == _folderId)
-                            ? _folderId
-                            : null,
-                        underline: const SizedBox.shrink(),
-                        borderRadius: Radii.buttonAll,
-                        items: [
-                          const DropdownMenuItem<String?>(
-                            child: Text('No folder'),
-                          ),
-                          for (final f in folders)
-                            DropdownMenuItem<String?>(
-                              value: f.id,
-                              child: Text(f.name),
-                            ),
-                        ],
-                        onChanged: (v) => setState(() => _folderId = v),
                       ),
                     ),
                   ],

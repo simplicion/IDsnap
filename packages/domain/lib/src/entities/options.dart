@@ -23,8 +23,8 @@ enum QualityPreset {
 
 enum PdfPageSize {
   a4('A4', 595.28, 841.89),
-  letter('US Letter', 612, 792),
-  legal('US Legal', 612, 1008),
+  letter('Letter', 612, 792),
+  legal('Legal', 612, 1008),
   fit('Fit to image', 0, 0);
 
   const PdfPageSize(this.label, this.widthPt, this.heightPt);

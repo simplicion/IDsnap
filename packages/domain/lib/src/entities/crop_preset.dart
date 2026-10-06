@@ -2,9 +2,12 @@ import 'package:meta/meta.dart';
 
 /// Fixed-aspect crop templates for photos and IDs (e.g. passport photos).
 ///
-/// Sizes follow commonly published specifications, but requirements differ by
-/// country and agency — the UI must tell users to verify the official rules.
-/// DocScan does not validate biometric compliance (head size, background).
+/// Presets are named by size term (passport size, stamp size…), never by
+/// country: the same size is accepted in many places, and requirements differ
+/// by agency — the UI must tell users to verify the official rules.
+/// IDSnap does not validate biometric compliance (head size, background).
+///
+/// [id]s are persisted and must stay stable even when labels change.
 @immutable
 class CropPreset {
   const CropPreset({
@@ -49,27 +52,36 @@ class CropPreset {
 
   static const passportIntl = CropPreset(
     id: 'passport_35x45',
-    label: 'Passport photo',
+    label: 'Passport size photo',
     widthMm: 35,
     heightMm: 45,
-    description: 'Common size in India, UK, EU, Australia and more',
+    description: 'The most widely used passport photo size',
     headRatio: 0.75,
   );
   static const passportUs = CropPreset(
     id: 'passport_us',
-    label: 'US passport / visa',
+    label: 'Square photo',
     widthMm: 50.8,
     heightMm: 50.8,
-    description: '2 × 2 inch',
+    description: '2 × 2 inch passport photo',
     headRatio: 0.6,
     topMarginRatio: 0.12,
   );
   static const visaChina = CropPreset(
     id: 'visa_33x48',
-    label: 'China visa',
+    label: 'Tall photo',
+    description: 'Slightly taller than passport size, asked for by some forms',
     widthMm: 33,
     heightMm: 48,
     headRatio: 0.64,
+  );
+  static const idPhoto = CropPreset(
+    id: 'id_30x40',
+    label: 'ID photo',
+    widthMm: 30,
+    heightMm: 40,
+    description: 'Small ID and form photo',
+    headRatio: 0.7,
   );
   static const stampSize = CropPreset(
     id: 'stamp_20x25',
@@ -82,7 +94,7 @@ class CropPreset {
   );
   static const passportCanada = CropPreset(
     id: 'passport_canada',
-    label: 'Canada passport',
+    label: 'Large passport photo',
     widthMm: 50,
     heightMm: 70,
     headRatio: 0.48,
@@ -94,7 +106,7 @@ class CropPreset {
     widthMm: 100,
     heightMm: 100,
     dpi: 108,
-    description: 'Square headshot for resumes, LinkedIn and ID apps',
+    description: 'Square headshot for resumes, profiles and ID apps',
     headRatio: 0.5,
     topMarginRatio: 0.14,
   );
@@ -114,7 +126,7 @@ class CropPreset {
   );
   static const letter = CropPreset(
     id: 'letter',
-    label: 'US Letter',
+    label: 'Letter',
     widthMm: 215.9,
     heightMm: 279.4,
     dpi: 200,
@@ -136,9 +148,10 @@ class CropPreset {
   static const List<CropPreset> all = [
     passportIntl,
     passportUs,
+    idPhoto,
+    stampSize,
     visaChina,
     passportCanada,
-    stampSize,
     profilePhoto,
     idCard,
     a4,

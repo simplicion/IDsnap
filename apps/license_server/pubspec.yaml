@@ -1,0 +1,19 @@
+name: license_server
+description: "IDSnap licence server: registers devices, starts the free day, takes 180 Pay webhooks and issues signed licence tokens."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  crypto: ^3.0.6
+  engine_license:
+    path: ../../packages/engines/license
+  http: ^1.6.0
+  shelf: ^1.4.2
+  sqlite3: ^3.6.0
+
+dev_dependencies:
+  test: ^1.25.0

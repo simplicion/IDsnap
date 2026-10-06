@@ -39,7 +39,10 @@
         { "title": "0005 OCR (ML Kit)", "path": "adr/0005-ocr-mlkit-bundled.md" },
         { "title": "0006 PDF engines", "path": "adr/0006-pdf-writer-and-pdfium.md" },
         { "title": "0007 Conversions", "path": "adr/0007-pure-dart-ooxml-conversion.md" },
-        { "title": "0008 Privacy", "path": "adr/0008-privacy-no-network.md" }
+        { "title": "0008 Privacy", "path": "adr/0008-privacy-no-network.md" },
+        { "title": "0009 Offline billing (superseded)", "path": "adr/0009-offline-billing-entitlements.md" },
+        { "title": "0010 Encryption at rest", "path": "adr/0010-encryption-at-rest.md" },
+        { "title": "0012 180 Pay licence server", "path": "adr/0012-180pay-licence-server.md" }
       ]
     },
     {

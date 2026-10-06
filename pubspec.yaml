@@ -8,6 +8,7 @@ workspace:
   - apps/scanner
   - apps/docs
   - apps/lab
+  - apps/license_server
   - packages/core
   - packages/domain
   - packages/contracts
@@ -21,13 +22,30 @@ workspace:
   - packages/engines/vision
   - packages/engines/security
   - packages/engines/reminders
+  - packages/engines/authenticator
+  - packages/engines/codes
+  - packages/engines/billing
+  - packages/engines/license
+  - packages/engines/ads
   - packages/features/home
   - packages/features/scan
   - packages/features/library
   - packages/features/tools
   - packages/features/settings
+  - packages/features/authenticator
+  - packages/features/notes
+  - packages/features/qr
+  - packages/features/paywall
 
 dev_dependencies: {melos: ^8.9.0, very_good_analysis: ^11.0.0}
+
+# Encryption at rest (ADR-0010): package:sqlite3 bundles SQLCipher instead
+# of plain SQLite on every platform (the Windows test host included, so the
+# PRAGMA key path is tested for real).
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlcipher
 
 melos:
   name: docscan

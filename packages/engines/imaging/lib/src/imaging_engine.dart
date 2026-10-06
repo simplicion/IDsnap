@@ -135,7 +135,18 @@ class ImagingEngine implements ImageProcessor {
         AppFailure(FailureCode.memoryLimitExceeded, cause: e, stackTrace: st),
       );
     } on Object catch (e, st) {
-      return Err(AppFailure(FailureCode.unknown, cause: e, stackTrace: st));
+      return Err(
+        AppFailure(
+          FailureCode.unknown,
+          cause: e,
+          stackTrace: st,
+          heading: "The image couldn't be processed",
+          message:
+              'Nothing was saved and your original is unchanged. Try again, '
+              'or choose another photo (a JPG or PNG works best).',
+          action: FailureAction.pickDifferentFile,
+        ),
+      );
     }
   }
 }

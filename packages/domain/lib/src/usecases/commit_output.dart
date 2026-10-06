@@ -49,19 +49,23 @@ class CommitOutput {
     }
     final pageCount = validated.valueOrNull;
 
+    // Rendered from the plaintext temp file: once committed, the library
+    // copy is encrypted at rest (ADR-0010) and PDFium can't open it by path.
+    final id = newId();
+    final thumb = await _thumbnail(id, temp, output);
+
     final String relative;
     try {
       relative = await files.commit(temp, ext);
     } on Object catch (e, st) {
       await files.delete(temp);
+      if (thumb != null) await files.delete(thumb);
       return Err(
         AppFailure(FailureCode.insufficientStorage, cause: e, stackTrace: st),
       );
     }
 
-    final id = newId();
     final now = DateTime.now();
-    final thumb = await _thumbnail(id, files.absolute(relative), output);
     final doc = Document(
       id: id,
       name: _cleanName(output.suggestedName),
@@ -94,6 +98,14 @@ class CommitOutput {
     if (output.bytes.isEmpty) return const Err(invalid);
     final head = output.bytes.sublist(0, output.bytes.length.clamp(0, 16));
     switch (output.format) {
+      case DocumentFormat.pdf when output.passwordProtected:
+        // Can't be opened without the password (never passed here): it must
+        // be a PDF that PDFium recognises as encrypted.
+        final count = await pdf.pageCount(temp);
+        if (count.failureOrNull?.code != FailureCode.passwordProtected) {
+          return const Err(invalid);
+        }
+        return Ok(output.expectedPages);
       case DocumentFormat.pdf:
         final count = await pdf.pageCount(temp);
         final n = count.valueOrNull;
@@ -130,13 +142,13 @@ class CommitOutput {
 
   Future<String?> _thumbnail(
     String id,
-    String absolute,
+    String plainPath,
     OutputFile output,
   ) async {
     final Uint8List? source;
     if (output.format == DocumentFormat.pdf) {
       source = (await pdf.renderPage(
-        absolute,
+        plainPath,
         0,
         targetWidth: 360,
       )).valueOrNull;

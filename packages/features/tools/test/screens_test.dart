@@ -98,7 +98,7 @@ void main() {
     expect(options.targetBytes, 200 * 1024);
     expect(options.format, ImageOutputFormat.jpeg);
     verify(() => h.commit(any())).called(1);
-    expect(find.text('Saved to your library'), findsOneWidget);
+    expect(find.text('Saved to ID Vault'), findsOneWidget);
   });
 
   testWidgets('Merge requires at least two PDFs', (tester) async {

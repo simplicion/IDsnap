@@ -125,7 +125,16 @@ class _PdfToImagesScreenState extends ConsumerState<PdfToImagesScreen>
     final width = _resolution.width;
     final pdf = ref.read(pdfEngineProvider);
     final images = ref.read(imageProcessorProvider);
+    final inspect = ref.read(inspectInputProvider);
     ref.read(jobProvider(_job).notifier).start((report) async {
+      final pre = await inspect(
+        input.path,
+        accepts: const {DocumentFormat.pdf},
+        nameHint: input.fileLabel,
+      );
+      if (pre case Err(:final failure)) {
+        return Err(failure.withDetail(input.fileLabel));
+      }
       final outputs = <OutputFile>[];
       for (final (i, page) in pages.indexed) {
         final png = await pdf.renderPage(input.path, page, targetWidth: width);

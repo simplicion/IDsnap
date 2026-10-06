@@ -1,0 +1,297 @@
+---
+---
+
+<header class="site-header" id="site-header">
+  <div class="container header-container">
+    <a href="/" class="brand-logo" aria-label="IDSnap Home">
+      <div class="logo-icon-wrap">
+        <svg class="logo-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="16" fill="#FFFFFF"/>
+          <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.25" stroke="#DDE2EA" stroke-width="1.5"/>
+          <path d="M14 24V16C14 14.9 14.9 14 16 14H24" stroke="#2457D6" stroke-width="3" stroke-linecap="round"/>
+          <path d="M50 14H42M50 14C51.1 14 52 14.9 52 16V24" stroke="#2457D6" stroke-width="3" stroke-linecap="round"/>
+          <path d="M14 40V48C14 49.1 14.9 50 16 50H24" stroke="#2457D6" stroke-width="3" stroke-linecap="round"/>
+          <path d="M50 50H42M50 50C51.1 50 52 49.1 52 48V40" stroke="#2457D6" stroke-width="3" stroke-linecap="round"/>
+          <text x="18" y="42" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="26" fill="#2457D6" letter-spacing="1">ID</text>
+          <circle cx="47" cy="38" r="4.5" fill="#0E8A7E"/>
+          <circle cx="47" cy="38" r="2" fill="#FFFFFF"/>
+        </svg>
+      </div>
+      <div class="logo-text-group">
+        <span class="logo-title"><span class="logo-id">ID</span>Snap</span>
+        <span class="logo-subtitle">Offline Vault</span>
+      </div>
+    </a>
+
+    <nav class="nav-desktop" aria-label="Main Navigation">
+      <a href="/#features" class="nav-link">Features</a>
+      <a href="/#identity" class="nav-link">Identity Suite</a>
+      <a href="/#authenticator" class="nav-link">2FA Authenticator</a>
+      <a href="/#tools" class="nav-link">Everyday Tools</a>
+      <a href="/security" class="nav-link">Security & Privacy</a>
+      <a href="/contact" class="nav-link">Support</a>
+    </nav>
+
+    <div class="header-actions">
+      <!-- Dark/Light Theme Toggle -->
+      <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle dark mode" type="button">
+        <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+      <a href="/#download" class="btn btn-primary header-download-btn">Get App</a>
+
+      <!-- Mobile Menu Toggle -->
+      <button id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Open navigation menu" aria-expanded="false" type="button">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer -->
+  <div id="mobile-nav-drawer" class="mobile-drawer" hidden>
+    <nav class="mobile-nav-links" aria-label="Mobile Navigation">
+      <a href="/#features" class="mobile-link">Features</a>
+      <a href="/#identity" class="mobile-link">Identity Suite</a>
+      <a href="/#authenticator" class="mobile-link">2FA Authenticator</a>
+      <a href="/#tools" class="mobile-link">Everyday Tools</a>
+      <a href="/security" class="mobile-link">Security & Privacy</a>
+      <a href="/privacy" class="mobile-link">Privacy Policy</a>
+      <a href="/terms" class="mobile-link">Terms of Service</a>
+      <a href="/contact" class="mobile-link">Support</a>
+      <a href="/#download" class="btn btn-primary mobile-download-btn">Download IDSnap</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    height: var(--header-height);
+    background-color: var(--header-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--outline-variant);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+
+  .header-container {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+
+  .logo-icon-wrap {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-svg {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(36, 87, 214, 0.25);
+  }
+
+  .logo-text-group {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+
+  .logo-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--on-surface);
+    letter-spacing: -0.03em;
+  }
+
+  .logo-subtitle {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-desktop {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  .nav-link {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--on-surface-variant);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .theme-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-md);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--on-surface-variant);
+    transition: all 0.2s ease;
+  }
+
+  .theme-toggle-btn:hover {
+    background-color: var(--surface-container-high);
+    color: var(--on-surface);
+  }
+
+  .sun-icon { display: none; }
+  .moon-icon { display: block; }
+
+  :global([data-theme="dark"]) .sun-icon { display: block; }
+  :global([data-theme="dark"]) .moon-icon { display: none; }
+
+  .header-download-btn {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  .hamburger-bar {
+    width: 100%;
+    height: 2px;
+    background-color: var(--on-surface);
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .mobile-drawer {
+    display: none;
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--outline-variant);
+    padding: 1.5rem;
+  }
+
+  .mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+
+  .mobile-link {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--on-surface);
+    text-decoration: none;
+    padding: 0.4rem 0;
+  }
+
+  .mobile-download-btn {
+    margin-top: 0.5rem;
+    width: 100%;
+  }
+
+  @media (max-width: 900px) {
+    .nav-desktop { display: none; }
+    .header-download-btn { display: none; }
+    .mobile-menu-btn { display: flex; }
+    .mobile-drawer:not([hidden]) { display: block; }
+  }
+</style>
+
+<script is:inline>
+  // Theme Toggle Persistence
+  const toggleBtn = document.getElementById('theme-toggle');
+  const storedTheme = localStorage.getItem('theme') || 
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+  document.documentElement.setAttribute('data-theme', storedTheme);
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  }
+
+  // Mobile Menu Toggle
+  const mobileToggle = document.getElementById('mobile-menu-toggle');
+  const mobileDrawer = document.getElementById('mobile-nav-drawer');
+
+  if (mobileToggle && mobileDrawer) {
+    mobileToggle.addEventListener('click', () => {
+      const isExpanded = mobileToggle.getAttribute('aria-expanded') === 'true';
+      mobileToggle.setAttribute('aria-expanded', !isExpanded);
+      if (isExpanded) {
+        mobileDrawer.setAttribute('hidden', '');
+      } else {
+        mobileDrawer.removeAttribute('hidden');
+      }
+    });
+
+    // Close on link tap
+    mobileDrawer.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileDrawer.setAttribute('hidden', '');
+        mobileToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+</script>

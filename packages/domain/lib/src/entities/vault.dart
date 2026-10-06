@@ -1,7 +1,10 @@
 import 'package:meta/meta.dart';
 
-/// Built-in vault categories (roadmap Feature B1). Stable `name`s are stored
-/// in the database; labels may be localized later.
+/// Legacy vault categories (roadmap Feature B1). The vault UI is now driven
+/// by user-created folders (`Folder`, `FolderTemplate`); categories remain on
+/// documents for backward compatibility. A document given a category while
+/// it has no folder is filed into the top-level folder made from the
+/// template with the same key (`FolderTemplate.key == name`), if one exists.
 enum DocumentCategory {
   ids('IDs & Proofs', 'National ID, passport, driving licence, tax ID'),
   education('Education & Career', 'Degrees, marksheets, certificates, resume'),
@@ -52,7 +55,7 @@ class VaultSlot {
     ),
     VaultSlot(
       'tax_id',
-      'Tax ID / PAN card',
+      'Tax ID card',
       DocumentCategory.ids,
       SlotCapture.idCard,
     ),

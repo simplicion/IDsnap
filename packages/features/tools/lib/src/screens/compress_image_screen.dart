@@ -190,6 +190,21 @@ class _CompressImageScreenState extends ConsumerState<CompressImageScreen>
       final r = await images.compress(bytes, options);
       if (r case Err(:final failure)) return Err(failure);
       final enc = r.valueOrNull!;
+      final target = options.targetBytes;
+      if (target != null && enc.bytes.length > target) {
+        // Never save a file that breaks the user's upload limit.
+        return Err(
+          AppFailure(
+            FailureCode.targetSizeUnreachable,
+            detail: 'Limit ${formatBytes(target)}',
+            action: FailureAction.lowerQuality,
+            message:
+                "Couldn't reach ${formatBytes(target)} without making the "
+                'image unreadable. Choose a smaller maximum size (e.g. '
+                '1080 px) and try again.',
+          ),
+        );
+      }
       _result = enc;
       return Ok([
         OutputFile(

@@ -96,7 +96,7 @@ Future<Uint8List> buildTextPdf(
       ? pdf.PdfPageFormat.a4
       : pdf.PdfPageFormat(options.pageSize.widthPt, options.pageSize.heightPt);
 
-  final doc = pw.Document(title: options.title, creator: 'DocScan');
+  final doc = pw.Document(title: options.title, creator: 'IDSnap');
   final style = pw.TextStyle(
     font: font,
     fontSize: options.fontSize,

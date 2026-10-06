@@ -51,6 +51,11 @@ void main() {
       ocr: ocr,
     );
     when(() => files.delete(any())).thenAnswer((_) async {});
+    // Pre-flight defaults: inputs exist, are non-empty, PDFs open.
+    when(() => files.exists(any())).thenAnswer((_) async => true);
+    when(() => files.size(any())).thenAnswer((_) async => 1024);
+    when(() => pdf.pageCount(any())).thenAnswer((_) async => const Ok(2));
+    when(() => files.read(any())).thenAnswer((_) async => Uint8List(0));
   });
 
   group('registry', () {
@@ -423,6 +428,145 @@ void main() {
         ),
       );
       expect(utf8.decode(r.valueOrNull!.single.bytes), 'Hi & bye');
+    });
+  });
+
+  group('production audit 2026-09: no silent empty output', () {
+    Future<Result<List<OutputFile>>> pdfToTxt(ConversionEngineImpl e) =>
+        e.convert(
+          ConversionRequest(
+            specId: ConversionIds.pdfToTxt,
+            inputs: [input('scan', DocumentFormat.pdf)],
+          ),
+        );
+
+    test('missing file → notFound before any work', () async {
+      when(() => files.exists(any())).thenAnswer((_) async => false);
+      final r = await pdfToTxt(engine);
+      expect(r.failureOrNull?.code, FailureCode.notFound);
+      verifyNever(() => pdf.extractText(any()));
+    });
+
+    test('zero-byte file → emptyFile', () async {
+      when(() => files.size(any())).thenAnswer((_) async => 0);
+      expect(
+        (await pdfToTxt(engine)).failureOrNull?.code,
+        FailureCode.emptyFile,
+      );
+    });
+
+    test(
+      'password-protected PDF → passwordProtected from pre-flight',
+      () async {
+        when(() => pdf.pageCount(any())).thenAnswer(
+          (_) async => const Err(AppFailure(FailureCode.passwordProtected)),
+        );
+        expect(
+          (await pdfToTxt(engine)).failureOrNull?.code,
+          FailureCode.passwordProtected,
+        );
+      },
+    );
+
+    test(
+      'scanned PDF without OCR engine → scannedPdfNeedsOcr + runOcr',
+      () async {
+        final noOcr = ConversionEngineImpl(
+          files: files,
+          pdf: pdf,
+          images: images,
+        );
+        when(
+          () => pdf.extractText(any()),
+        ).thenAnswer((_) async => const Ok(['', '  ']));
+        final f = (await pdfToTxt(noOcr)).failureOrNull!;
+        expect(f.code, FailureCode.scannedPdfNeedsOcr);
+        expect(f.nextAction, FailureAction.runOcr);
+      },
+    );
+
+    test(
+      'render failure during OCR fallback propagates (not silent)',
+      () async {
+        when(
+          () => pdf.extractText(any()),
+        ).thenAnswer((_) async => const Ok(['']));
+        when(
+          () => pdf.renderPage(
+            any(),
+            any(),
+            targetWidth: any(named: 'targetWidth'),
+          ),
+        ).thenAnswer(
+          (_) async => const Err(AppFailure(FailureCode.memoryLimitExceeded)),
+        );
+        final f = (await pdfToTxt(engine)).failureOrNull!;
+        expect(f.code, FailureCode.memoryLimitExceeded);
+        expect(f.detail, 'Page 1');
+      },
+    );
+
+    test('OCR error propagates typed with page detail', () async {
+      when(
+        () => pdf.extractText(any()),
+      ).thenAnswer((_) async => const Ok(['']));
+      when(
+        () => pdf.renderPage(
+          any(),
+          any(),
+          targetWidth: any(named: 'targetWidth'),
+        ),
+      ).thenAnswer((_) async => Ok(Uint8List(3)));
+      when(
+        () => files.writeTemp(any(), any()),
+      ).thenAnswer((_) async => '/t.png');
+      when(() => ocr.recognize(any(), any())).thenAnswer(
+        (_) async => const Err(AppFailure(FailureCode.modelUnavailable)),
+      );
+      final f = (await pdfToTxt(engine)).failureOrNull!;
+      expect(f.code, FailureCode.modelUnavailable);
+      verify(() => files.delete('/t.png')).called(1);
+    });
+
+    test(
+      'no text even after OCR → noTextFound (never an empty file)',
+      () async {
+        when(
+          () => pdf.extractText(any()),
+        ).thenAnswer((_) async => const Ok(['']));
+        when(
+          () => pdf.renderPage(
+            any(),
+            any(),
+            targetWidth: any(named: 'targetWidth'),
+          ),
+        ).thenAnswer((_) async => Ok(Uint8List(3)));
+        when(
+          () => files.writeTemp(any(), any()),
+        ).thenAnswer((_) async => '/t.png');
+        when(
+          () => ocr.recognize(any(), any()),
+        ).thenAnswer((_) async => const Ok(OcrResult.empty));
+        expect(
+          (await pdfToTxt(engine)).failureOrNull?.code,
+          FailureCode.noTextFound,
+        );
+      },
+    );
+
+    test('a PDF renamed to .jpg is rejected with a clear reason', () async {
+      when(
+        () => files.read(any()),
+      ).thenAnswer((_) async => Uint8List.fromList('%PDF-1.7'.codeUnits));
+      final r = await engine.convert(
+        ConversionRequest(
+          specId: ConversionIds.imageToTxt,
+          inputs: [input('photo', DocumentFormat.jpeg)],
+        ),
+      );
+      final f = r.failureOrNull!;
+      expect(f.code, FailureCode.unsupportedFormat);
+      expect(f.recovery, contains('actually a PDF'));
     });
   });
 }

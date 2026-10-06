@@ -30,6 +30,8 @@ class ConvertListScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Convert files')),
+      // Free build only; empty otherwise (ADR-0013).
+      bottomNavigationBar: const AdBannerSlot(),
       body: specs.isEmpty
           ? const EmptyState(
               icon: Icons.swap_horiz_rounded,

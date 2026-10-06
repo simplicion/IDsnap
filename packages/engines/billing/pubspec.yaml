@@ -1,0 +1,30 @@
+name: engine_billing
+description: "Engine: IDSnap licensing. Signed licences from the IDSnap licence server (180 Pay), verified offline; store billing kept behind IDSNAP_MONETIZATION=store. Switched off in the default free-with-ads build (ADR-0013)."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  docscan_core:
+    path: ../../core
+  crypto: ^3.0.6
+  flutter:
+    sdk: flutter
+  engine_license:
+    path: ../license
+  flutter_secure_storage: ^11.2.0
+  http: ^1.6.0
+  in_app_purchase: ^3.2.3
+  in_app_purchase_android: any
+  in_app_purchase_storekit: any
+  in_app_purchase_platform_interface: any
+  meta: ^1.16.0
+  url_launcher: ^6.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

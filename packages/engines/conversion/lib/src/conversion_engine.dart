@@ -80,6 +80,13 @@ class ConversionEngineImpl implements ConversionEngine {
         );
       }
     }
+    for (final input in inputs) {
+      final checked = await _preflight(input);
+      if (checked case Err(:final failure)) {
+        _log.warn('preflight_failed', {'spec': spec.id, 'code': failure.code});
+        return Err(failure);
+      }
+    }
     final stopwatch = Stopwatch()..start();
     final result = await guard(
       () => _run(spec, request, onProgress ?? (_) {}),
@@ -390,36 +397,63 @@ class ConversionEngineImpl implements ConversionEngine {
   }
 
   /// Embedded text per page, with OCR for pages that have none.
+  ///
+  /// Never returns silently-empty output (production audit 2026-09): a
+  /// render or OCR failure propagates as a typed failure, a scanned PDF
+  /// without an OCR engine fails with `scannedPdfNeedsOcr`, and a document
+  /// that still has no text after OCR fails with `noTextFound`.
   Future<List<String>> _pdfPageTexts(
     String path,
     OcrScript script,
     _Progress progress,
   ) async {
     final pages = List<String>.of(_unwrap(await pdf.extractText(path)));
+    if (pages.isEmpty) {
+      throw const AppFailure(FailureCode.corruptFile, detail: 'No pages');
+    }
     progress(0.3);
-    final recognizer = ocr;
-    if (recognizer != null) {
-      final empty = [
-        for (var i = 0; i < pages.length; i++)
-          if (pages[i].trim().isEmpty) i,
-      ];
-      for (var k = 0; k < empty.length; k++) {
-        final i = empty[k];
-        final png = (await pdf.renderPage(
-          path,
-          i,
-          targetWidth: 2000,
-        )).valueOrNull;
-        if (png == null) continue;
-        final temp = await files.writeTemp(png, 'png');
-        try {
-          final result = await recognizer.recognize(temp, script);
-          pages[i] = result.valueOrNull?.text ?? '';
-        } finally {
-          await files.delete(temp);
+    final empty = [
+      for (var i = 0; i < pages.length; i++)
+        if (pages[i].trim().isEmpty) i,
+    ];
+    if (empty.isNotEmpty) {
+      final recognizer = ocr;
+      if (recognizer == null) {
+        if (empty.length == pages.length) {
+          throw const AppFailure(FailureCode.scannedPdfNeedsOcr);
         }
-        progress(0.3 + (k + 1) / empty.length * 0.6);
+        for (final i in empty) {
+          pages[i] = '[Page ${i + 1} is an image without a text layer]';
+        }
+      } else {
+        for (var k = 0; k < empty.length; k++) {
+          final i = empty[k];
+          final png = await pdf.renderPage(path, i, targetWidth: 2000);
+          if (png case Err(:final failure)) {
+            throw failure.withDetail('Page ${i + 1}');
+          }
+          final temp = await files.writeTemp(png.valueOrNull!, 'png');
+          try {
+            final result = await recognizer.recognize(temp, script);
+            if (result case Err(:final failure)) {
+              throw failure.withDetail('Page ${i + 1}');
+            }
+            pages[i] = result.valueOrNull!.text;
+          } finally {
+            await files.delete(temp);
+          }
+          progress(0.3 + (k + 1) / empty.length * 0.6);
+        }
       }
+    }
+    if (pages.every((p) => p.trim().isEmpty)) {
+      throw const AppFailure(
+        FailureCode.noTextFound,
+        message:
+            'No readable text was found in this PDF, even with text '
+            'recognition. It may contain only pictures or handwriting.',
+        action: FailureAction.pickDifferentFile,
+      );
     }
     return [for (final p in pages) p.trimRight()];
   }
@@ -429,7 +463,76 @@ class ConversionEngineImpl implements ConversionEngine {
     if (recognizer == null) {
       throw const AppFailure(FailureCode.modelUnavailable);
     }
-    return _unwrap<OcrResult>(await recognizer.recognize(path, script));
+    final result = _unwrap<OcrResult>(await recognizer.recognize(path, script));
+    if (result.isEmpty) {
+      throw const AppFailure(FailureCode.noTextFound);
+    }
+    return result;
+  }
+
+  /// Pre-flight checks before any heavy work: the file exists, is not empty,
+  /// and its content matches the declared format. PDFs are opened once so
+  /// password-protected or corrupt files fail with a typed reason up front.
+  Future<Result<void>> _preflight(ConversionInput input) async {
+    try {
+      if (!await files.exists(input.path)) {
+        return const Err(AppFailure(FailureCode.notFound));
+      }
+      if (await files.size(input.path) == 0) {
+        return const Err(AppFailure(FailureCode.emptyFile));
+      }
+    } on Object catch (e, st) {
+      return Err(AppFailure(FailureCode.notFound, cause: e, stackTrace: st));
+    }
+    if (input.format == DocumentFormat.pdf) {
+      final count = await pdf.pageCount(input.path);
+      if (count case Err(:final failure)) return Err(failure);
+      if (count.valueOrNull == 0) {
+        return const Err(
+          AppFailure(FailureCode.corruptFile, detail: 'No pages'),
+        );
+      }
+      return const Ok(null);
+    }
+    final Uint8List bytes;
+    try {
+      bytes = await files.read(input.path);
+    } on Object catch (e, st) {
+      return Err(AppFailure(FailureCode.notFound, cause: e, stackTrace: st));
+    }
+    final head = bytes.length > 64 ? bytes.sublist(0, 64) : bytes;
+    final sniffed = DocumentFormat.sniff(
+      head,
+      nameHint: 'x.${input.format.extension}',
+    );
+    // Reject only when the content is clearly a *different* known format
+    // (e.g. a PDF renamed .jpg, or an iPhone HEIC photo). Unrecognized bytes
+    // are left to the format engine, which reports a typed corruptFile.
+    if (sniffed == DocumentFormat.heic && input.format != DocumentFormat.heic) {
+      return const Err(AppFailure(FailureCode.unsupportedFormat));
+    }
+    final contradicts =
+        sniffed != DocumentFormat.unknown &&
+        sniffed != input.format &&
+        !(sniffed.isImage && input.format.isImage) &&
+        !(sniffed.isText && input.format.isText) &&
+        !(sniffed == DocumentFormat.zip &&
+            const {
+              DocumentFormat.docx,
+              DocumentFormat.xlsx,
+              DocumentFormat.pptx,
+            }.contains(input.format));
+    if (contradicts) {
+      return Err(
+        AppFailure(
+          FailureCode.unsupportedFormat,
+          message:
+              'This file is actually a ${sniffed.label}, not a '
+              '${input.format.label}. Choose a ${input.format.label}.',
+        ),
+      );
+    }
+    return const Ok(null);
   }
 
   Future<OutputFile> _pdfFromText(

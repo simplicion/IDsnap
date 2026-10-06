@@ -58,3 +58,11 @@ final ocrCapabilityProvider = FutureProvider.autoDispose
           await ref.watch(textRecognizerProvider).capability(script),
       retry: noRetry,
     );
+
+/// Pre-flight validation shared by every tool (production audit 2026-09).
+final inspectInputProvider = Provider<InspectInput>(
+  (ref) => InspectInput(
+    files: ref.watch(fileStoreProvider),
+    pdf: ref.watch(pdfEngineProvider),
+  ),
+);

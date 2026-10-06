@@ -80,15 +80,6 @@ class Document {
   );
 }
 
-@immutable
-class Folder {
-  const Folder({required this.id, required this.name, required this.createdAt});
-
-  final String id;
-  final String name;
-  final DateTime createdAt;
-}
-
 enum DocumentSort {
   newest('Newest first'),
   oldest('Oldest first'),
@@ -125,7 +116,9 @@ class DocumentQuery {
   final DocumentSort sort;
   final DocumentFilter filter;
 
-  /// `null` means every folder.
+  /// `null` means every folder, except the contents of locked folders
+  /// (a lock hides them from global lists such as recents and pickers).
+  /// When set, lists exactly that folder's direct documents.
   final String? folderId;
   final int? limit;
 

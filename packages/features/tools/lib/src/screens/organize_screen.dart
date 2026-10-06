@@ -186,7 +186,16 @@ class _OrganizeScreenState extends ConsumerState<OrganizeScreen>
     };
     final pdf = ref.read(pdfEngineProvider);
     final files = ref.read(fileStoreProvider);
+    final inspect = ref.read(inspectInputProvider);
     ref.read(jobProvider(_job).notifier).start((report) async {
+      final pre = await inspect(
+        input.path,
+        accepts: const {DocumentFormat.pdf},
+        nameHint: input.fileLabel,
+      );
+      if (pre case Err(:final failure)) {
+        return Err(failure.withDetail(input.fileLabel));
+      }
       final selected = await pdf.selectPages(input.path, order);
       if (selected case Err(:final failure)) return Err(failure);
       var bytes = selected.valueOrNull!;

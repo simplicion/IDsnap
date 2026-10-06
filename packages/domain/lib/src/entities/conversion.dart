@@ -103,6 +103,7 @@ class OutputFile {
     required this.format,
     required this.suggestedName,
     this.expectedPages,
+    this.passwordProtected = false,
   });
 
   final Uint8List bytes;
@@ -111,4 +112,9 @@ class OutputFile {
 
   /// When set, validation checks the committed PDF has this many pages.
   final int? expectedPages;
+
+  /// An encrypted PDF (Protect file). The producer already verified it by
+  /// reopening it with the password; commit only checks that it is a PDF
+  /// that asks for one, and records [expectedPages].
+  final bool passwordProtected;
 }

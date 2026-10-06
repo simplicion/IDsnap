@@ -64,7 +64,16 @@ class MlKitFaceLocator implements FaceLocator {
         AppFailure(FailureCode.modelUnavailable, cause: e, stackTrace: st),
       );
     } on Object catch (e, st) {
-      return Err(AppFailure(FailureCode.unknown, cause: e, stackTrace: st));
+      return Err(
+        AppFailure(
+          FailureCode.unknown,
+          cause: e,
+          stackTrace: st,
+          heading: "The face couldn't be found automatically",
+          message: 'You can still frame the photo by hand.',
+          action: FailureAction.none,
+        ),
+      );
     }
   }
 

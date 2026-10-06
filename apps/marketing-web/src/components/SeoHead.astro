@@ -1,0 +1,88 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  ogType?: string;
+  schema?: object | object[];
+}
+
+const {
+  title,
+  description,
+  canonical = 'https://idsnap.app' + Astro.url.pathname,
+  ogType = 'website',
+  schema,
+} = Astro.props;
+
+const siteName = 'IDSnap: Everyday Document & Identity Vault';
+const fullTitle = title.includes('IDSnap') ? title : `${title} | IDSnap`;
+const ogImage = 'https://idsnap.app/og-image.png';
+
+// Default SoftwareApplication Schema
+const defaultAppSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "IDSnap",
+  "operatingSystem": "Android, iOS",
+  "applicationCategory": "ProductivityApplication",
+  "applicationSubCategory": "Document & Identity Utility",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "description": "All-in-one private document scanner, offline 2FA authenticator, ID card merger, passport photo cropper, and PDF target-size compressor.",
+  "featureList": [
+    "On-device processing: your documents never leave your phone",
+    "ID Card 2-step capture (Front + Back merged onto 1 A4 page)",
+    "Built-in RFC 6238 2FA TOTP Authenticator",
+    "Passport-size photo maker (35 x 45 mm, 2 x 2 in and more)",
+    "Target-size PDF and Image compressor (strictly under 200 KB)",
+    "On-device OCR text extraction and searchable PDF builder",
+    "Encrypted vault with biometric App Lock"
+  ],
+  "author": {
+    "@type": "Organization",
+    "name": "IDSnap",
+    "url": "https://idsnap.app"
+  }
+};
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={canonical} />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:locale" content="en_US" />
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={canonical} />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<!-- Favicon and Theme -->
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="theme-color" content="#2457D6" />
+<meta name="color-scheme" content="light dark" />
+
+<!-- Google & Search Verification -->
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+<!-- JSON-LD Structured Data for Senior SEO -->
+<script type="application/ld+json" set:html={JSON.stringify(defaultAppSchema)} />
+
+{schema && (
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+)}

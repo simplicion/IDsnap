@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:docscan_contracts/docscan_contracts.dart';
 import 'package:docscan_core/docscan_core.dart';
 import 'package:docscan_design_system/docscan_design_system.dart';
 import 'package:docscan_domain/docscan_domain.dart';
 import 'package:feature_tools/src/common/providers.dart';
+import 'package:feature_tools/src/protect/unlock_inputs.dart' as unlock;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 /// A file chosen as tool input, from the library or the device.
 @immutable
@@ -17,6 +20,7 @@ class ToolInput {
     required this.format,
     this.sizeBytes,
     this.documentId,
+    this.originalFileName,
   });
 
   /// Absolute, app-readable path.
@@ -30,13 +34,26 @@ class ToolInput {
   /// Set when the input came from the library.
   final String? documentId;
 
-  String get fileLabel => '$name.${format.extension}';
+  /// The picked file's own name (with its real extension) when the format
+  /// is unknown to the app, e.g. `notes.odt` in Protect file.
+  final String? originalFileName;
+
+  String get fileLabel =>
+      format == DocumentFormat.unknown && originalFileName != null
+      ? originalFileName!
+      : '$name.${format.extension}';
+
+  /// Library documents are compared by id (each pick decrypts to a new
+  /// private copy, ADR-0010); device files by path.
+  @override
+  bool operator ==(Object other) =>
+      other is ToolInput &&
+      (documentId != null
+          ? other.documentId == documentId
+          : other.documentId == null && other.path == path);
 
   @override
-  bool operator ==(Object other) => other is ToolInput && other.path == path;
-
-  @override
-  int get hashCode => path.hashCode;
+  int get hashCode => documentId?.hashCode ?? path.hashCode;
 }
 
 ToolInput inputFromDocument(FileStore files, Document doc) => ToolInput(
@@ -47,6 +64,24 @@ ToolInput inputFromDocument(FileStore files, Document doc) => ToolInput(
   documentId: doc.id,
 );
 
+/// A library document ready for engines that open files by path: vault
+/// files are encrypted at rest, so this decrypts a private plaintext copy
+/// into the app cache (ADR-0010). Copies are shredded at the next launch or
+/// after 30 minutes, whichever comes first.
+Future<ToolInput> openDocumentInput(WidgetRef ref, Document doc) async {
+  final files = ref.read(fileStoreProvider);
+  final plain = await ref
+      .read(plainFileAccessProvider)
+      .decryptToTemp(files.absolute(doc.relativePath), fileName: doc.fileName);
+  return ToolInput(
+    path: plain,
+    name: doc.name,
+    format: doc.format,
+    sizeBytes: doc.sizeBytes,
+    documentId: doc.id,
+  );
+}
+
 /// Loads the `?doc=` preselection if its format is accepted.
 Future<ToolInput?> inputFromDocId(
   WidgetRef ref,
@@ -55,7 +90,11 @@ Future<ToolInput?> inputFromDocId(
 ) async {
   final doc = await ref.read(documentRepositoryProvider).byId(id);
   if (doc == null || !accepts.contains(doc.format)) return null;
-  return inputFromDocument(ref.read(fileStoreProvider), doc);
+  try {
+    return await openDocumentInput(ref, doc);
+  } on Object {
+    return null;
+  }
 }
 
 /// Adds the `?doc=` library document to a tool's inputs on first build.
@@ -63,6 +102,9 @@ mixin PreselectDocument<T extends ConsumerStatefulWidget> on ConsumerState<T> {
   String? get initialDocId;
   Set<DocumentFormat> get acceptedFormats;
   void onPreselected(ToolInput input);
+
+  /// Ask for the password of a protected PDF and use a decrypted copy.
+  bool get unlockProtectedPdfs => true;
 
   @override
   void initState() {
@@ -72,7 +114,11 @@ mixin PreselectDocument<T extends ConsumerStatefulWidget> on ConsumerState<T> {
     unawaited(
       Future<void>.microtask(() async {
         final input = await inputFromDocId(ref, id, acceptedFormats);
-        if (input != null && mounted) onPreselected(input);
+        if (input == null || !mounted) return;
+        final ready = unlockProtectedPdfs
+            ? await unlock.unlockProtectedPdfs(context, ref, [input])
+            : [input];
+        if (ready.isNotEmpty && mounted) onPreselected(ready.first);
       }),
     );
   }
@@ -96,6 +142,8 @@ class InputPicker extends ConsumerWidget {
     this.multiple = false,
     this.reorderable = false,
     this.title,
+    this.anyFile = false,
+    this.unlockPdfs = true,
   });
 
   final Set<DocumentFormat> accepts;
@@ -105,9 +153,16 @@ class InputPicker extends ConsumerWidget {
   final bool reorderable;
   final String? title;
 
+  /// Device picks accept any file type (Protect file).
+  final bool anyFile;
+
+  /// Password-protected PDFs prompt for their password and are replaced by
+  /// a decrypted temp copy (see `unlockProtectedPdfs`).
+  final bool unlockPdfs;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final kind = describeFormats(accepts);
+    final kind = anyFile ? 'files' : describeFormats(accepts);
     final heading =
         title ??
         (multiple
@@ -182,6 +237,17 @@ class InputPicker extends ConsumerWidget {
     ],
   );
 
+  Future<void> _addUnlocked(
+    BuildContext context,
+    WidgetRef ref,
+    List<ToolInput> picked,
+  ) async {
+    final ready = unlockPdfs && context.mounted
+        ? await unlock.unlockProtectedPdfs(context, ref, picked)
+        : picked;
+    _add(ready);
+  }
+
   void _add(List<ToolInput> picked) {
     if (picked.isEmpty) return;
     if (!multiple) {
@@ -198,7 +264,9 @@ class InputPicker extends ConsumerWidget {
   Future<void> _pickFromDevice(BuildContext context, WidgetRef ref) async {
     final picker = ref.read(mediaPickerProvider);
     final files = ref.read(fileStoreProvider);
-    final result = accepts.every((f) => f.isImage)
+    final result = anyFile
+        ? await picker.pickFiles({DocumentFormat.unknown}, multiple: multiple)
+        : accepts.every((f) => f.isImage)
         ? await picker.pickImages(multiple: multiple)
         : await picker.pickFiles(accepts, multiple: multiple);
     if (!context.mounted) return;
@@ -215,7 +283,7 @@ class InputPicker extends ConsumerWidget {
       if (format == DocumentFormat.unknown && accepts.length == 1) {
         format = accepts.first;
       }
-      if (!accepts.contains(format)) {
+      if (!anyFile && !accepts.contains(format)) {
         rejected++;
         continue;
       }
@@ -231,6 +299,7 @@ class InputPicker extends ConsumerWidget {
           name: f.baseName,
           format: format,
           sizeBytes: size,
+          originalFileName: f.name,
         ),
       );
     }
@@ -243,7 +312,7 @@ class InputPicker extends ConsumerWidget {
             : "$rejected files aren't supported here. Choose $kindLabel.",
       );
     }
-    _add(picked);
+    await _addUnlocked(context, ref, picked);
   }
 
   String get kindLabel => describeFormats(accepts);
@@ -256,8 +325,20 @@ class InputPicker extends ConsumerWidget {
       builder: (_) => _LibrarySheet(accepts: accepts, multiple: multiple),
     );
     if (docs == null || docs.isEmpty) return;
-    final files = ref.read(fileStoreProvider);
-    _add([for (final d in docs) inputFromDocument(files, d)]);
+    final List<ToolInput> picked;
+    try {
+      picked = [for (final d in docs) await openDocumentInput(ref, d)];
+    } on Object catch (e, st) {
+      if (context.mounted) {
+        showFailureSnack(
+          context,
+          AppFailure(FailureCode.corruptFile, cause: e, stackTrace: st),
+        );
+      }
+      return;
+    }
+    if (!context.mounted) return;
+    await _addUnlocked(context, ref, picked);
   }
 }
 
@@ -384,6 +465,83 @@ class InputThumb extends StatelessWidget {
     }
     return ClipRRect(borderRadius: Radii.smAll, child: child);
   }
+}
+
+/// A library document's own (encrypted) thumbnail, decrypted in memory;
+/// the generic input thumbnail when it has none.
+class _LibraryThumb extends ConsumerWidget {
+  const _LibraryThumb({required this.doc, required this.files});
+
+  static const size = 44.0;
+
+  final Document doc;
+  final FileStore files;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final thumb = doc.thumbnailPath;
+    // Vault files are encrypted at rest: a PDF without a stored thumbnail
+    // is rendered from a short-lived decrypted copy, never from the
+    // ciphertext path (audit L-11).
+    final fallback = doc.format == DocumentFormat.pdf
+        ? _VaultPdfThumb(path: files.absolute(doc.relativePath), size: size)
+        : InputThumb(input: inputFromDocument(files, doc), size: size);
+    if (thumb == null) return fallback;
+    final bytes = ref.watch(vaultImageBytesProvider(thumb)).value;
+    if (bytes == null) return fallback;
+    return ClipRRect(
+      borderRadius: Radii.smAll,
+      child: Image.memory(
+        bytes,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        gaplessPlayback: true,
+      ),
+    );
+  }
+}
+
+/// First page of an encrypted vault PDF: decrypts a private copy, renders
+/// it and shreds the copy straight away.
+final FutureProviderFamily<Uint8List, String> vaultPdfThumbProvider =
+    FutureProvider.autoDispose.family<Uint8List, String>((ref, path) async {
+      final plain = ref.watch(plainFileAccessProvider);
+      final pdf = ref.watch(pdfEngineProvider);
+      final copy = await plain.decryptToTemp(path);
+      try {
+        final png = await pdf.renderPage(copy, 0, targetWidth: 320);
+        return switch (png) {
+          Ok(:final value) => value,
+          Err(:final failure) => throw failure,
+        };
+      } finally {
+        // A no-op when the file wasn't encrypted (copy == path).
+        await plain.releaseTemp(copy);
+      }
+    }, retry: noRetry);
+
+class _VaultPdfThumb extends ConsumerWidget {
+  const _VaultPdfThumb({required this.path, required this.size});
+
+  final String path;
+  final double size;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => ClipRRect(
+    borderRadius: Radii.smAll,
+    child: SizedBox.square(
+      dimension: size,
+      child: switch (ref.watch(vaultPdfThumbProvider(path))) {
+        AsyncData(:final value) => ColoredBox(
+          color: Colors.white,
+          child: Image.memory(value, fit: BoxFit.cover, gaplessPlayback: true),
+        ),
+        AsyncError() => _FormatIcon(format: DocumentFormat.pdf, size: size),
+        _ => ColoredBox(color: context.colors.surfaceContainerHigh),
+      },
+    ),
+  );
 }
 
 class _FormatIcon extends StatelessWidget {
@@ -516,7 +674,13 @@ class _LibrarySheetState extends ConsumerState<_LibrarySheet> {
               AsyncError(:final error) => FailureView(
                 error is AppFailure
                     ? error
-                    : const AppFailure(FailureCode.unknown),
+                    : const AppFailure(
+                        FailureCode.unknown,
+                        message:
+                            "Your library couldn't be loaded. Close this "
+                            'sheet and try again, or pick the file from your '
+                            'device instead.',
+                      ),
               ),
               _ => const Center(child: CircularProgressIndicator()),
             },
@@ -550,7 +714,7 @@ class _LibrarySheetState extends ConsumerState<_LibrarySheet> {
           formatRelativeDate(d.updatedAt),
         ].join(' · ');
         return ListTile(
-          leading: InputThumb(input: inputFromDocument(files, d), size: 44),
+          leading: _LibraryThumb(doc: d, files: files),
           title: Text(d.name, maxLines: 1, overflow: TextOverflow.ellipsis),
           subtitle: Text(subtitle),
           trailing: widget.multiple

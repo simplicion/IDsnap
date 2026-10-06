@@ -1,6 +1,10 @@
 import 'package:docscan_core/docscan_core.dart';
+import 'package:docscan_design_system/src/feedback.dart';
+import 'package:docscan_design_system/src/support.dart';
 import 'package:docscan_design_system/src/tokens.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// Section title with optional trailing action ("See all").
 class SectionHeader extends StatelessWidget {
@@ -140,7 +144,16 @@ class Pill extends StatelessWidget {
             Icon(icon, size: 14, color: fg),
             const SizedBox(width: 4),
           ],
-          Text(label, style: context.text.labelMedium?.copyWith(color: fg)),
+          // Long labels in narrow spaces (e.g. a Wrap in a card) ellipsize
+          // instead of overflowing.
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.text.labelMedium?.copyWith(color: fg),
+            ),
+          ),
         ],
       ),
     );
@@ -266,54 +279,128 @@ class EmptyState extends StatelessWidget {
 }
 
 /// Recoverable error panel: title, recovery hint, retry.
+/// Explains a failure — what happened, why, and the next step — with a
+/// primary action button for [AppFailure.nextAction] when the screen supplies
+/// a handler in [actions] (or [onRetry] for [FailureAction.retry]).
+///
+/// Unexpected failures also offer "Copy error details" (redacted
+/// diagnostics: failure code and exception type — never paths or content).
+/// Debug builds show the diagnostics inline.
 class FailureView extends StatelessWidget {
-  const FailureView(this.failure, {super.key, this.onRetry});
+  const FailureView(
+    this.failure, {
+    super.key,
+    this.onRetry,
+    this.actions = const {},
+  });
 
   final AppFailure failure;
   final VoidCallback? onRetry;
 
+  /// Handlers for next actions this screen can perform (e.g. runOcr opens
+  /// the OCR tool, pickDifferentFile clears the input).
+  final Map<FailureAction, VoidCallback> actions;
+
+  VoidCallback? _handler(FailureAction a) =>
+      a == FailureAction.retry ? actions[a] ?? onRetry : actions[a];
+
   @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(Space.x8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconBadge(
-            Icons.error_outline_rounded,
-            color: context.colors.error,
-            size: 64,
-          ),
-          const SizedBox(height: Space.x4),
-          Text(
-            failure.title,
-            style: context.text.titleLarge,
-            textAlign: TextAlign.center,
-          ),
-          if (failure.detail != null) ...[
-            const SizedBox(height: Space.x1),
+  Widget build(BuildContext context) {
+    final next = failure.nextAction;
+    final primary = next == FailureAction.none ? null : _handler(next);
+    final showRetry =
+        onRetry != null && next != FailureAction.retry && primary != onRetry;
+    final unexpected =
+        failure.code == FailureCode.unknown ||
+        failure.code == FailureCode.conversionFailed;
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(Space.x8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconBadge(
+              Icons.error_outline_rounded,
+              color: context.colors.error,
+              size: 64,
+            ),
+            const SizedBox(height: Space.x4),
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                failure.title,
+                style: context.text.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            if (failure.detail != null) ...[
+              const SizedBox(height: Space.x1),
+              Text(
+                failure.detail!,
+                style: context.text.bodyMedium,
+                textAlign: TextAlign.center,
+              ),
+            ],
+            const SizedBox(height: Space.x2),
             Text(
-              failure.detail!,
-              style: context.text.bodyMedium,
+              failure.recovery,
+              style: context.text.bodyMedium?.copyWith(
+                color: context.ds.textSecondary,
+              ),
               textAlign: TextAlign.center,
             ),
-          ],
-          const SizedBox(height: Space.x2),
-          Text(
-            failure.recovery,
-            style: context.text.bodyMedium?.copyWith(
-              color: context.ds.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          if (onRetry != null) ...[
             const SizedBox(height: Space.x5),
-            OutlinedButton(onPressed: onRetry, child: const Text('Try again')),
+            if (primary != null)
+              FilledButton(onPressed: primary, child: Text(next.label)),
+            if (showRetry) ...[
+              const SizedBox(height: Space.x2),
+              OutlinedButton(
+                onPressed: onRetry,
+                child: Text(FailureAction.retry.label),
+              ),
+            ],
+            if (unexpected) ...[
+              const SizedBox(height: Space.x2),
+              TextButton.icon(
+                onPressed: () async {
+                  await Clipboard.setData(
+                    ClipboardData(text: failure.diagnostics),
+                  );
+                  if (context.mounted) {
+                    showAppSnack(context, 'Error details copied');
+                  }
+                },
+                icon: const Icon(Icons.copy_rounded, size: 18),
+                label: const Text('Copy error details'),
+              ),
+            ],
+            if ((unexpected ||
+                    failure.nextAction == FailureAction.contactSupport) &&
+                SupportContact.available) ...[
+              const SizedBox(height: Space.x1),
+              TextButton.icon(
+                onPressed: () =>
+                    SupportContact.contact(context, failure: failure),
+                icon: const Icon(Icons.mail_outline_rounded, size: 18),
+                label: Text(FailureAction.contactSupport.label),
+              ),
+            ],
+            if (kDebugMode) ...[
+              const SizedBox(height: Space.x3),
+              SelectableText(
+                failure.diagnostics,
+                style: context.text.bodySmall?.copyWith(
+                  color: context.ds.textSecondary,
+                  fontFamily: 'monospace',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ],
-        ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 /// Progress panel for long operations. Shows determinate progress only when

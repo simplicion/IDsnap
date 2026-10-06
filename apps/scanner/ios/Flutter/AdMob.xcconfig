@@ -1,0 +1,16 @@
+// AdMob App ID for Info.plist (GADApplicationIdentifier). See
+// docs/adr/0013-free-with-ads.md.
+//
+// iOS has no AdMob app yet, so ADS ARE OFF ON iOS: the app wires the no-op
+// ads service while the "ios" block of assets/config/admob.json is empty,
+// and the ads SDK is never started. The value below is Google's public
+// SAMPLE App ID; it is here only because the SDK refuses to link into an
+// app whose Info.plist has no well-formed App ID.
+//
+// When the iOS AdMob app exists:
+//   1. put its IDs in the "ios" block of assets/config/admob.json;
+//   2. set the real App ID here (or in AdMobLocal.xcconfig, which wins).
+// An xcconfig value can't contain "//", which AdMob IDs never do.
+IDSNAP_ADMOB_APP_ID_IOS = ca-app-pub-3940256099942544~1458002511
+
+#include? "AdMobLocal.xcconfig"

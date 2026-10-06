@@ -1,6 +1,7 @@
 import 'package:docscan_contracts/docscan_contracts.dart';
 import 'package:docscan_core/docscan_core.dart';
 import 'package:docscan_design_system/docscan_design_system.dart';
+import 'package:feature_scan/src/save_controller.dart';
 import 'package:feature_scan/src/scan_session_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,9 +10,12 @@ import 'package:go_router/go_router.dart';
 /// Entry point of the scan flow (`/scan?source=`). Opens the camera or photo
 /// picker, then hands over to the review screen.
 class ScanLaunchScreen extends ConsumerStatefulWidget {
-  const ScanLaunchScreen({required this.source, super.key});
+  const ScanLaunchScreen({required this.source, super.key, this.folderId});
 
   final ScanSource source;
+
+  /// ID Vault folder the scan is saved into by default (from `?folder=`).
+  final String? folderId;
 
   @override
   ConsumerState<ScanLaunchScreen> createState() => _ScanLaunchScreenState();
@@ -25,6 +29,11 @@ class _ScanLaunchScreenState extends ConsumerState<ScanLaunchScreen> {
   @override
   void initState() {
     super.initState();
+    final folder = widget.folderId;
+    // Resuming keeps the folder chosen when the scan started.
+    if (folder != null || widget.source != ScanSource.resume) {
+      ref.read(scanTargetFolderProvider.notifier).folderId = folder;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) => _start(widget.source));
   }
 

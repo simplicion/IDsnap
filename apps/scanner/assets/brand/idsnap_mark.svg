@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- IDSnap app icon, source artwork (1024 design space, outlined: no font
+       needed). Same geometry as tool/generate_brand_assets.dart, which
+       renders every Android/iOS icon and splash image from it.
+       Colours: DsColors.blue600 #2457D6, teal600 #0E8A7E (packages/design_system).
+       Placeholder-quality artwork: a designer may want to refine it. -->
+  <rect width="1024" height="1024" fill="#FFFFFF"/>
+  <g fill="none" stroke="#2457D6" stroke-width="76" stroke-linecap="round">
+    <path d="M148 332V258A110 110 0 0 1 258 148H332"/>
+    <path d="M692 148H766A110 110 0 0 1 876 258V332"/>
+    <path d="M876 692V766A110 110 0 0 1 766 876H692"/>
+    <path d="M332 876H258A110 110 0 0 1 148 766V692"/>
+  </g>
+  <g fill="#2457D6">
+    <rect x="320" y="356" width="70" height="304"/>
+    <path fill-rule="evenodd" d="M450 356H560A144 152 0 0 1 560 660H450Z M520 426V590H560A74 82 0 0 0 560 426Z"/>
+  </g>
+  <circle cx="714" cy="714" r="37" fill="none" stroke="#0E8A7E" stroke-width="26"/>
+</svg>

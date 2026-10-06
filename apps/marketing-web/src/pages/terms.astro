@@ -1,0 +1,169 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const termsSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "IDSnap Terms of Service",
+  "description": "Terms of Service and End User License Agreement (EULA) for IDSnap. Clear, fair, and transparent conditions.",
+  "publisher": {
+    "@type": "Organization",
+    "name": "IDSnap",
+    "url": "https://idsnap.app"
+  }
+};
+---
+
+<Layout
+  title="Terms of Service & EULA"
+  description="Terms of Service and End User License Agreement for IDSnap. Plain-English terms ensuring you retain 100% ownership of your documents."
+  schema={termsSchema}
+>
+  <div class="container legal-page-container">
+    <div class="legal-header">
+      <div class="badge-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        Fair & Transparent Terms
+      </div>
+      <h1 class="legal-title">Terms of Service & EULA</h1>
+      <p class="legal-meta">Last Updated: September 25, 2026 • Version 1.0</p>
+    </div>
+
+    <div class="legal-body">
+      <section class="legal-section">
+        <h2>1. Acceptance of Terms</h2>
+        <p>
+          By downloading, installing, or using the IDSnap mobile application ("the App"), you agree to be bound by these Terms of Service ("Terms") and our Privacy Policy. If you do not agree to these Terms, do not install or use the App.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>2. Grant of License</h2>
+        <p>
+          IDSnap grants you a personal, non-exclusive, non-transferable, revocable license to use the App strictly for your personal, educational, or commercial document management needs on mobile devices you own or control, in accordance with the Apple App Store Terms and Google Play Terms of Service.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>3. 100% User Ownership of Documents & Data</h2>
+        <p>
+          <strong>You retain full, exclusive, and unencumbered ownership of all documents, images, signatures, 2FA keys, and files processed or stored using IDSnap.</strong>
+        </p>
+        <p>
+          We claim zero intellectual property rights over any file or scan you create. Your files are processed on your device; our servers never receive, view, or retain them.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>4. Important Disclaimer Regarding Official Documents & Scans</h2>
+        <p>
+          <strong>Digital Scans are Digital Representations:</strong> Scans, cropped photos, and PDF conversions produced by IDSnap are digitized representations of physical documents. IDSnap does not certify, notarize, authenticate, or guarantee that any scan will be legally accepted as an official original by government bodies, passport authorities, visa centers, courts, or academic institutions.
+        </p>
+        <p>
+          <strong>Photo Size Presets:</strong> While IDSnap provides crop aspect ratios matching international standards (such as 2 × 2 inch or 35 × 45 mm), you remain solely responsible for ensuring your physical appearance, lighting, background, head size, and framing satisfy the specific, evolving regulations of the official issuing agency.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>5. 2FA Authenticator Disclaimer & Backup Responsibility</h2>
+        <p>
+          The built-in 2FA Authenticator generates standard RFC 6238 Time-based One-Time Passwords (TOTP) strictly on your local device. <strong>You are solely responsible for securely storing your service backup recovery codes.</strong> Since IDSnap does not sync your data to the cloud, if you lose your phone, break your device, or clear your app data without external backups, we cannot recover your 2FA keys.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>6. Permitted and Prohibited Conduct</h2>
+        <p>You agree not to use IDSnap to:</p>
+        <ul>
+          <li>Forge, falsify, or tamper with government-issued identification cards, passports, academic transcripts, or legal contracts for fraudulent purposes.</li>
+          <li>Reverse-engineer, decompile, or attempt to extract source code from proprietary binary modules, except where permitted by open-source licenses.</li>
+          <li>Transmit malicious payloads by embedding harmful scripts into converted document formats.</li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>7. Disclaimer of Warranties</h2>
+        <p>
+          IDSnap is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind, whether express or implied, including but not limited to implied warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not warrant that operation will be error-free or uninterrupted.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>8. Contact Information</h2>
+        <p>For questions or notices regarding these Terms, contact:</p>
+        <div class="contact-box">
+          <p><strong>Legal & Developer Inquiries:</strong> <a href="mailto:legal@idsnap.app">legal@idsnap.app</a></p>
+          <p><strong>Support:</strong> <a href="/contact">Support Contact Page</a></p>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .legal-page-container {
+    padding-top: 3.5rem;
+    padding-bottom: 5rem;
+    max-width: 840px;
+  }
+
+  .legal-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .legal-title {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+
+  .legal-meta {
+    font-size: 0.95rem;
+    color: var(--on-surface-variant);
+  }
+
+  .legal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .legal-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.85rem;
+    color: var(--on-surface);
+    border-bottom: 2px solid var(--outline-variant);
+    padding-bottom: 0.5rem;
+  }
+
+  .legal-section p {
+    margin-bottom: 1rem;
+    line-height: 1.65;
+  }
+
+  .legal-section ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--on-surface-variant);
+  }
+
+  .contact-box {
+    background-color: var(--surface-container);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+</style>

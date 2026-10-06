@@ -117,9 +117,7 @@ void main() {
     expect(text.toUpperCase(), contains('INVOICE'));
   });
 
-  testWidgets('compress PDF with a UI-style progress callback', (
-    tester,
-  ) async {
+  testWidgets('compress PDF with a UI-style progress callback', (tester) async {
     final path = await scannedPdf();
     // UI callbacks capture framework objects that cannot cross isolates
     // (ports, native handles). This mirrors the Riverpod job notifier.
@@ -194,18 +192,20 @@ Future<Uint8List> renderTextPage(List<String> lines) async {
     ..drawRect(const Rect.fromLTWH(0, 0, w, h), Paint()..color = Colors.white);
   var y = 160.0;
   for (final line in lines) {
-    final tp = TextPainter(
-      text: TextSpan(
-        text: line,
-        style: const TextStyle(
-          color: Colors.black,
-          fontSize: 64,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: w - 160);
-    tp.paint(canvas, Offset(80, y));
+    final tp =
+        TextPainter(
+            text: TextSpan(
+              text: line,
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 64,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            textDirection: TextDirection.ltr,
+          )
+          ..layout(maxWidth: w - 160)
+          ..paint(canvas, Offset(80, y));
     y += tp.height + 60;
   }
   final image = await recorder.endRecording().toImage(w.toInt(), h.toInt());

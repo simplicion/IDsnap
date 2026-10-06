@@ -18,8 +18,13 @@ dependencies:
   pdf: ^3.13.1
   pdfrx: ^2.6.5
   image: ^4.10.1
+  # AES / SHA-2 / HMAC-SHA1 / PBKDF2 for PDF (R6) and ZIP (AE-2) encryption.
+  # MIT-style licence (Bouncy Castle).
+  pointycastle: ^4.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.5
+  # Independent AE-2 reader for the protected-ZIP round-trip tests.
+  archive: ^4.3.0

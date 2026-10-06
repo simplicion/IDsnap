@@ -16,11 +16,25 @@ Future<void> shareDocument(
   try {
     final path = await files.exportCopy(doc.relativePath, doc.fileName);
     final result = await share.share([path], subject: doc.name);
+    // Shred the decrypted copy once the target app had time to read it
+    // (and at the next launch otherwise; ADR-0010).
+    await ref
+        .read(plainFileAccessProvider)
+        .releaseTemp(path, grace: const Duration(minutes: 2));
     if (!context.mounted) return;
     if (result case Err(:final failure)) showFailureSnack(context, failure);
   } on Object catch (e) {
     if (context.mounted) {
-      showFailureSnack(context, AppFailure(FailureCode.unknown, cause: e));
+      showFailureSnack(
+        context,
+        AppFailure(
+          FailureCode.unknown,
+          cause: e,
+          message:
+              "Couldn't open the share sheet. The file is saved in ID "
+              'Vault; try sharing it from there.',
+        ),
+      );
     }
   }
 }
@@ -42,7 +56,16 @@ Future<void> saveDocumentToDevice(
     }, (f) => showFailureSnack(context, f));
   } on Object catch (e) {
     if (context.mounted) {
-      showFailureSnack(context, AppFailure(FailureCode.notFound, cause: e));
+      showFailureSnack(
+        context,
+        AppFailure(
+          FailureCode.unknown,
+          cause: e,
+          message:
+              "The file couldn't be saved to this phone's storage. It is "
+              'still in ID Vault; try again or use Share.',
+        ),
+      );
     }
   }
 }
@@ -54,15 +77,34 @@ class ResultSheet extends ConsumerWidget {
     super.key,
     this.summary,
     this.onStartOver,
+    this.showAds = true,
   });
 
   final List<Document> documents;
   final Widget? summary;
   final VoidCallback? onStartOver;
 
+  /// False inside a bottom sheet: sheets and dialogs never show ads.
+  /// Elsewhere the placement policy decides per screen (ADR-0013).
+  final bool showAds;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final many = documents.length > 1;
+    final location = showAds ? routeLocationOf(context) : null;
+    return PopScope(
+      // The one interstitial moment in the app: the job is finished, its
+      // files are saved and listed here, and the user is leaving this
+      // panel (Done or back). The placement policy and the frequency caps
+      // decide; nothing waits for an ad.
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) maybeShowResultInterstitial(ref, location);
+      },
+      child: _content(context, many),
+    );
+  }
+
+  Widget _content(BuildContext context, bool many) {
     return ListView(
       padding: const EdgeInsets.all(Space.gutter),
       children: [
@@ -76,11 +118,18 @@ class ResultSheet extends ConsumerWidget {
         ),
         const SizedBox(height: Space.x4),
         Text(
-          many ? '${documents.length} files saved' : 'Saved to your library',
+          many ? '${documents.length} files saved' : 'File saved',
           style: context.text.headlineSmall,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: Space.x1),
+        // The real destination folder (all outputs of one run share it).
+        if (documents.isNotEmpty)
+          SavedToFolderText(
+            documents.first.folderId,
+            style: context.text.bodyMedium,
+            textAlign: TextAlign.center,
+          ),
         Text(
           'Stored on this device only.',
           style: context.text.bodyMedium?.copyWith(
@@ -103,6 +152,10 @@ class ResultSheet extends ConsumerWidget {
           onPressed: () => context.canPop() ? context.pop() : null,
           child: const Text('Done'),
         ),
+        // One labelled ad card below the result and its buttons, with
+        // space around it. Zero height unless an ad is already loaded.
+        if (showAds)
+          const AdNativeSlot(placement: AdNativePlacement.toolResult),
       ],
     );
   }
@@ -192,6 +245,6 @@ Future<void> showResultSheet(BuildContext context, List<Document> documents) =>
       useSafeArea: true,
       builder: (_) => FractionallySizedBox(
         heightFactor: 0.85,
-        child: ResultSheet(documents: documents),
+        child: ResultSheet(documents: documents, showAds: false),
       ),
     );

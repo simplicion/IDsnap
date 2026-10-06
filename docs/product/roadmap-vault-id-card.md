@@ -91,6 +91,15 @@ test (two synthetic card images → a 1-page PDF with the right dimensions).
 ## 3. Feature B — Document Vault (categories + App Lock)
 
 ### B1. Smart categories
+
+> **Superseded (schema v4):** fixed system categories were replaced by **user-created, nested
+> folders**. The "+" menu offers templates (IDs & Proofs, Education & Career, Medical & Health,
+> Vehicles & Insurance, Tax & Receipts, Home & Legal, Travel, Work — defined as data in
+> `docscan_domain` `folder_template.dart`) or a custom name; folders nest without a depth limit,
+> any file can be uploaded or scanned into any folder, and each folder can carry an optional
+> device or PIN lock. The v3→v4 migration turns the old system folders into ordinary folders.
+> Labels stay country-neutral. The text below is kept for history only.
+
 Replace the flat "Files" root with a **Vault** home, keeping plain folders for everything else.
 
 | Category | Suggested items (empty-state prompts) |

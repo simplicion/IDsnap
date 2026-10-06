@@ -1,22 +1,63 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Privacy guarantee (ADR-0008): release builds have NO network access.
-         Debug/profile manifests re-add INTERNET for hot reload only. -->
-    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
+    <!-- ADR-0013 (amends ADR-0008): in the default, free build INTERNET is
+         used ONLY by the Google Mobile Ads SDK (ads and the consent form);
+         IDSnap's own code makes no network calls. In the paid licence mode
+         (ADR-0012) it is used only by the licence client in engine_billing.
+         Documents never leave the phone; an architecture test
+         (apps/scanner/test/architecture_test.dart) fails if any package
+         other than engine_ads / engine_billing gets network code. HTTPS
+         only: see res/xml/network_security_config.xml. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Required by the ads SDK (it checks for a connection before it
+         requests an ad). It was removed while the app had no SDK that
+         needed it; IDSnap's own code still never reads the network state. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Advertising ID, used by the ads SDK (declared by the SDK as well;
+         stated here so it is visible). Declare it in Play Console >
+         App content > Advertising ID. -->
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
+
+    <!-- App Lock (roadmap B2): system biometric / device-credential prompt. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <!-- Local expiry reminders (roadmap B4). Asked only when the user sets
+         an expiry date. Inexact alarms: no SCHEDULE_EXACT_ALARM needed. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Re-schedule reminders after reboot (flutter_local_notifications). -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Passport-size photo camera (camera plugin, on-device face detection).
+         Photos only: the plugin's microphone permission is removed. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+    <!-- Encryption at rest (ADR-0010): no OS backup / device transfer. The
+         master key can't leave the Keystore, so restored data would be
+         unreadable; users move phones with "Export all data".
+         tools:replace: these rules win over the backup rules bundled by
+         cunning_document_scanner. -->
     <application
-        android:label="DocScan"
+        android:label="@string/app_name"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="false"
+        tools:replace="android:fullBackupContent,android:dataExtractionRules"
+        tools:targetApi="s">
         <activity
             android:name=".MainActivity"
+            android:label="@string/app_name"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
+            android:enableOnBackInvokedCallback="true"
             android:windowSoftInputMode="adjustResize">
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
@@ -31,11 +72,37 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- AdMob App ID (ADR-0013). The value comes from
+             assets/config/admob.json through android/app/build.gradle.kts:
+             the real ID in release builds, Google's sample ID in debug and
+             profile builds. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="${admobAppId}" />
+        <!-- Consent first: nothing is measured until the app starts the ads
+             SDK, which it does only after consent is resolved. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.DELAY_APP_MEASUREMENT_INIT"
+            android:value="true" />
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- flutter_local_notifications: scheduled + boot receivers. -->
+        <receiver
+            android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+        <receiver
+            android:exported="false"
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+            </intent-filter>
+        </receiver>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
@@ -43,6 +110,12 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
+        <!-- Licensing: 180 Pay checkout and billing portal open in the browser
+             (url_launcher, external application). -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

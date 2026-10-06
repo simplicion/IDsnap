@@ -131,3 +131,24 @@ class Harness {
     await tester.pumpAndSettle();
   }
 }
+
+/// Folders for "Save to folder" tests.
+class FakeFolders implements FolderRepository {
+  FakeFolders(this.folders);
+
+  final List<Folder> folders;
+
+  @override
+  Future<List<Folder>> allFolders() async => folders;
+
+  @override
+  Stream<List<Folder>> watchAllFolders() => Stream.value(folders);
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// One folder "Family" (id `fam`).
+final familyFolders = FakeFolders([
+  Folder(id: 'fam', name: 'Family', createdAt: DateTime(2026)),
+]);

@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:docscan_contracts/docscan_contracts.dart';
+import 'package:docscan_core/docscan_core.dart';
 import 'package:docscan_design_system/docscan_design_system.dart';
 import 'package:docscan_domain/docscan_domain.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,53 @@ String documentMeta(Document d) => [
   formatBytes(d.sizeBytes),
 ].join(' · ');
 
-/// Thumbnail if one exists, otherwise the format icon.
+/// Whether the vault PDF at [relativePath] needs a password to open, e.g.
+/// one saved by Protect file. Cached for the session; false when it can't be
+/// checked. Only worth asking for PDFs without a thumbnail: a protected PDF
+/// can't be rendered when it is saved, so it never has one.
+final pdfNeedsPasswordProvider = FutureProvider.family<bool, String>((
+  ref,
+  relativePath,
+) async {
+  try {
+    final protector = ref.watch(pdfProtectorProvider);
+    final files = ref.watch(fileStoreProvider);
+    final plain = ref.watch(plainFileAccessProvider);
+    final path = await plain.decryptToTemp(files.absolute(relativePath));
+    try {
+      return (await protector.needsPassword(path)).valueOrNull ?? false;
+    } finally {
+      await plain.releaseTemp(path);
+    }
+  } on Object {
+    return false; // Not wired (tests, previews) or unreadable.
+  }
+});
+
+/// Whether [doc] is a password-protected PDF (see [pdfNeedsPasswordProvider]).
+bool isPasswordProtected(WidgetRef ref, Document doc) =>
+    doc.format == DocumentFormat.pdf &&
+    doc.thumbnailPath == null &&
+    (ref.watch(pdfNeedsPasswordProvider(doc.relativePath)).value ?? false);
+
+/// Small lock shown next to a password-protected document's name.
+class ProtectedBadge extends StatelessWidget {
+  const ProtectedBadge({super.key, this.size = 16});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => Icon(
+    Icons.lock_rounded,
+    key: const ValueKey('protected-badge'),
+    size: size,
+    color: context.ds.textSecondary,
+    semanticLabel: 'Password-protected',
+  );
+}
+
+/// Thumbnail if one exists, otherwise the format icon (a locked PDF for
+/// password-protected PDFs).
 class DocumentThumb extends ConsumerWidget {
   const DocumentThumb(this.doc, {super.key, this.size = 56});
 
@@ -29,21 +74,55 @@ class DocumentThumb extends ConsumerWidget {
     );
     final thumb = doc.thumbnailPath;
     if (thumb == null) {
+      if (isPasswordProtected(ref, doc)) {
+        return SizedBox(
+          key: const ValueKey('locked-pdf-thumb'),
+          width: size,
+          height: size,
+          child: Center(
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                IconBadge(visual.icon, color: visual.color, size: size * 0.8),
+                Positioned(
+                  right: -2,
+                  bottom: -2,
+                  child: CircleAvatar(
+                    radius: size * 0.16,
+                    backgroundColor: context.colors.surface,
+                    child: Icon(
+                      Icons.lock_rounded,
+                      size: size * 0.2,
+                      color: visual.color,
+                      semanticLabel: 'Password-protected PDF',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
       return SizedBox(width: size, height: size, child: fallback);
     }
-    final path = ref.watch(fileStoreProvider).absolute(thumb);
+    // Thumbnails are encrypted at rest (ADR-0010): decrypted in memory.
+    final bytes = ref.watch(vaultImageBytesProvider(thumb)).value;
     return ClipRRect(
       borderRadius: Radii.smAll,
       child: Container(
         width: size,
         height: size,
         color: context.colors.surfaceContainerHigh,
-        child: Image.file(
-          File(path),
-          fit: BoxFit.cover,
-          cacheWidth: (size * MediaQuery.devicePixelRatioOf(context)).round(),
-          errorBuilder: (_, _, _) => fallback,
-        ),
+        child: bytes == null
+            ? fallback
+            : Image.memory(
+                bytes,
+                fit: BoxFit.cover,
+                gaplessPlayback: true,
+                cacheWidth: (size * MediaQuery.devicePixelRatioOf(context))
+                    .round(),
+                errorBuilder: (_, _, _) => fallback,
+              ),
       ),
     );
   }
@@ -92,6 +171,14 @@ class DocumentListTile extends StatelessWidget {
         children: [
           Flexible(
             child: Text(doc.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+          ),
+          Consumer(
+            builder: (context, ref, _) => isPasswordProtected(ref, doc)
+                ? const Padding(
+                    padding: EdgeInsets.only(left: Space.x1),
+                    child: ProtectedBadge(),
+                  )
+                : const SizedBox.shrink(),
           ),
           if (doc.favorite) ...[
             const SizedBox(width: Space.x1),
@@ -199,11 +286,26 @@ class DocumentGridTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    doc.name,
-                    style: context.text.titleSmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          doc.name,
+                          style: context.text.titleSmall,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Consumer(
+                        builder: (context, ref, _) =>
+                            isPasswordProtected(ref, doc)
+                            ? const Padding(
+                                padding: EdgeInsets.only(left: Space.x1),
+                                child: ProtectedBadge(size: 14),
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 2),
                   Text(

@@ -93,6 +93,21 @@ saveScanControllerProvider =
       SaveScanController.new,
     );
 
+/// ID Vault folder a scan started from (`/scan?folder=`), preselected on the
+/// save screen. In memory only: a scan resumed after a restart saves to the
+/// top level unless the user picks a folder.
+class ScanTargetFolder extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  String? get folderId => state;
+  set folderId(String? value) => state = value;
+}
+
+final scanTargetFolderProvider = NotifierProvider<ScanTargetFolder, String?>(
+  ScanTargetFolder.new,
+);
+
 /// "Scan 2026-09-24 14.05"
 String defaultScanName(DateTime t) {
   String two(int v) => v.toString().padLeft(2, '0');

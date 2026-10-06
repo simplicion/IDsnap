@@ -115,8 +115,36 @@ class SettingsScreen extends ConsumerWidget {
               _OcrCapabilityNote(script: s.ocrScript),
             ],
           ),
+          const SectionHeader('Security & data'),
+          _Group(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.lock_outline_rounded),
+                title: const Text('App Lock'),
+                subtitle: Text(s.appLock ? 'On' : 'Off'),
+                trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: () => unawaited(context.push(Routes.security)),
+              ),
+              ListTile(
+                leading: const Icon(Icons.archive_outlined),
+                title: const Text('Your data'),
+                subtitle: const Text('Export or import all documents'),
+                trailing: const Icon(Icons.chevron_right_rounded),
+                onTap: () => unawaited(context.push(Routes.dataExport)),
+              ),
+            ],
+          ),
           const SectionHeader('Storage'),
           const _StorageSection(),
+          // Free build: what "free with ads" means, and the ad privacy
+          // choices. Paid builds: the plan. Settings never shows ads.
+          if (ref.watch(monetizationModeProvider).isFree) ...[
+            const SectionHeader('Free with ads'),
+            const _FreeWithAdsGroup(),
+          ] else ...[
+            const SectionHeader('IDSnap Pro'),
+            const _Group(children: [_SubscriptionTile()]),
+          ],
           const SectionHeader('About'),
           _Group(
             children: [
@@ -131,7 +159,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.info_outline_rounded),
-                title: const Text('About DocScan'),
+                title: const Text('About IDSnap'),
                 trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => unawaited(context.push(Routes.about)),
               ),
@@ -394,7 +422,10 @@ class _StorageSection extends ConsumerWidget {
           padding: const EdgeInsets.all(Space.x4),
           child: switch (usage) {
             AsyncData(:final value) => _UsageBar(usage: value),
-            AsyncError() => const Text('Storage usage unavailable'),
+            AsyncError() => const Text(
+              "Storage usage couldn't be measured. Your files are not "
+              'affected — reopen Settings to try again.',
+            ),
             _ => const LinearProgressIndicator(),
           },
         ),
@@ -414,7 +445,7 @@ class _StorageSection extends ConsumerWidget {
         ),
         ListTile(
           leading: Icon(
-            Icons.delete_forever_outlined,
+            Icons.delete_sweep_outlined,
             color: context.colors.error,
           ),
           title: Text(
@@ -422,47 +453,184 @@ class _StorageSection extends ConsumerWidget {
             style: TextStyle(color: context.colors.error),
           ),
           subtitle: const Text(
-            'Permanently removes every document from this device',
+            'Every document, also in locked folders. Folders, notes and '
+            'authenticator accounts stay.',
           ),
-          onTap: () => _deleteAll(context, ref),
+          onTap: () => _deleteAllDocuments(context, ref),
+        ),
+        ListTile(
+          leading: Icon(
+            Icons.delete_forever_outlined,
+            color: context.colors.error,
+          ),
+          title: Text(
+            'Erase everything',
+            style: TextStyle(color: context.colors.error),
+          ),
+          subtitle: Text(
+            'Documents, folders, notes, authenticator accounts, signatures, '
+            'QR history and settings.'
+            '${ref.watch(monetizationModeProvider).isFree ? '' : ' Your IDSnap Pro purchase is kept.'}',
+          ),
+          onTap: () => _eraseEverything(context, ref),
         ),
       ],
     );
   }
 
-  Future<void> _deleteAll(BuildContext context, WidgetRef ref) async {
-    final first = await confirmAction(
+  /// Cancels a deleted document's expiry reminders (best effort: the
+  /// scheduler may not be wired in every build).
+  static Future<void> Function(Document) _cancelReminders(WidgetRef ref) =>
+      (d) async {
+        try {
+          await ref.read(reminderSchedulerProvider).cancel(d.id);
+        } on Object {
+          // No scheduler: nothing was scheduled.
+        }
+      };
+
+  Future<void> _deleteAllDocuments(BuildContext context, WidgetRef ref) async {
+    final ok = await confirmAction(
       context,
       title: 'Delete all documents?',
       message:
-          'Every scan and file in DocScan will be removed from this device. Files you shared or saved elsewhere are not affected.',
+          'Every document in IDSnap, including those in locked folders, '
+          'will be permanently removed from this phone. Folders, notes, '
+          'authenticator accounts and settings stay. Files you shared or '
+          'saved elsewhere are not affected.',
       confirmLabel: 'Continue',
       destructive: true,
     );
-    if (!first || !context.mounted) return;
-    final second = await confirmAction(
-      context,
-      title: 'This cannot be undone',
-      message: 'Are you absolutely sure? There is no backup or cloud copy.',
-      confirmLabel: 'Delete everything',
-      destructive: true,
-    );
-    if (!second) return;
-    final repo = ref.read(documentRepositoryProvider);
-    final files = ref.read(fileStoreProvider);
-    final docs = await repo.watch(const DocumentQuery()).first;
-    for (final d in docs) {
-      await files.delete(d.relativePath);
-      final thumb = d.thumbnailPath;
-      if (thumb != null) await files.delete(thumb);
-      await repo.remove(d.id);
+    if (!ok || !context.mounted) return;
+    // Locked folders are included, so confirm it's the owner first.
+    if (!await reauthenticateForBackup(ref, 'Confirm to delete documents') ||
+        !context.mounted) {
+      return;
     }
-    await files.clearTemp();
+    final result = await ref
+        .read(vaultEraserProvider)
+        .deleteAllDocuments(onDeleted: _cancelReminders(ref));
     ref.invalidate(_usageProvider);
-    if (context.mounted) {
-      showAppSnack(context, 'Deleted ${docs.length} documents');
+    if (!context.mounted) return;
+    result.fold(
+      (n) => showAppSnack(
+        context,
+        n == 1 ? 'Deleted 1 document' : 'Deleted $n documents',
+      ),
+      (f) => showFailureSnack(context, f),
+    );
+  }
+
+  Future<void> _eraseEverything(BuildContext context, WidgetRef ref) async {
+    final typed = await showDialog<bool>(
+      context: context,
+      builder: (_) =>
+          _EraseConfirmDialog(paid: !ref.read(monetizationModeProvider).isFree),
+    );
+    if (typed != true || !context.mounted) return;
+    if (!await reauthenticateForBackup(ref, 'Confirm to erase everything') ||
+        !context.mounted) {
+      return;
+    }
+    final restart = ref.read(appRestartProvider);
+    final result = await ref
+        .read(vaultEraserProvider)
+        .eraseEverything(onDeleted: _cancelReminders(ref));
+    if (!context.mounted) return;
+    switch (result) {
+      case Ok():
+        if (restart != null) {
+          restart(); // Every screen starts again from the empty vault.
+          return;
+        }
+        ref
+          ..invalidate(settingsProvider)
+          ..invalidate(_usageProvider);
+        showAppSnack(
+          context,
+          'Everything was erased. Close and reopen IDSnap to finish.',
+        );
+      case Err(:final failure):
+        ref.invalidate(_usageProvider);
+        showFailureSnack(context, failure);
     }
   }
+}
+
+/// "Erase everything" asks the user to type a word, so it can't happen by
+/// a stray tap.
+class _EraseConfirmDialog extends StatefulWidget {
+  const _EraseConfirmDialog({required this.paid});
+
+  /// A paid build keeps the purchase, and says so.
+  final bool paid;
+
+  static const word = 'ERASE';
+
+  @override
+  State<_EraseConfirmDialog> createState() => _EraseConfirmDialogState();
+}
+
+class _EraseConfirmDialogState extends State<_EraseConfirmDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  bool get _ok =>
+      _controller.text.trim().toUpperCase() == _EraseConfirmDialog.word;
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: const Text('Erase everything?'),
+    scrollable: true,
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'This permanently removes from this phone: every document '
+          '(also in locked folders), folders, secure notes, authenticator '
+          'accounts with their secret keys and recovery codes, saved '
+          'signatures, QR history, folder and note PINs, drafts, temporary '
+          'files and your settings. IDSnap starts fresh.'
+          '${widget.paid ? ' Your IDSnap Pro purchase is kept.' : ''}',
+        ),
+        const SizedBox(height: Space.x3),
+        const Text(
+          'Turn off two-step verification on those websites first, or '
+          'export your data — without it you can lose access to accounts.',
+        ),
+        const SizedBox(height: Space.x3),
+        TextField(
+          controller: _controller,
+          autocorrect: false,
+          textCapitalization: TextCapitalization.characters,
+          decoration: const InputDecoration(
+            labelText: 'Type ${_EraseConfirmDialog.word} to confirm',
+          ),
+          onChanged: (_) => setState(() {}),
+        ),
+      ],
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context, false),
+        child: const Text('Cancel'),
+      ),
+      FilledButton(
+        style: FilledButton.styleFrom(
+          backgroundColor: context.colors.error,
+          foregroundColor: context.colors.onError,
+        ),
+        onPressed: _ok ? () => Navigator.pop(context, true) : null,
+        child: const Text('Erase everything'),
+      ),
+    ],
+  );
 }
 
 class _UsageBar extends StatelessWidget {
@@ -530,6 +698,91 @@ class _UsageBar extends StatelessWidget {
               ),
           ],
         ),
+      ],
+    );
+  }
+}
+
+/// Settings › Subscription entry: current plan at a glance.
+class _SubscriptionTile extends ConsumerWidget {
+  const _SubscriptionTile();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(entitlementProvider);
+    final subtitle = switch (state) {
+      FreeEntitlement() => 'Free · Every feature is unlocked',
+      TrialEntitlement(:final endsAt) =>
+        'Free day · ends in ${formatTimeLeft(endsAt, DateTime.now())}',
+      DayPassEntitlement(:final expiresAt) =>
+        'Day pass · ends in ${formatTimeLeft(expiresAt, DateTime.now())}',
+      MonthlyEntitlement() => 'IDSnap Pro · Monthly',
+      ExpiredEntitlement(reason: LapseReason.notActivated) =>
+        'Not activated · Connect once to start your free day',
+      ExpiredEntitlement() => 'No active plan · Free features only',
+    };
+    return ListTile(
+      leading: const Icon(Icons.workspace_premium_outlined),
+      title: const Text('Subscription'),
+      subtitle: Text(subtitle),
+      trailing: const Icon(Icons.chevron_right_rounded),
+      onTap: () => unawaited(context.push(Routes.subscription)),
+    );
+  }
+}
+
+/// Settings in the free build (ADR-0013): says plainly that IDSnap is free
+/// and shows ads, and offers the ad privacy choices when the consent
+/// platform requires them (EEA, UK, Switzerland, some US states).
+class _FreeWithAdsGroup extends ConsumerStatefulWidget {
+  const _FreeWithAdsGroup();
+
+  @override
+  ConsumerState<_FreeWithAdsGroup> createState() => _FreeWithAdsGroupState();
+}
+
+class _FreeWithAdsGroupState extends ConsumerState<_FreeWithAdsGroup> {
+  AdsService? _ads;
+
+  void _changed() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _ads?.removeListener(_changed);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ads = ref.watch(adsServiceProvider);
+    if (!identical(ads, _ads)) {
+      _ads?.removeListener(_changed);
+      _ads = ads..addListener(_changed);
+    }
+    return _Group(
+      children: [
+        const ListTile(
+          leading: Icon(Icons.volunteer_activism_outlined),
+          title: Text('IDSnap is free'),
+          subtitle: Text(
+            'Every feature is unlocked, with no trial and nothing to buy. '
+            'Ads on Home, Tools and some tool screens pay for it. There are '
+            'never ads in your ID Vault, the Authenticator, Secure notes or '
+            'Settings.',
+          ),
+        ),
+        if (ads.privacyOptionsRequired)
+          ListTile(
+            leading: const Icon(Icons.tune_rounded),
+            title: const Text('Ad privacy choices'),
+            subtitle: const Text(
+              'Change whether ads may be personalised for you',
+            ),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => unawaited(ads.openPrivacyOptions()),
+          ),
       ],
     );
   }

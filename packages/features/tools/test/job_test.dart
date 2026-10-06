@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:docscan_contracts/docscan_contracts.dart';
 import 'package:docscan_core/docscan_core.dart';
 import 'package:docscan_design_system/docscan_design_system.dart';
 import 'package:docscan_domain/docscan_domain.dart';
@@ -48,6 +49,49 @@ void main() {
     await run;
     expect(state(), isA<JobDone>());
     expect((state() as JobDone).documents.single.id, 'd1');
+  });
+
+  test('commits into the "Save to" folder of the tool', () async {
+    final c = ProviderContainer(
+      overrides: [
+        ...h.overrides,
+        folderRepositoryProvider.overrideWithValue(familyFolders),
+      ],
+    );
+    addTearDown(c.dispose);
+    c.listen(jobProvider('t'), (_, _) {});
+    when(
+      () => h.commit(any(), folderId: any(named: 'folderId')),
+    ).thenAnswer((_) async => Ok(doc('d1')));
+    c.read(saveFolderProvider(toolSaveFlow('t')).notifier).choose('fam');
+    await c.read(jobProvider('t').notifier).run((r) async => Ok([_out()]));
+    expect(c.read(jobProvider('t')), isA<JobDone>());
+    verify(() => h.commit(any(), folderId: 'fam')).called(1);
+  });
+
+  test('a locked folder can be saved into without unlocking it', () async {
+    final locked = FakeFolders([
+      Folder(
+        id: 'priv',
+        name: 'Private',
+        lockMode: FolderLockMode.pin,
+        createdAt: DateTime(2026),
+      ),
+    ]);
+    final c = ProviderContainer(
+      overrides: [
+        ...h.overrides,
+        folderRepositoryProvider.overrideWithValue(locked),
+      ],
+    );
+    addTearDown(c.dispose);
+    c.listen(jobProvider('t'), (_, _) {});
+    when(
+      () => h.commit(any(), folderId: any(named: 'folderId')),
+    ).thenAnswer((_) async => Ok(doc('d1')));
+    c.read(saveFolderProvider(toolSaveFlow('t')).notifier).choose('priv');
+    await c.read(jobProvider('t').notifier).run((r) async => Ok([_out()]));
+    verify(() => h.commit(any(), folderId: 'priv')).called(1);
   });
 
   test('commit failure ends in JobFailed, never JobDone', () async {
@@ -120,7 +164,9 @@ void main() {
 
     expect(find.byType(FailureView), findsOneWidget);
     expect(find.text(FailureCode.corruptFile.title), findsOneWidget);
-    await tester.tap(find.text('Try again'));
+    // The primary button is the failure's next action ("Choose another
+    // file"); it returns to the form. A duplicate "Try again" is hidden.
+    await tester.tap(find.text(FailureCode.corruptFile.action.label));
     await tester.pumpAndSettle();
     expect(find.text('Field'), findsOneWidget);
   });
@@ -143,7 +189,26 @@ void main() {
     );
     await c.read(jobProvider('w2').notifier).run((r) async => Ok([_out()]));
     await tester.pumpAndSettle();
-    expect(find.text('Saved to your library'), findsOneWidget);
+    expect(find.text('Saved to ID Vault'), findsOneWidget);
     expect(find.text('Report.pdf'), findsOneWidget);
+  });
+
+  testWidgets('ToolScaffold shows the "Save to" folder control', (
+    tester,
+  ) async {
+    await h.pump(
+      tester,
+      const ToolScaffold(
+        jobKey: 'w3',
+        title: 'T',
+        description: 'd',
+        primaryLabel: 'Go',
+        children: [],
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('save-folder-field')), findsOneWidget);
+    expect(find.text('Save to'), findsOneWidget);
+    expect(find.text('ID Vault'), findsOneWidget);
   });
 }

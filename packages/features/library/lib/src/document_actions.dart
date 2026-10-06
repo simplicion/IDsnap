@@ -2,9 +2,13 @@ import 'package:docscan_contracts/docscan_contracts.dart';
 import 'package:docscan_core/docscan_core.dart';
 import 'package:docscan_design_system/docscan_design_system.dart';
 import 'package:docscan_domain/docscan_domain.dart';
+import 'package:feature_library/src/folders/folder_actions.dart';
+import 'package:feature_library/src/folders/folder_lock.dart';
+import 'package:feature_library/src/folders/folder_providers.dart';
 import 'package:feature_library/src/library_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 /// User-initiated actions on library documents, shared by the list and the
 /// viewer so behaviour (and copy) stays consistent.
@@ -20,17 +24,50 @@ class DocumentActions {
         for (final d in docs)
           await files.exportCopy(d.relativePath, d.fileName),
       ];
+      // The share sheet is a system screen: don't relock folders for it.
       final result = await ref
-          .read(shareServiceProvider)
-          .share(paths, subject: docs.length == 1 ? docs.single.name : null);
+          .read(folderAccessProvider.notifier)
+          .whileExternal(
+            () => ref
+                .read(shareServiceProvider)
+                .share(
+                  paths,
+                  subject: docs.length == 1 ? docs.single.name : null,
+                ),
+          );
+      // Decrypted share copies are shredded once the receiving app has had
+      // time to read them, and at the next launch otherwise (ADR-0010).
+      final plain = ref.read(plainFileAccessProvider);
+      for (final path in paths) {
+        await plain.releaseTemp(path, grace: const Duration(minutes: 2));
+      }
       if (result case Err(:final failure) when context.mounted) {
         showFailureSnack(context, failure);
       }
     } on Object catch (e) {
       if (context.mounted) {
-        showFailureSnack(context, AppFailure(FailureCode.notFound, cause: e));
+        showFailureSnack(
+          context,
+          AppFailure(
+            FailureCode.unknown,
+            cause: e,
+            message:
+                "The file couldn't be prepared for sharing. It is still in "
+                'ID Vault and unchanged; try again.',
+          ),
+        );
       }
     }
+  }
+
+  /// Opens the Protect file tool with [doc] preselected: password-protect
+  /// it (AES-256 PDF or ZIP), then share. The vault copy is unchanged.
+  Future<void> protectAndShare(BuildContext context, Document doc) async {
+    // A document in a locked folder is only reachable once unlocked, so no
+    // extra access check is needed here. Pro: asks before opening the tool.
+    if (!await ensurePro(context, ref, ProFeature.protectFile)) return;
+    if (!context.mounted) return;
+    await context.push<void>(Routes.tool(ToolId.protectFile, docId: doc.id));
   }
 
   Future<void> saveToDevice(BuildContext context, Document doc) async {
@@ -38,15 +75,28 @@ class DocumentActions {
     try {
       final bytes = await files.read(files.absolute(doc.relativePath));
       final result = await ref
-          .read(shareServiceProvider)
-          .saveToDevice(bytes, doc.fileName);
+          .read(folderAccessProvider.notifier)
+          .whileExternal(
+            () => ref
+                .read(shareServiceProvider)
+                .saveToDevice(bytes, doc.fileName),
+          );
       if (!context.mounted) return;
       result.fold((saved) {
         if (saved) showAppSnack(context, 'Saved ${doc.fileName}');
       }, (f) => showFailureSnack(context, f));
     } on Object catch (e) {
       if (context.mounted) {
-        showFailureSnack(context, AppFailure(FailureCode.notFound, cause: e));
+        showFailureSnack(
+          context,
+          AppFailure(
+            FailureCode.unknown,
+            cause: e,
+            message:
+                "The file couldn't be saved to this phone's storage. It is "
+                'still in ID Vault and unchanged; try again or use Share.',
+          ),
+        );
       }
     }
   }
@@ -70,46 +120,85 @@ class DocumentActions {
     doc.copyWith(favorite: !doc.favorite, updatedAt: DateTime.now()),
   );
 
+  /// Moves documents into a folder picked from the tree. Moving out of a
+  /// locked folder needs it unlocked first.
   Future<void> moveToFolder(BuildContext context, List<Document> docs) async {
-    final choice = await showModalBottomSheet<_FolderChoice>(
-      context: context,
-      builder: (context) => const _FolderPicker(),
-    );
-    if (choice == null || !context.mounted) return;
-    var folderId = choice.folderId;
-    if (choice.createNew) {
-      final name = await promptText(
-        context,
-        title: 'New folder',
-        confirmLabel: 'Create',
-        hint: 'Folder name',
-      );
-      if (name == null || name.isEmpty || !context.mounted) return;
-      final created = await ref
-          .read(documentRepositoryProvider)
-          .addFolder(name);
-      folderId = created.valueOrNull?.id;
-      if (folderId == null) {
-        if (context.mounted) showFailureSnack(context, created.failureOrNull!);
-        return;
-      }
-    }
-    for (final d in docs) {
+    if (docs.isEmpty) return;
+    for (final folderId in {for (final d in docs) d.folderId}) {
+      if (!await ensureFolderAccess(context, ref, folderId)) return;
       if (!context.mounted) return;
-      await _update(
-        context,
-        d.copyWith(
-          folderId: folderId,
-          clearFolder: folderId == null,
-          updatedAt: DateTime.now(),
-        ),
-      );
     }
-    if (context.mounted) {
+    final target = await pickFolder(
+      context,
+      title: docs.length == 1
+          ? 'Move "${docs.single.name}" to'
+          : 'Move ${docs.length} files to',
+      initial: docs.first.folderId,
+    );
+    if (target == null || !context.mounted) return;
+    final result = await ref.read(folderRepositoryProvider).moveDocuments([
+      for (final d in docs) d.id,
+    ], target.folderId);
+    for (final d in docs) {
+      ref.invalidate(documentByIdProvider(d.id));
+    }
+    if (!context.mounted) return;
+    result.fold(
+      (_) => showAppSnack(
+        context,
+        docs.length == 1 ? 'Moved' : 'Moved ${docs.length} files',
+      ),
+      (f) => showFailureSnack(context, f),
+    );
+  }
+
+  /// Sets an expiry date and (re)schedules local reminders.
+  Future<void> setExpiry(BuildContext context, Document doc) async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: doc.expiresAt ?? DateTime(now.year + 1, now.month, now.day),
+      firstDate: DateTime(now.year - 5),
+      lastDate: DateTime(now.year + 30),
+      helpText: 'Expiry date',
+      confirmText: 'Save',
+    );
+    if (picked == null || !context.mounted) return;
+    final updated = doc.copyWith(expiresAt: picked, updatedAt: DateTime.now());
+    await _update(context, updated);
+    if (!context.mounted) return;
+    final remind = ref.read(currentSettingsProvider).expiryReminders;
+    final scheduled = remind ? await _schedule(context, updated) : false;
+    // null: a failure snack already says the date is saved and what to do.
+    if (scheduled != null && context.mounted) {
       showAppSnack(
         context,
-        docs.length == 1 ? 'Moved' : 'Moved ${docs.length} documents',
+        scheduled
+            ? 'Expiry saved. You will be reminded 30 and 7 days before.'
+            : 'Expiry date saved',
       );
+    }
+  }
+
+  Future<void> clearExpiry(BuildContext context, Document doc) async {
+    await _update(
+      context,
+      doc.copyWith(clearExpiry: true, updatedAt: DateTime.now()),
+    );
+    await cancelReminders(ref, doc.id);
+    if (context.mounted) showAppSnack(context, 'Expiry date removed');
+  }
+
+  /// `true` scheduled, `false` reminders unavailable here, `null` failed
+  /// (permission denied or the phone refused): the failure is shown with
+  /// what to do (audit H-01), and the expiry date stays saved.
+  Future<bool?> _schedule(BuildContext context, Document doc) async {
+    switch (await ref.read(expiryRemindersProvider).scheduleFor(doc)) {
+      case Ok(:final value):
+        return value;
+      case Err(:final failure):
+        if (context.mounted) showFailureSnack(context, failure);
+        return null;
     }
   }
 
@@ -145,53 +234,11 @@ class DocumentActions {
   }
 }
 
-class _FolderChoice {
-  const _FolderChoice(this.folderId, {this.createNew = false});
-
-  final String? folderId;
-  final bool createNew;
-}
-
-class _FolderPicker extends ConsumerWidget {
-  const _FolderPicker();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final folders = ref.watch(foldersProvider).value ?? const <Folder>[];
-    return SafeArea(
-      child: ListView(
-        shrinkWrap: true,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(
-              Space.gutter,
-              0,
-              Space.gutter,
-              Space.x2,
-            ),
-            child: Text('Move to', style: context.text.titleMedium),
-          ),
-          ListTile(
-            leading: const Icon(Icons.inbox_rounded),
-            title: const Text('All files (no folder)'),
-            onTap: () => Navigator.pop(context, const _FolderChoice(null)),
-          ),
-          for (final f in folders)
-            ListTile(
-              leading: const Icon(Icons.folder_rounded),
-              title: Text(f.name),
-              onTap: () => Navigator.pop(context, _FolderChoice(f.id)),
-            ),
-          ListTile(
-            leading: const Icon(Icons.create_new_folder_rounded),
-            title: const Text('New folder…'),
-            onTap: () => Navigator.pop(
-              context,
-              const _FolderChoice(null, createNew: true),
-            ),
-          ),
-        ],
-      ),
-    );
+/// Cancels reminders for a document; a no-op when reminders aren't wired.
+Future<void> cancelReminders(WidgetRef ref, String documentId) async {
+  try {
+    await ref.read(reminderSchedulerProvider).cancel(documentId);
+  } on Object {
+    // Reminders unavailable: nothing was scheduled.
   }
 }

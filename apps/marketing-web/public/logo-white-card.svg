@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 76" fill="none">
+  <defs>
+    <filter id="cardShadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#14234A" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Complete White Card Canvas -->
+  <rect width="290" height="76" rx="18" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" filter="url(#cardShadow)"/>
+
+  <!-- Icon Mark -->
+  <g transform="translate(12, 10)">
+    <!-- Inner Accent Frame -->
+    <rect width="56" height="56" rx="14" fill="#F0F4FF" stroke="#DDE2EA" stroke-width="1"/>
+    
+    <!-- Viewfinder Corner Brackets in Royal Blue (#2457D6) -->
+    <path d="M13 21V15C13 13.9 13.9 13 15 13H21" stroke="#2457D6" stroke-width="2.75" stroke-linecap="round"/>
+    <path d="M43 13H37M43 13C44.1 13 45 13.9 45 15V21" stroke="#2457D6" stroke-width="2.75" stroke-linecap="round"/>
+    <path d="M13 35V41C13 42.1 13.9 43 15 43H21" stroke="#2457D6" stroke-width="2.75" stroke-linecap="round"/>
+    <path d="M43 43H37M43 43C44.1 43 45 42.1 45 41V35" stroke="#2457D6" stroke-width="2.75" stroke-linecap="round"/>
+    
+    <!-- Bold 'ID' Typography -->
+    <text x="17" y="37" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-weight="900" font-size="21" fill="#2457D6" letter-spacing="0.5">ID</text>
+    
+    <!-- Security Verification Node -->
+    <circle cx="41" cy="35" r="3.5" fill="#0E8A7E"/>
+    <circle cx="41" cy="35" r="1.5" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Typographic Wordmark -->
+  <g transform="translate(82, 49)">
+    <text font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-size="34" font-weight="900" letter-spacing="-0.03em">
+      <tspan fill="#2457D6">ID</tspan><tspan fill="#0F172A">Snap</tspan>
+    </text>
+  </g>
+</svg>

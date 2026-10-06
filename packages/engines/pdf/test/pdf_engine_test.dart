@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:docscan_core/docscan_core.dart';
@@ -136,6 +137,53 @@ void main() {
       await f.writeAsBytes(bytes);
       return f.path;
     }
+
+    // Production audit 2026-09: the UI passes an onProgress callback that
+    // captures Riverpod/Flutter objects. If any engine closure handed to
+    // Isolate.run captures it, the call fails with "Illegal argument in
+    // isolate message" → "Compress PDF: Conversion failed". A captured
+    // ReceivePort reproduces exactly that condition on any host.
+    test('compress and render work with an unsendable onProgress', () async {
+      if (!pdfiumReady) return markTestSkipped('PDFium unavailable');
+      final path = await writePdf('isolate', 2);
+      final unsendable = ReceivePort();
+      addTearDown(unsendable.close);
+      final progress = <double>[];
+      final compressed = await engine.compress(
+        path,
+        PdfCompressionLevel.recommended,
+        onProgress: (p) {
+          unsendable.sendPort; // captured like a notifier/ref would be
+          progress.add(p);
+        },
+      );
+      expect(
+        compressed.failureOrNull,
+        isNull,
+        reason: '${compressed.failureOrNull?.diagnostics}',
+      );
+      expect(progress.last, 1);
+      final png = await engine.renderPage(path, 0, targetWidth: 300);
+      expect(png.failureOrNull, isNull);
+    });
+
+    test('empty and corrupt files fail with typed reasons', () async {
+      if (!pdfiumReady) return markTestSkipped('PDFium unavailable');
+      final empty = File('${dir.path}/empty.pdf')..writeAsBytesSync([]);
+      expect(
+        (await engine.pageCount(empty.path)).failureOrNull?.code,
+        FailureCode.emptyFile,
+      );
+      final junk = File('${dir.path}/junk.pdf')
+        ..writeAsBytesSync(List.filled(500, 42));
+      expect(
+        (await engine.compress(
+          junk.path,
+          PdfCompressionLevel.light,
+        )).failureOrNull?.code,
+        FailureCode.corruptFile,
+      );
+    });
 
     test(
       'pageCount, merge, select, rotate, extractText, render, compress',

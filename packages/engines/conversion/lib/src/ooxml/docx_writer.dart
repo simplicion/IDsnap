@@ -153,7 +153,7 @@ class DocxBuilder {
       'xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" '
       'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'
       '${title == null ? '' : '<dc:title>${xmlEscape(title!)}</dc:title>'}'
-      '<dc:creator>DocScan</dc:creator>'
+      '<dc:creator>IDSnap</dc:creator>'
       '</cp:coreProperties>';
 
   String _documentRels() {
@@ -242,7 +242,7 @@ const _packageRels =
 
 const _app =
     '$_xmlHeader<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties">'
-    '<Application>DocScan</Application></Properties>';
+    '<Application>IDSnap</Application></Properties>';
 
 String _style(
   String id,

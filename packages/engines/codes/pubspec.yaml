@@ -1,0 +1,16 @@
+name: engine_codes
+description: "Pure-Dart QR/barcode payload parsing (Wi-Fi, contacts, links, payments, product and ID card barcodes), URL safety checks and an offline QR encoder."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+
+dependencies:
+  image: ^4.10.1
+  meta: ^1.19.0
+  qr: ^3.0.2
+
+dev_dependencies:
+  test: ^1.31.1

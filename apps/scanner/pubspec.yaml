@@ -1,7 +1,7 @@
 name: docscan_scanner
-description: "A new Flutter project."
+description: "IDSnap — offline identity and everyday document vault."
 publish_to: 'none'
-version: 0.1.0+1
+version: 1.0.0+1
 
 resolution: workspace
 
@@ -9,6 +9,22 @@ environment:
   sdk: ^3.9.0
 
 dependencies:
+  feature_authenticator:
+    path: ../../packages/features/authenticator
+  engine_authenticator:
+    path: ../../packages/engines/authenticator
+  feature_notes:
+    path: ../../packages/features/notes
+  feature_qr:
+    path: ../../packages/features/qr
+  engine_codes:
+    path: ../../packages/engines/codes
+  # QR/barcode scanning for the authenticator and the QR & barcode tool.
+  # Android uses the bundled ML Kit barcode model (never the Play-services
+  # download); iOS uses Apple Vision.
+  mobile_scanner: ^7.1.2
+  feature_paywall:
+    path: ../../packages/features/paywall
   feature_settings:
     path: ../../packages/features/settings
   feature_tools:
@@ -19,6 +35,11 @@ dependencies:
     path: ../../packages/features/scan
   feature_home:
     path: ../../packages/features/home
+  engine_billing:
+    path: ../../packages/engines/billing
+  # Ads for the free build (ADR-0013). The only package with an ads SDK.
+  engine_ads:
+    path: ../../packages/engines/ads
   engine_security:
     path: ../../packages/engines/security
   engine_reminders:
@@ -50,6 +71,8 @@ dependencies:
   flutter_riverpod: ^3.4.3
   go_router: ^18.0.1
   path_provider: ^2.1.6
+  # Licensing: checkout and the 180 Pay portal open in the external browser.
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   integration_test:
@@ -60,8 +83,19 @@ dev_dependencies:
   image: ^4.10.1
   mocktail: ^1.0.5
   pdfrx: ^2.6.5
+  # Licensing end-to-end test (test/licence_e2e_test.dart): the real
+  # licence server in-process.
+  crypto: ^3.0.6
+  engine_license:
+    path: ../../packages/engines/license
+  http: ^1.6.0
+  license_server:
+    path: ../license_server
+  shelf: ^1.4.2
 
 flutter:
   uses-material-design: true
   assets:
     - assets/fonts/NotoSans-Regular.ttf
+    # AdMob IDs, shared with Gradle (ADR-0013).
+    - assets/config/admob.json

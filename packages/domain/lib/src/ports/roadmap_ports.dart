@@ -51,17 +51,39 @@ abstract interface class AppLock {
   Future<Result<bool>> authenticate(String reason);
 }
 
-/// ZIP export/import of the whole library (roadmap B4).
-abstract interface class LibraryArchiver {
-  /// Writes a ZIP (category folders + manifest.json) and returns its bytes.
-  Future<Result<Uint8List>> exportAll({void Function(double)? onProgress});
+/// Optional session state an [AppLock] may also implement. Kept separate so
+/// existing [AppLock] implementations and fakes keep compiling; callers use
+/// the [AppLockSessionX] extension, which answers "no" for locks that don't
+/// implement it.
+abstract interface class AppLockSession {
+  /// How recent an unlock must be to satisfy a nested gate.
+  static const defaultRecentWindow = Duration(seconds: 5);
 
-  /// Imports a ZIP produced by [exportAll]; returns documents added.
-  Future<Result<int>> importArchive(
-    String zipPath, {
-    void Function(double)? onProgress,
-  });
+  /// True while a system prompt is on screen (from any caller).
+  bool get isAuthenticating;
+
+  /// True when the last successful authentication finished less than
+  /// [within] ago. Lets a nested gate (authenticator reveal, folder lock)
+  /// skip a second prompt right after App Lock unlocked the app.
+  bool recentlyAuthenticated({Duration within = defaultRecentWindow});
 }
+
+/// Safe accessors for [AppLockSession] on any [AppLock].
+extension AppLockSessionX on AppLock {
+  bool get isAuthenticating => switch (this) {
+    final AppLockSession s => s.isAuthenticating,
+    _ => false,
+  };
+
+  bool recentlyAuthenticated({
+    Duration within = AppLockSession.defaultRecentWindow,
+  }) => switch (this) {
+    final AppLockSession s => s.recentlyAuthenticated(within: within),
+    _ => false,
+  };
+}
+
+// LibraryArchiver (full backup) moved to ports/backup.dart.
 
 /// Local-only reminders for expiring documents (roadmap B4).
 abstract interface class ReminderScheduler {
@@ -82,5 +104,14 @@ abstract interface class SignatureProcessor {
     required int width,
     required int height,
     int? maxBytes,
+  });
+
+  /// Transparent mode (PRD 3.3): paper becomes fully transparent, alpha
+  /// follows ink darkness, and the result is tightly cropped to the ink.
+  /// Returns a PNG no larger than [maxDimension] on its longest edge.
+  /// `Err(documentNotDetected)` when no ink is found.
+  Future<Result<EncodedImage>> extractTransparent(
+    Uint8List photo, {
+    int maxDimension = 1200,
   });
 }

@@ -1,0 +1,15 @@
+{
+  "_about": "AdMob IDs for IDSnap (publisher pub-6432767564862835). ONE source of truth: Gradle reads android.appId for the manifest, the app reads the rest as a bundled asset. These are not secrets (they are visible in every APK). Release builds use them; debug and profile builds always use Google's sample IDs instead. Override with --dart-define=IDSNAP_ADMOB_* if needed. iOS is empty: ads stay off on iOS until its IDs are added here. See docs/adr/0013-free-with-ads.md.",
+  "android": {
+    "appId": "ca-app-pub-6432767564862835~9537044782",
+    "banner": "ca-app-pub-6432767564862835/5924357972",
+    "interstitial": "ca-app-pub-6432767564862835/9301241060",
+    "native": "ca-app-pub-6432767564862835/7595523131"
+  },
+  "ios": {
+    "appId": "",
+    "banner": "",
+    "interstitial": "",
+    "native": ""
+  }
+}

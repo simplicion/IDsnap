@@ -42,10 +42,12 @@ final class JobNotice extends JobState {
 
 /// Returned by work to end in [JobNotice] instead of an error.
 class NoticeFailure extends AppFailure {
-  const NoticeFailure(this.message)
-    : super(FailureCode.processingCancelled, detail: message);
+  const NoticeFailure(String message)
+    : super(FailureCode.processingCancelled, detail: message, message: message);
 
-  final String message;
+  /// Always present for notices.
+  @override
+  String get message => super.message!;
 }
 
 typedef ReportProgress = void Function(double progress);
@@ -83,7 +85,18 @@ class JobController extends Notifier<JobState> {
     } on AppFailure catch (f) {
       result = Err(f);
     } on Object catch (e, st) {
-      result = Err(AppFailure(FailureCode.unknown, cause: e, stackTrace: st));
+      result = Err(
+        AppFailure(
+          FailureCode.unknown,
+          cause: e,
+          stackTrace: st,
+          message:
+              'The tool stopped unexpectedly and nothing was saved. Your '
+              'original file is unchanged. Try again; if it keeps '
+              'happening, try a smaller file or copy the error details for '
+              'support.',
+        ),
+      );
     }
     if (!ref.mounted) return;
 
@@ -94,14 +107,28 @@ class JobController extends Notifier<JobState> {
             : JobFailed(failure);
       case Ok(value: final outputs):
         if (outputs.isEmpty) {
-          state = const JobFailed(AppFailure(FailureCode.conversionFailed));
+          state = const JobFailed(
+            AppFailure(
+              FailureCode.conversionFailed,
+              message:
+                  'The tool produced no files. Your original was not '
+                  'changed.',
+            ),
+          );
           return;
         }
-        state = const JobRunning(label: 'Saving to your library…');
+        state = const JobRunning(label: 'Saving to ID Vault…');
+        // The tool's "Save to" choice; a folder deleted meanwhile → top
+        // level. Saving into a locked folder is allowed (write-only).
+        final folderId = await existingSaveFolder(
+          () => ref.read(folderRepositoryProvider),
+          ref.read(saveFolderProvider(toolSaveFlow(key))),
+        );
+        if (!ref.mounted) return;
         final commit = ref.read(commitOutputProvider);
         final docs = <Document>[];
         for (final out in outputs) {
-          final saved = await commit(out);
+          final saved = await commit(out, folderId: folderId);
           if (!ref.mounted) return;
           if (saved case Err(:final failure)) {
             state = JobFailed(failure);
@@ -113,6 +140,9 @@ class JobController extends Notifier<JobState> {
     }
   }
 }
+
+/// [saveFolderProvider] key of the tool whose job is [jobKey].
+String toolSaveFlow(String jobKey) => 'tool:$jobKey';
 
 final jobProvider = NotifierProvider.autoDispose
     .family<JobController, JobState, String>(JobController.new);

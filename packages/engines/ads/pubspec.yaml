@@ -1,0 +1,21 @@
+name: engine_ads
+description: "Engine: advertising (Google Mobile Ads). Consent first, test IDs outside release, frequency-capped interstitials. The only package allowed to link an ads SDK (ADR-0013)."
+publish_to: none
+version: 0.1.0
+resolution: workspace
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # The official Google plugin: AdMob banners and interstitials plus the
+  # User Messaging Platform (consent) APIs.
+  google_mobile_ads: ^9.1.0
+  meta: ^1.16.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

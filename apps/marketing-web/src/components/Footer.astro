@@ -1,0 +1,236 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-container">
+    <div class="footer-top">
+      <div class="footer-brand-col">
+        <a href="/" class="footer-brand" aria-label="IDSnap Home">
+          <div class="footer-logo-wrap">
+            <svg viewBox="0 0 64 64" fill="none" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="64" rx="16" fill="#2457D6"/>
+              <rect x="14" y="12" width="36" height="40" rx="6" stroke="#8EABFF" stroke-width="3" fill="none"/>
+              <circle cx="44" cy="44" r="7" fill="#0E8A7E"/>
+              <path d="M41 43.5V42C41 40.5 42.5 39.5 44 39.5C45.5 39.5 47 40.5 47 42V43.5M40 43.5H48V48H40V43.5Z" stroke="#FFFFFF" stroke-width="1.2" fill="none"/>
+            </svg>
+          </div>
+          <span class="footer-brand-name">IDSnap</span>
+        </a>
+        <p class="footer-tagline">
+          The all-in-one private identity & document studio. Scan ID cards front-and-back, generate 2FA codes, crop official passport photos, and compress PDFs—your documents never leave your phone.
+        </p>
+        <div class="footer-badge-wrap">
+          <span class="badge-pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            On-Device Architecture
+          </span>
+        </div>
+      </div>
+
+      <div class="footer-links-col">
+        <h3 class="footer-heading">Features</h3>
+        <ul class="footer-nav-list">
+          <li><a href="/#identity">ID Card 1-Sheet Scanner</a></li>
+          <li><a href="/#authenticator">Offline 2FA Authenticator</a></li>
+          <li><a href="/#passport">Passport-Size Photo Maker</a></li>
+          <li><a href="/#compress">Target-Size PDF Compressor</a></li>
+          <li><a href="/#ocr">On-Device OCR & Text</a></li>
+          <li><a href="/#convert">Offline Format Converter</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-col">
+        <h3 class="footer-heading">Security & Trust</h3>
+        <ul class="footer-nav-list">
+          <li><a href="/security">Security Architecture</a></li>
+          <li><a href="/security#airplane-mode">Airplane Mode Verification</a></li>
+          <li><a href="/security#keychain">Biometric KeyStore & Keychain</a></li>
+          <li><a href="/data-deletion">Data & Account Deletion</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-col">
+        <h3 class="footer-heading">Legal & Compliance</h3>
+        <ul class="footer-nav-list">
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+          <li><a href="/privacy#gdpr">GDPR & CCPA Rights</a></li>
+          <li><a href="/privacy#google-play">Google Play Data Safety</a></li>
+          <li><a href="/contact">Developer Support & Security Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-disclaimers">
+        <p class="disclaimer-text">
+          <strong>Compliance Notice:</strong> IDSnap operates exclusively on the user's local device. No personal identity records, biometric templates, 2FA secret seeds, document images, or OCR text layers are ever uploaded, transmitted, or stored on remote servers.
+        </p>
+        <p class="disclaimer-text">
+          Digital scans produced by IDSnap are digitized copies. Photo and document requirements must be verified against the guidelines of the portal or office you submit to.
+        </p>
+      </div>
+
+      <div class="footer-meta-row">
+        <p class="copyright-text">
+          &copy; {currentYear} IDSnap. All rights reserved. Built with Flutter, Drift & Astro.
+        </p>
+        <div class="footer-compliance-badges">
+          <span class="compliance-tag">Google Play Verified</span>
+          <span class="compliance-tag">Apple App Privacy Nutrition Label Compliant</span>
+          <span class="compliance-tag">GDPR Ready</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background-color: var(--surface-container-high);
+    border-top: 1px solid var(--outline-variant);
+    padding: 5rem 0 2.5rem 0;
+    margin-top: 5rem;
+    transition: background-color 0.3s ease;
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 3.5rem;
+    border-bottom: 1px solid var(--outline-variant);
+  }
+
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    margin-bottom: 1.25rem;
+  }
+
+  .footer-brand-name {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--on-surface);
+    letter-spacing: -0.03em;
+  }
+
+  .footer-tagline {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    max-width: 360px;
+  }
+
+  .footer-heading {
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--on-surface);
+    margin-bottom: 1.25rem;
+  }
+
+  .footer-nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .footer-nav-list a {
+    font-size: 0.92rem;
+    color: var(--on-surface-variant);
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-block;
+  }
+
+  .footer-nav-list a:hover {
+    color: var(--primary);
+    transform: translateX(2px);
+    text-decoration: none;
+  }
+
+  .footer-bottom {
+    padding-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .footer-disclaimers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-left: 3px solid var(--outline);
+    padding-left: 1.25rem;
+  }
+
+  .disclaimer-text {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: var(--on-surface-variant);
+  }
+
+  .footer-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding-top: 1rem;
+  }
+
+  .copyright-text {
+    font-size: 0.85rem;
+    color: var(--on-surface-variant);
+  }
+
+  .footer-compliance-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .compliance-tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    background-color: var(--surface);
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-sm);
+    color: var(--on-surface-variant);
+  }
+
+  @media (max-width: 960px) {
+    .footer-top {
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+    .footer-brand-col {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .footer-top {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .footer-brand-col {
+      grid-column: span 1;
+    }
+    .footer-meta-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

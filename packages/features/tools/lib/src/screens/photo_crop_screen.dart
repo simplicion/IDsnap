@@ -133,7 +133,7 @@ class _PhotoCropScreenState extends ConsumerState<PhotoCropScreen>
 
     return ToolScaffold(
       jobKey: _job,
-      title: 'Passport & ID photo',
+      title: 'Crop a photo',
       description:
           'Pick a size. We find the face and frame it automatically — '
           'pinch and drag to fine-tune.',
@@ -194,7 +194,7 @@ class _PhotoCropScreenState extends ConsumerState<PhotoCropScreen>
         const FidelityNote(
           label: 'Check the official rules',
           explanation:
-              "Check your country's official photo rules; DocScan doesn't "
+              "Check your country's official photo rules; IDSnap doesn't "
               'verify compliance (head size, background, expression).',
         ),
       ],
