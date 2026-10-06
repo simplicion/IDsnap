@@ -42,7 +42,8 @@
         { "title": "0008 Privacy", "path": "adr/0008-privacy-no-network.md" },
         { "title": "0009 Offline billing (superseded)", "path": "adr/0009-offline-billing-entitlements.md" },
         { "title": "0010 Encryption at rest", "path": "adr/0010-encryption-at-rest.md" },
-        { "title": "0012 180 Pay licence server", "path": "adr/0012-180pay-licence-server.md" }
+        { "title": "0012 180 Pay licence server (off by default)", "path": "adr/0012-180pay-licence-server.md" },
+        { "title": "0013 Free with ads", "path": "adr/0013-free-with-ads.md" }
       ]
     },
     {

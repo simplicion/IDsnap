@@ -9,17 +9,26 @@ name: Release
 #   ANDROID_KEYSTORE_PASSWORD   keystore password
 #   ANDROID_KEY_ALIAS           key alias inside the keystore
 #   ANDROID_KEY_PASSWORD        key password
+#   IDSNAP_SUPPORT_EMAIL        support mailbox shown in the app
+#
+# Monetization (docs/adr/0013-free-with-ads.md). The default build is FREE
+# WITH ADS and needs no further secret: the AdMob IDs are committed in
+# apps/scanner/assets/config/admob.json (they are not secrets) and Gradle
+# fails the build if they are missing or are Google's sample IDs.
+# Optional repository VARIABLES (Settings > Secrets and variables > Actions >
+# Variables):
+#   IDSNAP_MONETIZATION         ads (default) | licence | store
+#   IDSNAP_ADMOB_TEST_DEVICE_IDS  comma-separated hashed device IDs that get
+#                               test ads from the real ad units (QA phones)
+#   IDSNAP_ADMOB_APP_ID_ANDROID, IDSNAP_ADMOB_BANNER_ID,
+#   IDSNAP_ADMOB_INTERSTITIAL_ID, IDSNAP_ADMOB_NATIVE_ID
+#                               override one ID of admob.json (rarely needed)
+# Required ONLY when IDSNAP_MONETIZATION=licence (ADR-0012), as secrets:
 #   IDSNAP_LICENSE_URL          https base URL of the 180 Pay licence server
-#                               (ADR-0012; see packages/engines/billing/lib/src/licence/licence_config.dart)
 #   IDSNAP_LICENSE_PUBLIC_KEY   licence server Ed25519 PUBLIC key, base64url
 #                               (apps/license_server/tool/keygen.dart). Never the dev key.
-#   IDSNAP_SUPPORT_EMAIL        support mailbox shown in the app
-#   (Licence defines per docs/adr/0012-180pay-licence-server.md. To pin TLS to the
-#   licence host, edit res/xml/network_security_config.xml per deployment.)
-# Optional:
-#   IDSNAP_BILLING              "store" selects legacy Play Billing/StoreKit (default: licence)
-#   IDSNAP_PLAY_LICENSE_KEY     Play Console licence key; only used when the
-#                               build selects store billing (IDSNAP_BILLING=store).
+# Used ONLY when IDSNAP_MONETIZATION=store:
+#   IDSNAP_PLAY_LICENSE_KEY     Play Console licence key (secret).
 #
 # Outputs: idsnap-<tag>.aab (upload to Google Play), per-ABI APKs for direct
 # downloads (arm64-v8a for modern phones, armeabi-v7a for old ones; no x86_64)
@@ -47,21 +56,35 @@ jobs:
           IDSNAP_LICENSE_URL: ${{ secrets.IDSNAP_LICENSE_URL }}
           IDSNAP_LICENSE_PUBLIC_KEY: ${{ secrets.IDSNAP_LICENSE_PUBLIC_KEY }}
           IDSNAP_SUPPORT_EMAIL: ${{ secrets.IDSNAP_SUPPORT_EMAIL }}
+          IDSNAP_MONETIZATION: ${{ vars.IDSNAP_MONETIZATION }}
         run: |
+          mode="${IDSNAP_MONETIZATION:-ads}"
+          case "$mode" in
+            ads|licence|store) ;;
+            *) echo "::error::IDSNAP_MONETIZATION must be ads, licence or store (got '$mode')."; exit 1 ;;
+          esac
+          echo "Monetization mode: $mode"
+          required=(ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS
+                    ANDROID_KEY_PASSWORD IDSNAP_SUPPORT_EMAIL)
+          # The licence server settings are needed only by the paid licence
+          # build; the free build with ads never reads them.
+          if [ "$mode" = licence ]; then
+            required+=(IDSNAP_LICENSE_URL IDSNAP_LICENSE_PUBLIC_KEY)
+          fi
           missing=()
-          for name in ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS \
-                      ANDROID_KEY_PASSWORD IDSNAP_LICENSE_URL IDSNAP_LICENSE_PUBLIC_KEY \
-                      IDSNAP_SUPPORT_EMAIL; do
+          for name in "${required[@]}"; do
             if [ -z "${!name}" ]; then missing+=("$name"); fi
           done
           if ((${#missing[@]})); then
             echo "::error::Missing release secrets: ${missing[*]}. Refusing to build an unsigned or misconfigured release."
             exit 1
           fi
-          case "$IDSNAP_LICENSE_URL" in
-            https://*) ;;
-            *) echo "::error::IDSNAP_LICENSE_URL must be an https URL."; exit 1 ;;
-          esac
+          if [ "$mode" = licence ]; then
+            case "$IDSNAP_LICENSE_URL" in
+              https://*) ;;
+              *) echo "::error::IDSNAP_LICENSE_URL must be an https URL."; exit 1 ;;
+            esac
+          fi
 
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -110,16 +133,34 @@ jobs:
           IDSNAP_LICENSE_URL: ${{ secrets.IDSNAP_LICENSE_URL }}
           IDSNAP_LICENSE_PUBLIC_KEY: ${{ secrets.IDSNAP_LICENSE_PUBLIC_KEY }}
           IDSNAP_SUPPORT_EMAIL: ${{ secrets.IDSNAP_SUPPORT_EMAIL }}
-          IDSNAP_BILLING: ${{ secrets.IDSNAP_BILLING }}
           IDSNAP_PLAY_LICENSE_KEY: ${{ secrets.IDSNAP_PLAY_LICENSE_KEY }}
+          IDSNAP_MONETIZATION: ${{ vars.IDSNAP_MONETIZATION }}
+          IDSNAP_ADMOB_TEST_DEVICE_IDS: ${{ vars.IDSNAP_ADMOB_TEST_DEVICE_IDS }}
+          IDSNAP_ADMOB_APP_ID_ANDROID: ${{ vars.IDSNAP_ADMOB_APP_ID_ANDROID }}
+          IDSNAP_ADMOB_BANNER_ID: ${{ vars.IDSNAP_ADMOB_BANNER_ID }}
+          IDSNAP_ADMOB_INTERSTITIAL_ID: ${{ vars.IDSNAP_ADMOB_INTERSTITIAL_ID }}
+          IDSNAP_ADMOB_NATIVE_ID: ${{ vars.IDSNAP_ADMOB_NATIVE_ID }}
         run: |
           # A file keeps the values out of the command line and the logs.
           # Optional defines are written only when set: an empty define
-          # would override the in-code default (e.g. IDSNAP_BILLING=licence).
+          # would override the in-code default (e.g. IDSNAP_MONETIZATION=ads)
+          # or the committed AdMob IDs.
           python3 - <<'PY' > "$RUNNER_TEMP/release-defines.json"
           import json, os
-          required = ["IDSNAP_LICENSE_URL", "IDSNAP_LICENSE_PUBLIC_KEY", "IDSNAP_SUPPORT_EMAIL"]
-          optional = ["IDSNAP_BILLING", "IDSNAP_PLAY_LICENSE_KEY"]
+          mode = os.environ.get("IDSNAP_MONETIZATION") or "ads"
+          required = ["IDSNAP_SUPPORT_EMAIL"]
+          optional = [
+              "IDSNAP_MONETIZATION",
+              "IDSNAP_ADMOB_TEST_DEVICE_IDS",
+              "IDSNAP_ADMOB_APP_ID_ANDROID",
+              "IDSNAP_ADMOB_BANNER_ID",
+              "IDSNAP_ADMOB_INTERSTITIAL_ID",
+              "IDSNAP_ADMOB_NATIVE_ID",
+          ]
+          if mode == "licence":
+              required += ["IDSNAP_LICENSE_URL", "IDSNAP_LICENSE_PUBLIC_KEY"]
+          if mode == "store":
+              optional += ["IDSNAP_PLAY_LICENSE_KEY"]
           defines = {k: os.environ[k] for k in required}
           defines.update({k: os.environ[k] for k in optional if os.environ.get(k)})
           print(json.dumps(defines))

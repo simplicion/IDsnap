@@ -30,6 +30,8 @@ engineering decisions.
 
 ## Promises we keep in code
 
-1. No network in core flows ([ADR-0008](adr/0008-privacy-no-network.md)).
+1. Your documents, IDs and codes never leave the phone; the app's own code makes no network calls
+   ([ADR-0008](adr/0008-privacy-no-network.md)). IDSnap is free and shows Google ads on a few
+   screens, never in the vault ([ADR-0013](adr/0013-free-with-ads.md)).
 2. Originals are never modified. Every output is validated before "Saved" appears.
 3. Every conversion states its fidelity. Scans are copies, not certified originals.

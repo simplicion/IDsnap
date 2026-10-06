@@ -196,7 +196,10 @@ DocScan never claims official compliance; the tool shows a disclaimer.
 
 ## Release permissions (verified)
 
-The merged release manifest requests **no** dangerous or network permissions:
-`INTERNET` and `ACCESS_NETWORK_STATE` are removed with `tools:node="remove"`.
+The release manifest requests `INTERNET`, `ACCESS_NETWORK_STATE` and
+`com.google.android.gms.permission.AD_ID` for the Google Mobile Ads SDK only
+(the app is free with ads, [ADR-0013](../adr/0013-free-with-ads.md)); IDSnap's
+own code makes no network calls. It requests no storage, location, contacts or
+microphone permission.
 The platform document scanner runs inside Google Play services (its own
 process), and gallery/file access uses the system photo & document pickers.

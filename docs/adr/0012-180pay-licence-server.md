@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Accepted |
+| **Status** | Accepted; **switched off by default since [ADR-0013](0013-free-with-ads.md)** (2026-10-07): the app is free with ads, and everything below applies only to builds made with `--dart-define=IDSNAP_MONETIZATION=licence` |
 | **Date** | 2026-10-06 |
 | **Supersedes** | [ADR-0009](0009-offline-billing-entitlements.md) |
 | **Amends** | [ADR-0008](0008-privacy-no-network.md) (the app now uses the internet, for licensing only) |
@@ -76,12 +76,12 @@ The app verifies on every start (signature, version, device) and on every entitl
 ### Build configuration (release agent: wire these as secrets)
 | `--dart-define` | Needed for | Value |
 |---|---|---|
-| `IDSNAP_LICENSE_URL` | every release build | `https://<licence server>` (https required) |
-| `IDSNAP_LICENSE_PUBLIC_KEY` | every release build | public key printed by `apps/license_server/tool/keygen.dart` (base64url, 32 bytes). Public, but keep it as a CI variable so it matches the server's `LICENSE_SIGNING_KEY`. |
-| `IDSNAP_BILLING` | optional | `store` selects the legacy Play Billing/StoreKit path; default `licence`. |
+| `IDSNAP_LICENSE_URL` | every `licence`-mode release build | `https://<licence server>` (https required) |
+| `IDSNAP_LICENSE_PUBLIC_KEY` | every `licence`-mode release build | public key printed by `apps/license_server/tool/keygen.dart` (base64url, 32 bytes). Public, but keep it as a CI variable so it matches the server's `LICENSE_SIGNING_KEY`. |
+| `IDSNAP_MONETIZATION` | **required for this ADR to apply** | `licence` selects this licence-server model; `store` the Play Billing/StoreKit path (ADR-0009); the default `ads` is the free build (ADR-0013), which reads none of the licence defines. Replaces `IDSNAP_BILLING`. |
 | `IDSNAP_SIMULATE_ENTITLEMENT` | debug only | `trial`, `dayPass`, `monthly`, `expired`, `offlineNeverRegistered` (ignored in release). |
 
-`flutter build apk --release --dart-define=IDSNAP_LICENSE_URL=https://licence.example.com --dart-define=IDSNAP_LICENSE_PUBLIC_KEY=<key>`
+`flutter build apk --release --dart-define=IDSNAP_MONETIZATION=licence --dart-define=IDSNAP_LICENSE_URL=https://licence.example.com --dart-define=IDSNAP_LICENSE_PUBLIC_KEY=<key>`
 
 **Fail fast:** a release build started without an https URL, without a key, with a malformed key, or with the published **dev key** throws `LicenceConfigError` at startup (`resolveLicenceSettings`). Debug/profile builds default to `http://localhost:8080` and the dev key (`DevLicenceKeys`, clearly marked; the server refuses the dev private key unless `ALLOW_DEV_KEY=true`). A Gradle-time check of the defines (in `build.gradle.kts`, owned by the release pipeline) is recommended in addition.
 
@@ -94,7 +94,7 @@ The app verifies on every start (signature, version, device) and on every entitl
 `apps/scanner/test/architecture_test.dart` fails if any shipped package other than `engine_billing` / `engine_license` imports `package:http`/`dio`/`web_socket_channel`/`grpc`, uses `HttpClient`, `HttpServer`, sockets or `WebSocket`, or depends on a network package (incl. Firebase, Sentry, google_fonts). `url_launcher` hand-offs stay allowed.
 
 ### Store distribution
-Selling digital features inside an app distributed through Google Play or the App Store **may require the store's own billing** (Play Payments policy; App Store Review Guideline 3.1.1). Using 180 Pay is the owner's decision; distribution outside the stores, or an approved alternative-billing programme, may be needed. The ADR-0009 store path is kept compiling (`IDSNAP_BILLING=store`, monthly only) as a fallback.
+Selling digital features inside an app distributed through Google Play or the App Store **may require the store's own billing** (Play Payments policy; App Store Review Guideline 3.1.1). Using 180 Pay is the owner's decision; distribution outside the stores, or an approved alternative-billing programme, may be needed. The ADR-0009 store path is kept compiling (`IDSNAP_MONETIZATION=store`, monthly only) as a fallback.
 
 ## Consequences
 - Positive: one free day per device, enforced server-side; any payment amount the owner chooses (day passes); full offline use after licensing; access is only ever granted by a verified webhook; prices change without an app release.

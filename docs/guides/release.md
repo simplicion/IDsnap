@@ -12,7 +12,14 @@ signing secrets are configured, and unsigned otherwise.
 - [ ] Accessibility pass: TalkBack/VoiceOver on the scan flow, 200% text, dark mode.
 - [ ] Performance budgets met (PRD §11) on the low-tier device.
 - [ ] Dependency audit: `flutter pub outdated`, license review of new packages, no new network dependencies.
-- [ ] The release manifest has no `INTERNET` permission (`apps/scanner/android/app/src/main/AndroidManifest.xml`).
+- [ ] Permissions are exactly the expected set (`aapt dump permissions` on the APK): `INTERNET`,
+      `ACCESS_NETWORK_STATE` and `com.google.android.gms.permission.AD_ID` are there for the ads SDK
+      only ([ADR-0013](../adr/0013-free-with-ads.md)); no storage, location, contacts or microphone
+      permission.
+- [ ] Ads ([ADR-0013](../adr/0013-free-with-ads.md)): AdMob IDs in `apps/scanner/assets/config/admob.json`
+      are the real ones (a release build fails otherwise); consent messages are published in AdMob;
+      the real-phone ad checklist in the README passed; Play Console "Contains ads", Advertising ID
+      and Data safety match [data-safety.md](../release/data-safety.md).
 
 ## Android
 - [ ] `key.properties` + keystore configured locally or as CI secrets

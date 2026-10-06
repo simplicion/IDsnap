@@ -259,8 +259,8 @@ void main() {
     Routes.dataExport,
     Routes.idCard(),
     Routes.passportPhotoCamera,
-    Routes.scanReview,
-    Routes.scanSave,
+    // (The scan review and save screens need a scan in progress; the policy
+    // test in docscan_contracts covers their locations.)
     Routes.qrScanner,
     Routes.tool(ToolId.signPdf),
     Routes.tool(ToolId.mySignature),

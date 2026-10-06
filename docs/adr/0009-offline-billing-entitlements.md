@@ -3,7 +3,8 @@
 > **Superseded.** The owner moved payments to 180 Pay with a 1-day free trial,
 > monthly and day-pass plans and no lifetime plan: see
 > [ADR-0012](0012-180pay-licence-server.md). The store-billing code described
-> here still compiles and is selectable with `--dart-define=IDSNAP_BILLING=store`.
+> here still compiles and is selectable with `--dart-define=IDSNAP_MONETIZATION=store`
+> (the default build is free with ads: [ADR-0013](0013-free-with-ads.md)).
 
 | | |
 |---|---|
