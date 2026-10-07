@@ -3,7 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// App version shown to support. Must equal `version:` in pubspec.yaml
 /// (test/overrides_coverage_test.dart fails when they drift apart).
-const appVersion = '1.0.0+1';
+const appVersion = '1.0.0+2';
 
 /// Support contact for failure screens (audit M-04). The address comes from
 /// `--dart-define=IDSNAP_SUPPORT_EMAIL=you@yourdomain`; the default is a
