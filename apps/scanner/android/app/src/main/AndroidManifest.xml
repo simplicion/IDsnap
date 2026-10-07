@@ -31,6 +31,15 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove" />
     <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+
+    <!-- Unused permissions stripped for a clean Google Play listing (ADR-0013, release guide):
+         - BILLING: in-app purchases are disabled in the free ad-supported build. Stripping it
+           prevents Google Play from showing the "In-app purchases" badge.
+         - READ/WRITE_EXTERNAL_STORAGE: implied by camera/scanner plugins; not needed on
+           modern Android (Scoped Storage). Stripping avoids storage permission reviews. -->
+    <uses-permission android:name="com.android.vending.BILLING" tools:node="remove" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" />
     <!-- Encryption at rest (ADR-0010): no OS backup / device transfer. The
          master key can't leave the Keystore, so restored data would be
          unreadable; users move phones with "Export all data".
